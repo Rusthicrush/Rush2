@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RUSH — Your Personal Universe</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ============================================================
+     ANIMATED BACKGROUND CANVAS
+============================================================ -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- ============================================================
+     TOP NAVBAR
+============================================================ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-left">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-logo">
+      <span class="logo-text">RUSH</span>
+      <span class="logo-dot"></span>
+    </div>
+  </div>
+  <div class="nav-center">
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="searchInput" placeholder="Search posts…" autocomplete="off"/>
+      <button class="search-clear" id="searchClear"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" title="Notifications"><i class="fas fa-bell"></i><span class="badge">3</span></button>
+    <div class="nav-avatar" title="Rush">R</div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-profile">
+    <div class="sb-avatar">R</div>
+    <div class="sb-info">
+      <span class="sb-name">Rush</span>
+      <span class="sb-handle">@rush</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-link active" data-section="home" href="#"><i class="fas fa-house"></i><span>Home</span></a>
+    <a class="nav-link" data-section="posts" href="#"><i class="fas fa-layer-group"></i><span>My Posts</span></a>
+    <a class="nav-link" data-section="create" href="#"><i class="fas fa-circle-plus"></i><span>Create Post</span></a>
+    <a class="nav-link" data-section="media" href="#"><i class="fas fa-images"></i><span>Media</span></a>
+    <div class="nav-divider"></div>
+    <a class="nav-link" data-section="youtube" href="#"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+    <a class="nav-link" data-section="instagram" href="#"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+    <a class="nav-link" data-section="facebook" href="#"><i class="fab fa-facebook"></i><span>Facebook</span></a>
+    <div class="nav-divider"></div>
+    <a class="nav-link" data-section="about" href="#"><i class="fas fa-user-astronaut"></i><span>About Me</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>RUSH © 2025</span>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ============================================================
+     MAIN LAYOUT
+============================================================ -->
+<div class="layout" id="mainLayout">
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== HOME SECTION ===== -->
+    <section class="section active" id="section-home">
+      <!-- Hero -->
+      <div class="hero-banner">
+        <div class="hero-glow"></div>
+        <h1 class="hero-title">RUSH</h1>
+        <p class="hero-sub">Your universe. Your stories. Your timeline.</p>
+        <button class="btn-primary hero-cta" data-goto="create">
+          <i class="fas fa-bolt"></i> Create Your First Post
+        </button>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="thoughts"><i class="fas fa-comment-dots"></i> Thoughts</button>
+        <button class="filter-tab" data-filter="photos"><i class="fas fa-image"></i> Photos</button>
+      </div>
+
+      <!-- Feed -->
+      <div class="feed" id="mainFeed">
+        <!-- Posts injected by JS -->
+      </div>
+    </section>
+
+    <!-- ===== MY POSTS SECTION ===== -->
+    <section class="section" id="section-posts">
+      <div class="section-header">
+        <h2><i class="fas fa-layer-group"></i> My Posts</h2>
+        <span class="post-count" id="myPostCount">0 posts</span>
+      </div>
+      <div class="feed" id="postsFeed"></div>
+    </section>
+
+    <!-- ===== CREATE POST SECTION ===== -->
+    <section class="section" id="section-create">
+      <div class="section-header"><h2><i class="fas fa-circle-plus"></i> Create Post</h2></div>
+      <div class="create-card glass-card">
+        <div class="create-user-row">
+          <div class="post-avatar">R</div>
+          <div>
+            <span class="post-username">Rush</span>
+            <span class="post-privacy"><i class="fas fa-globe"></i> Public</span>
+          </div>
+        </div>
+        <textarea id="postText" class="post-textarea" placeholder="What's on your mind, Rush?"></textarea>
+        <!-- Image Preview -->
+        <div class="img-preview-wrap" id="imgPreviewWrap" style="display:none">
+          <img id="imgPreview" src="" alt="Preview"/>
+          <button class="remove-img" id="removeImg"><i class="fas fa-times"></i></button>
+        </div>
+        <!-- Toolbar -->
+        <div class="create-toolbar">
+          <label class="tool-btn" title="Add Photo" for="imgUpload">
+            <i class="fas fa-image"></i><span>Photo</span>
+            <input type="file" id="imgUpload" accept="image/*" style="display:none"/>
+          </label>
+          <button class="tool-btn" title="Mood"><i class="fas fa-face-smile"></i><span>Feeling</span></button>
+          <button class="tool-btn" title="Location"><i class="fas fa-location-dot"></i><span>Location</span></button>
+        </div>
+        <button class="btn-primary publish-btn" id="publishBtn"><i class="fas fa-bolt"></i> Publish Post</button>
+      </div>
+    </section>
+
+    <!-- ===== MEDIA SECTION ===== -->
+    <section class="section" id="section-media">
+      <div class="section-header"><h2><i class="fas fa-images"></i> Media Gallery</h2></div>
+      <div class="media-grid" id="mediaGrid">
+        <div class="empty-state" id="mediaEmpty">
+          <i class="fas fa-photo-film"></i>
+          <p>No media yet. Upload images in Create Post!</p>
+        </div>
+      </div>
+      <!-- Lightbox -->
+      <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></button>
+        <img id="lightboxImg" src="" alt=""/>
+      </div>
+    </section>
+
+    <!-- ===== YOUTUBE SECTION ===== -->
+    <section class="section" id="section-youtube">
+      <div class="section-header yt-header">
+        <h2><i class="fab fa-youtube yt-icon"></i> YouTube</h2>
+        <span class="platform-badge yt-badge">WATCH</span>
+      </div>
+      <div class="platform-panel yt-panel">
+        <!-- Embed input -->
+        <div class="yt-embed-input glass-card">
+          <label>Paste a YouTube Video URL to watch it here:</label>
+          <div class="yt-input-row">
+            <input type="text" id="ytUrl" placeholder="https://www.youtube.com/watch?v=..."/>
+            <button class="btn-primary" id="ytLoadBtn"><i class="fas fa-play"></i> Load</button>
+          </div>
+        </div>
+        <!-- Player -->
+        <div class="yt-player-wrap glass-card" id="ytPlayerWrap" style="display:none">
+          <iframe id="ytIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <!-- Featured Playlist Cards -->
+        <div class="yt-cards">
+          <div class="yt-card glass-card" data-vid="dQw4w9WgXcQ">
+            <div class="yt-thumb"><i class="fab fa-youtube"></i></div>
+            <div class="yt-card-info"><span>Featured Video</span><small>Click to load</small></div>
+            <button class="yt-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="yt-card glass-card" data-vid="jNQXAC9IVRw">
+            <div class="yt-thumb"><i class="fab fa-youtube"></i></div>
+            <div class="yt-card-info"><span>Featured Video 2</span><small>Click to load</small></div>
+            <button class="yt-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="yt-card glass-card" data-vid="9bZkp7q19f0">
+            <div class="yt-thumb"><i class="fab fa-youtube"></i></div>
+            <div class="yt-card-info"><span>Featured Video 3</span><small>Click to load</small></div>
+            <button class="yt-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INSTAGRAM SECTION ===== -->
+    <section class="section" id="section-instagram">
+      <div class="section-header">
+        <h2><i class="fab fa-instagram ig-icon"></i> Instagram</h2>
+        <span class="platform-badge ig-badge">REELS</span>
+      </div>
+      <div class="platform-panel ig-panel glass-card">
+        <div class="ig-top-bar">
+          <div class="ig-stories">
+            <div class="ig-story-wrap"><div class="ig-story-ring"><div class="ig-story-avatar">R</div></div><small>Your Story</small></div>
+            <div class="ig-story-wrap"><div class="ig-story-ring"><div class="ig-story-avatar" style="background:var(--accent2)">A</div></div><small>Alex</small></div>
+            <div class="ig-story-wrap"><div class="ig-story-ring"><div class="ig-story-avatar" style="background:var(--blue3)">M</div></div><small>Maya</small></div>
+            <div class="ig-story-wrap"><div class="ig-story-ring"><div class="ig-story-avatar" style="background:var(--blue5)">J</div></div><small>Jake</small></div>
+            <div class="ig-story-wrap"><div class="ig-story-ring"><div class="ig-story-avatar" style="background:#8b5cf6">S</div></div><small>Sara</small></div>
+          </div>
+        </div>
+        <div class="ig-posts-grid">
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img1"><div class="ig-overlay"><i class="fas fa-heart"></i>124 &nbsp;<i class="fas fa-comment"></i>38</div></div>
+          </div>
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img2"><div class="ig-overlay"><i class="fas fa-heart"></i>89 &nbsp;<i class="fas fa-comment"></i>12</div></div>
+          </div>
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img3"><div class="ig-overlay"><i class="fas fa-heart"></i>210 &nbsp;<i class="fas fa-comment"></i>55</div></div>
+          </div>
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img4"><div class="ig-overlay"><i class="fas fa-heart"></i>300 &nbsp;<i class="fas fa-comment"></i>72</div></div>
+          </div>
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img5"><div class="ig-overlay"><i class="fas fa-heart"></i>156 &nbsp;<i class="fas fa-comment"></i>29</div></div>
+          </div>
+          <div class="ig-post-card">
+            <div class="ig-post-img ig-img6"><div class="ig-overlay"><i class="fas fa-heart"></i>445 &nbsp;<i class="fas fa-comment"></i>91</div></div>
+          </div>
+        </div>
+        <a href="https://instagram.com" target="_blank" class="btn-platform ig-open-btn"><i class="fab fa-instagram"></i> Open Instagram</a>
+      </div>
+    </section>
+
+    <!-- ===== FACEBOOK SECTION ===== -->
+    <section class="section" id="section-facebook">
+      <div class="section-header">
+        <h2><i class="fab fa-facebook fb-icon"></i> Facebook</h2>
+        <span class="platform-badge fb-badge">FEED</span>
+      </div>
+      <div class="platform-panel fb-panel">
+        <!-- Story Bar -->
+        <div class="fb-stories glass-card">
+          <div class="fb-story-card fb-your-story">
+            <div class="fb-story-inner"><i class="fas fa-circle-plus"></i></div>
+            <span>Your Story</span>
+          </div>
+          <div class="fb-story-card"><div class="fb-story-inner fb-s2">A</div><span>Alex</span></div>
+          <div class="fb-story-card"><div class="fb-story-inner fb-s3">M</div><span>Maya</span></div>
+          <div class="fb-story-card"><div class="fb-story-inner fb-s4">J</div><span>Jake</span></div>
+        </div>
+        <!-- Mock Feed Posts -->
+        <div class="fb-post glass-card">
+          <div class="fb-post-header">
+            <div class="fb-post-avatar">R</div>
+            <div>
+              <span class="fb-post-name">Rush</span>
+              <span class="fb-post-time"><i class="fas fa-globe"></i> 2 hours ago</span>
+            </div>
+          </div>
+          <p class="fb-post-text">Just launched my personal social platform RUSH! 🚀 Feeling amazing about this journey ahead.</p>
+          <div class="fb-post-reactions">
+            <span><i class="fas fa-thumbs-up fb-like"></i> 47 Likes</span>
+            <span>12 Comments · 5 Shares</span>
+          </div>
+          <div class="fb-post-actions">
+            <button><i class="fas fa-thumbs-up"></i> Like</button>
+            <button><i class="fas fa-comment"></i> Comment</button>
+            <button><i class="fas fa-share"></i> Share</button>
+          </div>
+        </div>
+        <div class="fb-post glass-card">
+          <div class="fb-post-header">
+            <div class="fb-post-avatar" style="background:var(--blue3)">M</div>
+            <div>
+              <span class="fb-post-name">Maya Patel</span>
+              <span class="fb-post-time"><i class="fas fa-globe"></i> 5 hours ago</span>
+            </div>
+          </div>
+          <p class="fb-post-text">The RUSH platform looks absolutely stunning 🔥 Love the blue aesthetic!</p>
+          <div class="fb-post-reactions">
+            <span><i class="fas fa-thumbs-up fb-like"></i> 23 Likes</span>
+            <span>8 Comments</span>
+          </div>
+          <div class="fb-post-actions">
+            <button><i class="fas fa-thumbs-up"></i> Like</button>
+            <button><i class="fas fa-comment"></i> Comment</button>
+            <button><i class="fas fa-share"></i> Share</button>
+          </div>
+        </div>
+        <a href="https://facebook.com" target="_blank" class="btn-platform fb-open-btn"><i class="fab fa-facebook"></i> Open Facebook</a>
+      </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section class="section" id="section-about">
+      <div class="section-header"><h2><i class="fas fa-user-astronaut"></i> About Me</h2></div>
+      <div class="about-card glass-card">
+        <div class="about-avatar-wrap">
+          <div class="about-avatar">R</div>
+          <div class="about-avatar-glow"></div>
+        </div>
+        <h3 class="about-name">Rush</h3>
+        <p class="about-handle">@rush · Creator of RUSH Platform</p>
+        <p class="about-bio">Welcome to my universe. RUSH is my personal space where I share thoughts, stories, and everything that inspires me. This is more than a website — it's my digital identity.</p>
+        <div class="about-stats">
+          <div class="stat-box"><span id="statPosts">0</span><small>Posts</small></div>
+          <div class="stat-box"><span id="statPhotos">0</span><small>Photos</small></div>
+          <div class="stat-box"><span>∞</span><small>Energy</small></div>
+        </div>
+        <div class="about-socials">
+          <a href="https://youtube.com" target="_blank" class="social-pill yt"><i class="fab fa-youtube"></i> YouTube</a>
+          <a href="https://instagram.com" target="_blank" class="social-pill ig"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="https://facebook.com" target="_blank" class="social-pill fb"><i class="fab fa-facebook"></i> Facebook</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====== RIGHT SIDEBAR ====== -->
+  <aside class="right-sidebar" id="rightSidebar">
+    <!-- Profile Widget -->
+    <div class="widget glass-card">
+      <div class="widget-profile">
+        <div class="widget-avatar">R</div>
+        <div class="widget-avatar-glow"></div>
+      </div>
+      <h3 class="widget-name">Rush</h3>
+      <p class="widget-bio">Living life at full speed. 🚀</p>
+      <div class="widget-stats">
+        <div><span id="wStatPosts">0</span><small>Posts</small></div>
+        <div><span id="wStatPhotos">0</span><small>Photos</small></div>
+        <div><span>∞</span><small>Vibes</small></div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="widget glass-card">
+      <h4 class="widget-title"><i class="fas fa-bolt"></i> Platforms</h4>
+      <div class="quick-links">
+        <a href="https://youtube.com" target="_blank" class="quick-link yt-ql"><i class="fab fa-youtube"></i> YouTube</a>
+        <a href="https://instagram.com" target="_blank" class="quick-link ig-ql"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="https://facebook.com" target="_blank" class="quick-link fb-ql"><i class="fab fa-facebook"></i> Facebook</a>
+      </div>
+    </div>
+
+    <!-- Trending / Activity -->
+    <div class="widget glass-card">
+      <h4 class="widget-title"><i class="fas fa-fire"></i> Activity</h4>
+      <ul class="activity-list" id="activityList">
+        <li class="activity-empty">No activity yet</li>
+      </ul>
+    </div>
+  </aside>
+
+</div><!-- /.layout -->
+
+<!-- ============================================================
+     FLOATING ACTION BUTTON
+============================================================ -->
+<button class="fab" id="fab" title="Create Post" data-goto="create">
+  <i class="fas fa-plus"></i>
+</button>
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+============================================================ -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Post published!</span>
+</div>
+
+<!-- ============================================================
+     COMMENT MODAL
+============================================================ -->
+<div class="modal-overlay" id="commentModal">
+  <div class="modal glass-card">
+    <button class="modal-close" id="commentModalClose"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-comment-dots"></i> Comments</h3>
+    <div class="comment-list" id="commentList"></div>
+    <div class="comment-input-row">
+      <div class="post-avatar">R</div>
+      <input type="text" id="commentInput" placeholder="Write a comment…"/>
+      <button class="btn-primary" id="commentSubmit"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
