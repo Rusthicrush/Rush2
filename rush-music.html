@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#020c1f"/>
+<title>RUSH Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   RUSH MUSIC — PREMIUM GALAXY PLAYER
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Galaxy Blue Theme (default) */
+  --bg-deep:       #020c1f;
+  --bg-mid:        #030f2a;
+  --bg-card:       rgba(8,24,68,0.55);
+  --bg-glass:      rgba(5,18,50,0.7);
+  --accent:        #00d4ff;
+  --accent-rgb:    0,212,255;
+  --accent2:       #0066ff;
+  --accent2-rgb:   0,102,255;
+  --accent3:       #6e3dff;
+  --glow:          0 0 40px rgba(0,212,255,0.4);
+  --glow-sm:       0 0 16px rgba(0,212,255,0.3);
+  --border:        rgba(0,212,255,0.18);
+  --border-bright: rgba(0,212,255,0.5);
+  --text:          #e8f4ff;
+  --text-sub:      #6890c0;
+  --text-dim:      #3a5882;
+  --card-shadow:   0 8px 40px rgba(0,10,40,0.7);
+  --nav-bg:        rgba(2,10,28,0.95);
+  --player-bg:     rgba(3,12,34,0.92);
+  --orb1: #00d4ff;
+  --orb2: #0055ff;
+  --orb3: #6e3dff;
+  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── THEME VARIANTS ── */
+[data-theme="neon"] {
+  --bg-deep: #040010;  --bg-mid: #080020;
+  --bg-card: rgba(20,0,60,0.55); --bg-glass: rgba(15,0,45,0.75);
+  --accent: #ff00e5; --accent-rgb: 255,0,229;
+  --accent2: #8800ff; --accent2-rgb: 136,0,255;
+  --accent3: #00ffe0; --glow: 0 0 40px rgba(255,0,229,0.5);
+  --glow-sm: 0 0 16px rgba(255,0,229,0.35);
+  --border: rgba(255,0,229,0.2); --border-bright: rgba(255,0,229,0.6);
+  --text: #f5e5ff; --text-sub: #9f60c0; --text-dim: #4a2060;
+  --nav-bg: rgba(4,0,16,0.96); --player-bg: rgba(6,0,20,0.94);
+  --orb1: #ff00e5; --orb2: #8800ff; --orb3: #00ffe0;
+}
+[data-theme="ocean"] {
+  --bg-deep: #001520; --bg-mid: #001e2d;
+  --bg-card: rgba(0,40,60,0.55); --bg-glass: rgba(0,30,50,0.75);
+  --accent: #00ffe0; --accent-rgb: 0,255,224;
+  --accent2: #00aeff; --accent2-rgb: 0,174,255;
+  --accent3: #0055ff; --glow: 0 0 40px rgba(0,255,224,0.4);
+  --glow-sm: 0 0 16px rgba(0,255,224,0.3);
+  --border: rgba(0,255,224,0.2); --border-bright: rgba(0,255,224,0.55);
+  --text: #e0fff8; --text-sub: #4da89a; --text-dim: #1a5050;
+  --nav-bg: rgba(0,10,16,0.96); --player-bg: rgba(0,14,22,0.94);
+  --orb1: #00ffe0; --orb2: #00aeff; --orb3: #0055ff;
+}
+[data-theme="purple"] {
+  --bg-deep: #0d0018; --bg-mid: #130025;
+  --bg-card: rgba(30,0,60,0.55); --bg-glass: rgba(22,0,48,0.75);
+  --accent: #bf00ff; --accent-rgb: 191,0,255;
+  --accent2: #7700cc; --accent2-rgb: 119,0,204;
+  --accent3: #ff00aa; --glow: 0 0 40px rgba(191,0,255,0.5);
+  --glow-sm: 0 0 16px rgba(191,0,255,0.35);
+  --border: rgba(191,0,255,0.22); --border-bright: rgba(191,0,255,0.6);
+  --text: #f2e5ff; --text-sub: #9055b0; --text-dim: #4a1870;
+  --nav-bg: rgba(8,0,16,0.96); --player-bg: rgba(10,0,22,0.94);
+  --orb1: #bf00ff; --orb2: #7700cc; --orb3: #ff00aa;
+}
+[data-theme="titanium"] {
+  --bg-deep: #080808; --bg-mid: #0f0f0f;
+  --bg-card: rgba(22,22,28,0.65); --bg-glass: rgba(16,16,22,0.8);
+  --accent: #e8e8f0; --accent-rgb: 232,232,240;
+  --accent2: #a0a8c0; --accent2-rgb: 160,168,192;
+  --accent3: #4466ff; --glow: 0 0 30px rgba(232,232,240,0.25);
+  --glow-sm: 0 0 12px rgba(232,232,240,0.2);
+  --border: rgba(232,232,240,0.14); --border-bright: rgba(232,232,240,0.4);
+  --text: #f0f0f8; --text-sub: #707090; --text-dim: #383848;
+  --nav-bg: rgba(4,4,6,0.97); --player-bg: rgba(6,6,10,0.96);
+  --orb1: #888; --orb2: #555; --orb3: #4466ff;
+}
+[data-theme="aurora"] {
+  --bg-deep: #000d18; --bg-mid: #001220;
+  --bg-card: rgba(0,25,40,0.6); --bg-glass: rgba(0,18,32,0.78);
+  --accent: #00ffaa; --accent-rgb: 0,255,170;
+  --accent2: #0088ff; --accent2-rgb: 0,136,255;
+  --accent3: #ff6600; --glow: 0 0 40px rgba(0,255,170,0.4);
+  --glow-sm: 0 0 16px rgba(0,255,170,0.3);
+  --border: rgba(0,255,170,0.2); --border-bright: rgba(0,255,170,0.55);
+  --text: #e5fff5; --text-sub: #3a9068; --text-dim: #1a4035;
+  --nav-bg: rgba(0,8,14,0.96); --player-bg: rgba(0,10,18,0.94);
+  --orb1: #00ffaa; --orb2: #0088ff; --orb3: #ff6600;
+}
+
+/* ── RESET & BASE ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { height:100%; overflow:hidden; }
+body {
+  height:100%; overflow:hidden; background:var(--bg-deep);
+  color:var(--text); font-family:'Rajdhani',sans-serif;
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+input,button,select { font-family:inherit; }
+button { cursor:pointer; border:none; background:none; color:inherit; }
+input { outline:none; background:none; color:inherit; border:none; }
+::-webkit-scrollbar { display:none; }
+* { scrollbar-width:none; }
+
+/* ── APP SHELL ── */
+#app {
+  position:fixed; inset:0;
+  display:flex; flex-direction:column;
+  overflow:hidden; background:var(--bg-deep);
+  transition:background var(--transition);
+}
+
+/* ── GALAXY CANVAS BACKGROUND ── */
+#galaxy-canvas {
+  position:fixed; inset:0;
+  z-index:0; pointer-events:none;
+  opacity:0.65;
+  transition:opacity 0.8s;
+}
+
+/* ── AMBIENT ORBS ── */
+.orb {
+  position:fixed; border-radius:50%;
+  filter:blur(80px); pointer-events:none; z-index:0;
+  transition:all 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.orb-1 { width:400px; height:400px; background:var(--orb1); opacity:0.08; top:-100px; left:-100px; }
+.orb-2 { width:350px; height:350px; background:var(--orb2); opacity:0.07; bottom:-80px; right:-80px; }
+.orb-3 { width:250px; height:250px; background:var(--orb3); opacity:0.06; top:40%; left:30%; }
+
+/* ── SCREENS ── */
+.screen {
+  position:absolute; inset:0; z-index:1;
+  overflow:hidden;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.4s cubic-bezier(0.4,0,0.2,1),
+             transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  transform:translateX(30px);
+}
+.screen.active {
+  opacity:1; pointer-events:all;
+  transform:translateX(0);
+}
+.screen.exit { transform:translateX(-30px); }
+
+.scroll-view {
+  height:100%; overflow-y:auto;
+  padding-bottom:80px;
+  overscroll-behavior-y:contain;
+}
+
+/* ── SPLASH ── */
+#screen-splash {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:100;
+}
+.splash-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid var(--accent); opacity:0;
+  animation:ringExpand 2.4s ease-out forwards;
+}
+.splash-ring:nth-child(1) { width:120px; height:120px; animation-delay:0.4s; }
+.splash-ring:nth-child(2) { width:220px; height:220px; animation-delay:0.7s; }
+.splash-ring:nth-child(3) { width:340px; height:340px; animation-delay:1s; border-color:var(--accent2); }
+.splash-ring:nth-child(4) { width:460px; height:460px; animation-delay:1.3s; border-color:var(--accent3); opacity:0; }
+@keyframes ringExpand {
+  0% { transform:scale(0.3); opacity:0; }
+  40% { opacity:0.6; }
+  100% { transform:scale(1); opacity:0; }
+}
+.splash-logo {
+  position:relative; z-index:2; text-align:center;
+  animation:splashFadeIn 1s ease forwards 0.3s;
+  opacity:0;
+}
+@keyframes splashFadeIn {
+  from { opacity:0; transform:scale(0.7) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.splash-logo .brand {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(52px,16vw,80px);
+  font-weight:900; letter-spacing:12px;
+  color:var(--accent);
+  text-shadow:0 0 40px var(--accent), 0 0 80px rgba(var(--accent-rgb),0.5), 0 0 120px rgba(var(--accent-rgb),0.2);
+  animation:rushPulse 2s ease-in-out infinite 1s;
+}
+@keyframes rushPulse {
+  0%,100% { text-shadow:0 0 40px var(--accent), 0 0 80px rgba(var(--accent-rgb),0.5); }
+  50%     { text-shadow:0 0 60px var(--accent), 0 0 120px rgba(var(--accent-rgb),0.6), 0 0 200px rgba(var(--accent-rgb),0.2); }
+}
+.splash-logo .sub {
+  font-size:13px; letter-spacing:6px; color:var(--text-sub);
+  text-transform:uppercase; margin-top:8px;
+  font-family:'Rajdhani',sans-serif; font-weight:500;
+}
+.splash-logo .dev {
+  font-size:12px; letter-spacing:4px; color:var(--text-dim);
+  margin-top:24px; font-weight:600;
+}
+.splash-logo .dev span { color:var(--accent); }
+.splash-bar {
+  position:absolute; bottom:80px; width:160px; height:2px;
+  background:rgba(var(--accent-rgb),0.15); border-radius:1px;
+  overflow:hidden;
+}
+.splash-bar-fill {
+  height:100%; width:0; border-radius:1px;
+  background:linear-gradient(90deg, var(--accent2), var(--accent));
+  box-shadow:0 0 10px var(--accent);
+  animation:loadBar 2.5s ease forwards 0.5s;
+}
+@keyframes loadBar { 0%{width:0} 100%{width:100%} }
+
+/* ── TOP STATUS BAR AREA ── */
+.status-bar {
+  position:relative; z-index:10;
+  height:52px; padding:0 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.status-bar-title {
+  font-family:'Orbitron',monospace;
+  font-size:14px; font-weight:700;
+  letter-spacing:3px; color:var(--accent);
+}
+.status-time { font-size:13px; font-weight:600; color:var(--text-sub); }
+.status-icons { display:flex; gap:8px; align-items:center; }
+.status-icons svg { width:16px; height:16px; fill:var(--text-sub); }
+
+/* ── BOTTOM NAV ── */
+#bottom-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  height:70px; z-index:50;
+  background:var(--nav-bg);
+  backdrop-filter:blur(30px) saturate(1.8);
+  -webkit-backdrop-filter:blur(30px) saturate(1.8);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-around;
+  padding-bottom:env(safe-area-inset-bottom);
+  transition:transform 0.3s ease;
+}
+#bottom-nav.hidden { transform:translateY(100%); }
+.nav-btn {
+  display:flex; flex-direction:column; align-items:center;
+  gap:4px; padding:8px 16px; border-radius:16px;
+  transition:all 0.25s ease; flex:1; color:var(--text-dim);
+  position:relative;
+}
+.nav-btn .nav-icon { font-size:22px; transition:all 0.25s ease; }
+.nav-btn .nav-label {
+  font-size:10px; font-weight:700; letter-spacing:0.8px;
+  text-transform:uppercase; transition:all 0.25s ease;
+}
+.nav-btn.active { color:var(--accent); }
+.nav-btn.active .nav-icon { filter:drop-shadow(0 0 8px var(--accent)); transform:scale(1.1); }
+.nav-btn.active::after {
+  content:''; position:absolute; bottom:-1px;
+  left:50%; transform:translateX(-50%);
+  width:24px; height:2px; border-radius:2px;
+  background:var(--accent); box-shadow:0 0 8px var(--accent);
+}
+.nav-btn:active { transform:scale(0.9); }
+
+/* ── GLASS CARD ── */
+.glass-card {
+  background:var(--bg-card);
+  backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--card-shadow);
+  overflow:hidden;
+  transition:border-color var(--transition), box-shadow var(--transition);
+}
+.glass-card:active { transform:scale(0.98); }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:0 20px; margin-bottom:14px;
+}
+.section-title {
+  font-family:'Orbitron',monospace;
+  font-size:13px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase; color:var(--text);
+}
+.section-more {
+  font-size:12px; font-weight:600;
+  letter-spacing:1px; color:var(--accent); opacity:0.8;
+}
+.section-more:active { opacity:1; }
+
+/* ─────────────────────────────────────────
+   HOME SCREEN
+───────────────────────────────────────── */
+#screen-home .scroll-view { padding-top:0; }
+
+.hero-area {
+  position:relative; padding:60px 24px 28px;
+  overflow:hidden;
+}
+.hero-bg-ring {
+  position:absolute; top:-60px; right:-80px;
+  width:280px; height:280px; border-radius:50%;
+  border:1px solid rgba(var(--accent-rgb),0.12);
+  animation:heroRingSpin 20s linear infinite;
+}
+.hero-bg-ring::after {
+  content:''; position:absolute; inset:20px;
+  border-radius:50%; border:1px solid rgba(var(--accent-rgb),0.08);
+}
+@keyframes heroRingSpin { to { transform:rotate(360deg); } }
+.hero-greeting {
+  font-size:13px; letter-spacing:3px; color:var(--text-sub);
+  text-transform:uppercase; font-weight:600; margin-bottom:6px;
+}
+.hero-brand {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(48px,14vw,72px);
+  font-weight:900; letter-spacing:10px;
+  line-height:1; color:var(--accent);
+  text-shadow:0 0 40px rgba(var(--accent-rgb),0.6),
+              0 0 80px rgba(var(--accent-rgb),0.2);
+  animation:rushPulse 3s ease-in-out infinite;
+}
+.hero-tagline {
+  font-size:15px; color:var(--text-sub); margin-top:10px;
+  font-weight:500; letter-spacing:1px;
+}
+
+/* Now Playing Strip */
+.now-playing-strip {
+  margin:0 20px 24px;
+  padding:14px 18px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:all 0.25s;
+}
+.now-playing-strip:active { transform:scale(0.97); }
+.np-art {
+  width:52px; height:52px; border-radius:14px;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:26px; position:relative; overflow:hidden;
+  box-shadow:var(--glow-sm);
+}
+.np-info { flex:1; overflow:hidden; }
+.np-label { font-size:10px; letter-spacing:2px; color:var(--accent); font-weight:700; text-transform:uppercase; }
+.np-title { font-size:15px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.np-artist { font-size:12px; color:var(--text-sub); }
+.np-controls { display:flex; gap:10px; align-items:center; }
+.np-btn { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; }
+.np-play { background:var(--accent); color:#000; box-shadow:var(--glow-sm); }
+.np-play:active { transform:scale(0.88); }
+
+/* Equalizer bars */
+.eq-bars { display:flex; gap:3px; align-items:flex-end; height:20px; }
+.eq-bar {
+  width:3px; border-radius:2px;
+  background:var(--accent); box-shadow:0 0 4px var(--accent);
+  animation:eqAnim 0.8s ease-in-out infinite alternate;
+}
+.eq-bar:nth-child(1) { animation-duration:0.6s; }
+.eq-bar:nth-child(2) { animation-duration:0.9s; animation-delay:0.1s; }
+.eq-bar:nth-child(3) { animation-duration:0.7s; animation-delay:0.2s; }
+.eq-bar:nth-child(4) { animation-duration:1.0s; animation-delay:0.05s; }
+.eq-bar:nth-child(5) { animation-duration:0.65s; animation-delay:0.15s; }
+@keyframes eqAnim {
+  from { height:4px; opacity:0.5; }
+  to   { height:18px; opacity:1; }
+}
+.eq-bars.paused .eq-bar { animation-play-state:paused; }
+
+/* Horizontal scroll row */
+.h-scroll {
+  display:flex; gap:14px;
+  padding:0 20px 4px;
+  overflow-x:auto; overflow-y:hidden;
+}
+
+/* Song card — vertical */
+.song-card-v {
+  flex-shrink:0; width:130px; cursor:pointer;
+  transition:all 0.25s;
+}
+.song-card-v:active { transform:scale(0.94); }
+.song-card-art {
+  width:130px; height:130px; border-radius:18px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:52px; margin-bottom:10px;
+  border:1px solid var(--border);
+  box-shadow:var(--card-shadow);
+  overflow:hidden; position:relative;
+  transition:box-shadow 0.3s;
+}
+.song-card-art:hover { box-shadow:var(--glow); }
+.song-card-art .art-shimmer {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%, rgba(255,255,255,0.04) 100%);
+}
+.song-card-title { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.song-card-artist { font-size:11px; color:var(--text-sub); margin-top:2px; }
+
+/* Playlist card */
+.playlist-card {
+  flex-shrink:0; width:150px; height:90px;
+  padding:14px 16px; cursor:pointer;
+  display:flex; flex-direction:column; justify-content:space-between;
+  transition:all 0.25s; position:relative; overflow:hidden;
+}
+.playlist-card:active { transform:scale(0.94); }
+.playlist-card-glow {
+  position:absolute; right:-20px; top:-20px;
+  width:100px; height:100px; border-radius:50%;
+  filter:blur(30px); opacity:0.3;
+}
+.playlist-card-name { font-size:14px; font-weight:700; letter-spacing:0.5px; position:relative; z-index:1; }
+.playlist-card-count { font-size:11px; color:var(--text-sub); position:relative; z-index:1; }
+.playlist-card-icon { font-size:22px; position:relative; z-index:1; }
+
+/* Trending row */
+.trending-item {
+  display:flex; align-items:center; gap:14px;
+  padding:10px 20px; cursor:pointer; transition:background 0.2s;
+}
+.trending-item:active { background:rgba(var(--accent-rgb),0.06); }
+.t-rank {
+  width:24px; font-family:'Orbitron',monospace;
+  font-size:11px; color:var(--text-dim); font-weight:700;
+  text-align:center; flex-shrink:0;
+}
+.t-art {
+  width:46px; height:46px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; border:1px solid var(--border); flex-shrink:0;
+}
+.t-info { flex:1; overflow:hidden; }
+.t-title { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.t-artist { font-size:12px; color:var(--text-sub); }
+.t-plays { font-size:11px; color:var(--text-dim); font-weight:600; letter-spacing:0.5px; }
+.t-fav { font-size:18px; padding:4px; transition:transform 0.2s; }
+.t-fav:active { transform:scale(1.3); }
+
+/* ─────────────────────────────────────────
+   PLAYER SCREEN
+───────────────────────────────────────── */
+#screen-player {
+  z-index:20;
+}
+#screen-player .status-bar { position:absolute; top:0; left:0; right:0; }
+
+.player-bg {
+  position:absolute; inset:0;
+  transition:all 0.8s ease; z-index:0;
+}
+
+.player-content {
+  position:relative; z-index:2;
+  height:100%; display:flex; flex-direction:column;
+  padding:0 24px;
+}
+
+.player-header {
+  padding-top:52px; padding-bottom:16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.player-header-btn {
+  width:40px; height:40px; border-radius:14px;
+  background:var(--bg-card); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; transition:all 0.2s; backdrop-filter:blur(20px);
+}
+.player-header-btn:active { transform:scale(0.88); background:rgba(var(--accent-rgb),0.15); }
+.player-header-title {
+  text-align:center;
+  font-size:11px; letter-spacing:3px; color:var(--text-sub);
+  text-transform:uppercase; font-weight:700;
+}
+
+/* Album Art */
+.player-art-wrap {
+  flex-shrink:0; display:flex; justify-content:center;
+  padding:10px 0 20px;
+}
+.player-art {
+  width:min(240px, 62vw); height:min(240px, 62vw);
+  border-radius:30px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:100px; position:relative;
+  box-shadow:0 20px 80px rgba(0,0,0,0.6), var(--glow);
+  border:1px solid rgba(var(--accent-rgb),0.2);
+  overflow:hidden; cursor:pointer;
+  transition:box-shadow 0.5s, transform 0.3s;
+}
+.player-art.spinning { animation:discSpin 8s linear infinite; }
+.player-art.spinning.paused { animation-play-state:paused; }
+@keyframes discSpin { to { transform:rotate(360deg); } }
+.player-art::after {
+  content:''; position:absolute; inset:0; border-radius:30px;
+  background:linear-gradient(140deg, rgba(255,255,255,0.12) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+  pointer-events:none;
+}
+.player-art:active { transform:scale(0.96); }
+
+/* Song info */
+.player-info { text-align:center; padding:0 12px; margin-bottom:16px; }
+.player-title {
+  font-size:22px; font-weight:800; color:var(--text);
+  letter-spacing:0.5px; margin-bottom:4px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.player-artist { font-size:14px; color:var(--text-sub); font-weight:500; }
+.player-actions {
+  display:flex; gap:16px; justify-content:center;
+  align-items:center; margin-top:12px;
+}
+.player-action-btn {
+  font-size:20px; padding:6px; transition:all 0.2s;
+  opacity:0.6;
+}
+.player-action-btn:active { transform:scale(1.2); opacity:1; }
+.player-action-btn.active { opacity:1; filter:drop-shadow(0 0 6px var(--accent)); }
+
+/* Seek bar */
+.player-seek {
+  padding:0 4px; margin-bottom:8px;
+}
+.seek-track {
+  width:100%; height:3px; border-radius:3px;
+  background:rgba(var(--accent-rgb),0.15);
+  position:relative; cursor:pointer; overflow:visible;
+  touch-action:none;
+}
+.seek-fill {
+  height:100%; border-radius:3px;
+  background:linear-gradient(90deg, var(--accent2), var(--accent));
+  box-shadow:0 0 8px var(--accent);
+  position:relative; transition:width 0.1s;
+}
+.seek-thumb {
+  position:absolute; right:-7px; top:50%;
+  transform:translateY(-50%);
+  width:14px; height:14px; border-radius:50%;
+  background:var(--accent); box-shadow:var(--glow-sm);
+  transition:transform 0.2s;
+}
+.seek-thumb:hover { transform:translateY(-50%) scale(1.4); }
+.seek-times {
+  display:flex; justify-content:space-between;
+  font-size:11px; color:var(--text-dim); margin-top:8px;
+  font-weight:600; letter-spacing:0.5px;
+}
+
+/* Controls */
+.player-controls {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 8px; margin-bottom:18px;
+}
+.ctrl-btn {
+  font-size:24px; padding:8px;
+  transition:all 0.2s; opacity:0.7;
+  display:flex; align-items:center; justify-content:center;
+}
+.ctrl-btn:active { transform:scale(0.85); opacity:1; }
+.ctrl-btn.active { opacity:1; color:var(--accent); filter:drop-shadow(0 0 8px var(--accent)); }
+.ctrl-play {
+  width:64px; height:64px; border-radius:50%;
+  background:linear-gradient(135deg, var(--accent2), var(--accent));
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; color:#000; font-weight:900;
+  box-shadow:0 4px 30px rgba(var(--accent-rgb),0.5), var(--glow);
+  transition:all 0.2s; opacity:1;
+}
+.ctrl-play:active { transform:scale(0.9); }
+
+/* Volume */
+.player-volume {
+  display:flex; align-items:center; gap:12px;
+  padding:0 4px; margin-bottom:8px;
+}
+.vol-icon { font-size:18px; opacity:0.6; }
+.vol-slider {
+  flex:1; height:3px; border-radius:3px;
+  background:rgba(var(--accent-rgb),0.15);
+  -webkit-appearance:none; appearance:none; cursor:pointer;
+  outline:none;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; width:14px; height:14px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:var(--glow-sm); cursor:pointer;
+}
+
+/* Lyrics panel */
+.lyrics-panel {
+  flex:1; overflow:hidden;
+  background:var(--bg-card);
+  border:1px solid var(--border); border-radius:20px;
+  padding:16px 18px; margin-bottom:16px;
+}
+.lyrics-label {
+  font-size:10px; letter-spacing:3px; color:var(--accent);
+  font-weight:700; text-transform:uppercase; margin-bottom:10px;
+}
+.lyrics-text {
+  font-size:15px; color:var(--text-sub); line-height:1.8;
+  overflow:hidden; display:-webkit-box;
+  -webkit-line-clamp:4; -webkit-box-orient:vertical;
+}
+.lyrics-text .hl { color:var(--text); font-weight:600; }
+
+/* ─────────────────────────────────────────
+   LIBRARY SCREEN
+───────────────────────────────────────── */
+.library-header { padding:20px 20px 14px; }
+.library-title {
+  font-family:'Orbitron',monospace;
+  font-size:22px; font-weight:800; letter-spacing:4px;
+  color:var(--text); margin-bottom:14px;
+}
+.search-bar {
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:16px; padding:10px 16px;
+  backdrop-filter:blur(20px); transition:border-color 0.2s;
+}
+.search-bar:focus-within { border-color:var(--accent); box-shadow:0 0 0 2px rgba(var(--accent-rgb),0.15); }
+.search-icon { font-size:16px; opacity:0.5; }
+.search-input {
+  flex:1; font-size:14px; font-weight:500;
+  background:transparent; color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+}
+.search-input::placeholder { color:var(--text-dim); }
+
+.filter-tabs {
+  display:flex; gap:8px; padding:0 20px 16px;
+  overflow-x:auto;
+}
+.filter-tab {
+  flex-shrink:0; padding:6px 16px; border-radius:20px;
+  font-size:12px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; transition:all 0.25s;
+  border:1px solid var(--border); color:var(--text-sub);
+}
+.filter-tab.active {
+  background:rgba(var(--accent-rgb),0.15);
+  border-color:var(--accent); color:var(--accent);
+  box-shadow:0 0 12px rgba(var(--accent-rgb),0.2);
+}
+.filter-tab:active { transform:scale(0.94); }
+
+.view-toggle { display:flex; gap:6px; padding:0 20px 14px; }
+.view-btn {
+  padding:6px 12px; border-radius:10px; font-size:18px;
+  border:1px solid var(--border); transition:all 0.2s;
+}
+.view-btn.active { border-color:var(--accent); background:rgba(var(--accent-rgb),0.12); }
+
+/* List view */
+.library-list { padding:0 20px; display:flex; flex-direction:column; gap:8px; }
+.lib-item {
+  display:flex; align-items:center; gap:14px;
+  padding:10px 14px; border-radius:16px;
+  background:var(--bg-card); border:1px solid var(--border);
+  cursor:pointer; transition:all 0.2s;
+}
+.lib-item:active { transform:scale(0.98); border-color:rgba(var(--accent-rgb),0.4); }
+.lib-art {
+  width:48px; height:48px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; flex-shrink:0; border:1px solid var(--border);
+  overflow:hidden;
+}
+.lib-info { flex:1; overflow:hidden; }
+.lib-title { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lib-sub { font-size:12px; color:var(--text-sub); margin-top:2px; }
+.lib-dur { font-size:11px; color:var(--text-dim); font-weight:600; flex-shrink:0; }
+.lib-fav { font-size:18px; flex-shrink:0; padding:4px; }
+.lib-fav:active { transform:scale(1.3); }
+
+/* Grid view */
+.library-grid {
+  padding:0 20px;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.grid-item {
+  border-radius:18px; overflow:hidden;
+  background:var(--bg-card); border:1px solid var(--border);
+  cursor:pointer; transition:all 0.2s;
+}
+.grid-item:active { transform:scale(0.96); }
+.grid-art {
+  width:100%; aspect-ratio:1;
+  display:flex; align-items:center; justify-content:center;
+  font-size:48px;
+}
+.grid-info { padding:10px 12px; }
+.grid-title { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.grid-sub { font-size:11px; color:var(--text-sub); margin-top:2px; }
+
+/* ─────────────────────────────────────────
+   PLAYLISTS SCREEN
+───────────────────────────────────────── */
+.playlist-header { padding:20px; display:flex; align-items:center; justify-content:space-between; }
+.playlist-add-btn {
+  display:flex; align-items:center; gap:8px;
+  padding:9px 18px; border-radius:20px;
+  background:rgba(var(--accent-rgb),0.12);
+  border:1px solid var(--accent); color:var(--accent);
+  font-size:13px; font-weight:700; letter-spacing:1px;
+  transition:all 0.2s;
+}
+.playlist-add-btn:active { transform:scale(0.94); background:rgba(var(--accent-rgb),0.2); }
+
+.playlists-grid { padding:0 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.pl-card {
+  border-radius:20px; overflow:hidden; cursor:pointer;
+  border:1px solid var(--border); position:relative;
+  transition:all 0.25s; min-height:140px;
+}
+.pl-card:active { transform:scale(0.96); }
+.pl-art {
+  width:100%; padding-top:80%; position:relative;
+  display:flex; align-items:center; justify-content:center; font-size:48px;
+  overflow:hidden;
+}
+.pl-art-inner {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; font-size:48px;
+}
+.pl-info { padding:10px 12px 12px; }
+.pl-name { font-size:14px; font-weight:800; color:var(--text); letter-spacing:0.3px; }
+.pl-count { font-size:11px; color:var(--text-sub); margin-top:3px; }
+.pl-del {
+  position:absolute; top:8px; right:8px;
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(255,50,50,0.2); border:1px solid rgba(255,50,50,0.3);
+  display:flex; align-items:center; justify-content:center; font-size:12px;
+  transition:all 0.2s; z-index:2;
+}
+.pl-del:active { background:rgba(255,50,50,0.4); transform:scale(0.9); }
+
+/* Empty state */
+.empty-state {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:60px 40px; text-align:center;
+}
+.empty-icon { font-size:64px; margin-bottom:20px; opacity:0.4; }
+.empty-title { font-family:'Orbitron',monospace; font-size:16px; font-weight:700; letter-spacing:2px; color:var(--text-sub); margin-bottom:8px; }
+.empty-sub { font-size:13px; color:var(--text-dim); }
+
+/* ─────────────────────────────────────────
+   SETTINGS SCREEN
+───────────────────────────────────────── */
+.settings-hero {
+  padding:28px 24px 20px; text-align:center;
+}
+.settings-logo {
+  font-family:'Orbitron',monospace;
+  font-size:36px; font-weight:900; letter-spacing:8px;
+  color:var(--accent); text-shadow:var(--glow-sm);
+  animation:rushPulse 3s ease-in-out infinite;
+  margin-bottom:4px;
+}
+.settings-dev {
+  font-size:12px; letter-spacing:3px; color:var(--text-sub);
+  text-transform:uppercase; font-weight:600;
+}
+.settings-dev span { color:var(--accent); }
+
+.settings-section { padding:0 20px 24px; }
+.settings-group-title {
+  font-size:10px; letter-spacing:3px; color:var(--accent);
+  text-transform:uppercase; font-weight:700; margin-bottom:10px;
+  padding-left:4px;
+}
+.settings-group {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden;
+}
+.settings-row {
+  display:flex; align-items:center;
+  padding:14px 18px; gap:14px;
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s; cursor:pointer;
+}
+.settings-row:last-child { border-bottom:none; }
+.settings-row:active { background:rgba(var(--accent-rgb),0.06); }
+.settings-row-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.settings-row-text { flex:1; }
+.settings-row-label { font-size:14px; font-weight:700; color:var(--text); }
+.settings-row-sub { font-size:11px; color:var(--text-sub); margin-top:2px; }
+.settings-row-right { font-size:13px; color:var(--text-sub); }
+
+/* Toggle switch */
+.toggle-switch { position:relative; width:48px; height:26px; flex-shrink:0; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; cursor:pointer; inset:0;
+  background:var(--text-dim); border-radius:26px;
+  transition:all 0.3s;
+}
+.toggle-slider::before {
+  content:''; position:absolute;
+  width:20px; height:20px; border-radius:50%;
+  left:3px; top:3px; background:#fff;
+  transition:all 0.3s; box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.toggle-switch input:checked + .toggle-slider { background:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.4); }
+.toggle-switch input:checked + .toggle-slider::before { transform:translateX(22px); }
+
+/* Theme picker */
+.theme-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:0 20px 24px; }
+.theme-chip {
+  border-radius:16px; padding:12px 10px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer; border:2px solid transparent;
+  transition:all 0.25s; text-align:center;
+}
+.theme-chip.active { border-color:var(--accent); box-shadow:0 0 16px rgba(var(--accent-rgb),0.3); }
+.theme-chip:active { transform:scale(0.94); }
+.theme-swatch { width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); }
+.theme-chip-name { font-size:10px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:var(--text-sub); }
+
+/* Premium card */
+.premium-card {
+  margin:0 20px 20px;
+  background:linear-gradient(135deg, rgba(var(--accent-rgb),0.12), rgba(var(--accent2-rgb),0.08));
+  border:1px solid var(--border-bright);
+  border-radius:22px; padding:20px;
+  display:flex; align-items:center; gap:16px;
+  box-shadow:var(--glow);
+  cursor:pointer; transition:all 0.25s;
+}
+.premium-card:active { transform:scale(0.98); }
+.premium-icon { font-size:36px; }
+.premium-text .premium-title { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; letter-spacing:2px; color:var(--accent); margin-bottom:4px; }
+.premium-text .premium-sub { font-size:12px; color:var(--text-sub); }
+.premium-badge {
+  margin-left:auto; padding:6px 14px; border-radius:20px;
+  background:linear-gradient(135deg, var(--accent2), var(--accent));
+  color:#000; font-size:11px; font-weight:800; letter-spacing:1px;
+  text-transform:uppercase; box-shadow:var(--glow-sm);
+}
+
+/* ─────────────────────────────────────────
+   MODAL / OVERLAY
+───────────────────────────────────────── */
+#modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  display:flex; align-items:flex-end;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+#modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-sheet {
+  width:100%; background:var(--bg-glass);
+  backdrop-filter:blur(40px); -webkit-backdrop-filter:blur(40px);
+  border:1px solid var(--border); border-bottom:none;
+  border-radius:28px 28px 0 0; padding:20px 20px 40px;
+  transform:translateY(100%); transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:0 -20px 60px rgba(0,0,0,0.5);
+}
+#modal-overlay.open .modal-sheet { transform:translateY(0); }
+.modal-handle {
+  width:40px; height:4px; border-radius:2px;
+  background:var(--text-dim); margin:0 auto 20px;
+}
+.modal-title {
+  font-family:'Orbitron',monospace;
+  font-size:16px; font-weight:700; letter-spacing:2px;
+  color:var(--text); margin-bottom:20px;
+}
+.modal-input {
+  width:100%; padding:14px 18px; border-radius:16px;
+  background:var(--bg-card); border:1px solid var(--border);
+  font-size:15px; font-weight:600; color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  margin-bottom:16px; transition:border-color 0.2s;
+}
+.modal-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(var(--accent-rgb),0.15); }
+.modal-btn {
+  width:100%; padding:15px; border-radius:18px;
+  font-size:15px; font-weight:800; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer; border:none;
+  background:linear-gradient(135deg, var(--accent2), var(--accent));
+  color:#000; box-shadow:var(--glow); font-family:'Rajdhani',sans-serif;
+  transition:all 0.2s;
+}
+.modal-btn:active { transform:scale(0.97); }
+.modal-btn.secondary {
+  background:var(--bg-card); color:var(--text);
+  border:1px solid var(--border); box-shadow:none;
+  margin-top:10px;
+}
+
+/* Song picker in modal */
+.modal-song-list { max-height:260px; overflow-y:auto; margin-bottom:16px; display:flex; flex-direction:column; gap:6px; }
+.modal-song-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; border-radius:14px;
+  background:var(--bg-card); border:1px solid var(--border);
+  cursor:pointer; transition:all 0.2s;
+}
+.modal-song-item.selected { border-color:var(--accent); background:rgba(var(--accent-rgb),0.1); }
+.modal-song-item:active { transform:scale(0.98); }
+.modal-song-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; transition:all 0.2s; }
+.modal-song-item.selected .modal-song-check { background:var(--accent); border-color:var(--accent); color:#000; }
+
+/* ─────────────────────────────────────────
+   ANIMATIONS & UTILS
+───────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes scaleIn {
+  from { opacity:0; transform:scale(0.9); }
+  to   { opacity:1; transform:scale(1); }
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 60%{transform:translateX(6px)}
+}
+@keyframes heartPop {
+  0%  { transform:scale(1); }
+  40% { transform:scale(1.5); }
+  70% { transform:scale(0.9); }
+  100%{ transform:scale(1); }
+}
+.animate-in { animation:fadeInUp 0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
+.stagger-1 { animation-delay:0.05s; opacity:0; }
+.stagger-2 { animation-delay:0.10s; opacity:0; }
+.stagger-3 { animation-delay:0.15s; opacity:0; }
+.stagger-4 { animation-delay:0.20s; opacity:0; }
+.stagger-5 { animation-delay:0.25s; opacity:0; }
+.heart-pop { animation:heartPop 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+/* Glow text */
+.glow-text { color:var(--accent); text-shadow:0 0 20px rgba(var(--accent-rgb),0.7); }
+
+/* Divider */
+.divider { height:1px; background:var(--border); margin:8px 0; }
+
+/* Hidden */
+.hidden { display:none !important; }
+
+/* Responsive tweaks */
+@media (min-width:420px) {
+  .player-art { width:260px; height:260px; }
+}
+@media (min-width:540px) {
+  .library-grid { grid-template-columns:repeat(3,1fr); }
+  .playlists-grid { grid-template-columns:repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ APP ═══════════════════════════════════ -->
+<div id="app">
+
+  <!-- Galaxy Canvas -->
+  <canvas id="galaxy-canvas"></canvas>
+
+  <!-- Ambient Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ── SPLASH ── -->
+  <div class="screen" id="screen-splash">
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-logo">
+      <div class="brand">RUSH</div>
+      <div class="sub">Music Player</div>
+      <div class="dev">by <span>RUSH</span></div>
+    </div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  </div>
+
+  <!-- ── HOME ── -->
+  <div class="screen" id="screen-home">
+    <div class="scroll-view">
+
+      <!-- Hero -->
+      <div class="hero-area">
+        <div class="hero-bg-ring"></div>
+        <div class="hero-greeting animate-in stagger-1" id="hero-greeting">Good Evening</div>
+        <div class="hero-brand animate-in stagger-2">RUSH</div>
+        <div class="hero-tagline animate-in stagger-3">Your universe of music 🌌</div>
+      </div>
+
+      <!-- Now Playing Strip -->
+      <div class="glass-card now-playing-strip animate-in stagger-3" onclick="navigate('player')">
+        <div class="np-art" id="np-art-home">🎵</div>
+        <div class="np-info">
+          <div class="np-label">Now Playing</div>
+          <div class="np-title" id="np-title-home">Cosmic Drift</div>
+          <div class="np-artist" id="np-artist-home">Nova Echo</div>
+        </div>
+        <div class="np-controls">
+          <div class="eq-bars" id="home-eq">
+            <div class="eq-bar" style="height:10px"></div>
+            <div class="eq-bar" style="height:16px"></div>
+            <div class="eq-bar" style="height:8px"></div>
+            <div class="eq-bar" style="height:14px"></div>
+            <div class="eq-bar" style="height:12px"></div>
+          </div>
+          <button class="np-btn np-play" onclick="event.stopPropagation();togglePlay()" id="home-play-btn">⏸</button>
+        </div>
+      </div>
+
+      <!-- Recently Played -->
+      <div class="animate-in stagger-4">
+        <div class="section-header">
+          <span class="section-title">Recently Played</span>
+          <span class="section-more">See All</span>
+        </div>
+        <div class="h-scroll" id="recent-scroll"></div>
+      </div>
+
+      <!-- Trending -->
+      <div class="animate-in stagger-5" style="margin-top:24px">
+        <div class="section-header">
+          <span class="section-title">🔥 Trending</span>
+        </div>
+        <div id="trending-list"></div>
+      </div>
+
+      <!-- Playlists -->
+      <div style="margin-top:24px">
+        <div class="section-header">
+          <span class="section-title">Your Playlists</span>
+          <span class="section-more" onclick="navigate('playlists')">See All</span>
+        </div>
+        <div class="h-scroll" id="home-playlists"></div>
+      </div>
+
+      <!-- Favorites -->
+      <div style="margin-top:24px; margin-bottom:16px">
+        <div class="section-header">
+          <span class="section-title">❤️ Favorites</span>
+        </div>
+        <div id="favorites-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PLAYER ── -->
+  <div class="screen" id="screen-player">
+    <div class="player-bg" id="player-bg"></div>
+    <div class="player-content">
+
+      <div class="player-header">
+        <button class="player-header-btn" onclick="navigate('home')">‹</button>
+        <div class="player-header-title">Now Playing</div>
+        <button class="player-header-btn" id="player-menu-btn" onclick="openAddToPlaylist()">⊕</button>
+      </div>
+
+      <div class="player-art-wrap">
+        <div class="player-art" id="player-art" onclick="toggleSpin()">🌌</div>
+      </div>
+
+      <div class="player-info">
+        <div class="player-title" id="player-title">Cosmic Drift</div>
+        <div class="player-artist" id="player-artist">Nova Echo</div>
+        <div class="player-actions">
+          <button class="player-action-btn" id="fav-btn" onclick="toggleFavorite()">🤍</button>
+          <button class="player-action-btn" id="spin-btn" onclick="toggleSpin()" title="Disc Spin">💿</button>
+          <button class="player-action-btn" onclick="openAddToPlaylist()">➕</button>
+        </div>
+      </div>
+
+      <div class="player-seek">
+        <div class="seek-track" id="seek-track">
+          <div class="seek-fill" id="seek-fill" style="width:32%">
+            <div class="seek-thumb"></div>
+          </div>
+        </div>
+        <div class="seek-times">
+          <span id="seek-cur">1:08</span>
+          <span id="seek-dur">3:24</span>
+        </div>
+      </div>
+
+      <div class="player-controls">
+        <button class="ctrl-btn" id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
+        <button class="ctrl-btn" onclick="prevSong()">⏮</button>
+        <button class="ctrl-play" id="main-play-btn" onclick="togglePlay()">⏸</button>
+        <button class="ctrl-btn" onclick="nextSong()">⏭</button>
+        <button class="ctrl-btn" id="repeat-btn" onclick="toggleRepeat()">🔁</button>
+      </div>
+
+      <div class="player-volume">
+        <span class="vol-icon">🔈</span>
+        <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="75" oninput="setVolume(this.value)"/>
+        <span class="vol-icon">🔊</span>
+      </div>
+
+      <div class="lyrics-panel">
+        <div class="lyrics-label">Lyrics</div>
+        <div class="lyrics-text" id="lyrics-text">Loading lyrics...</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── LIBRARY ── -->
+  <div class="screen" id="screen-library">
+    <div class="scroll-view">
+      <div class="library-header">
+        <div class="status-bar" style="padding:0;height:auto;margin-bottom:14px">
+          <div class="library-title">Library</div>
+          <div class="view-toggle">
+            <button class="view-btn active" id="view-list-btn" onclick="setView('list')">☰</button>
+            <button class="view-btn" id="view-grid-btn" onclick="setView('grid')">⊞</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="lib-search" placeholder="Search songs, artists…" oninput="filterLibrary()"/>
+        </div>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-tab" data-filter="favorites" onclick="setFilter(this,'favorites')">Favorites</button>
+        <button class="filter-tab" data-filter="recent" onclick="setFilter(this,'recent')">Recent</button>
+        <button class="filter-tab" data-filter="artists" onclick="setFilter(this,'artists')">Artists</button>
+        <button class="filter-tab" data-filter="albums" onclick="setFilter(this,'albums')">Albums</button>
+      </div>
+
+      <div id="lib-list-view" class="library-list"></div>
+      <div id="lib-grid-view" class="library-grid hidden"></div>
+    </div>
+  </div>
+
+  <!-- ── PLAYLISTS ── -->
+  <div class="screen" id="screen-playlists">
+    <div class="scroll-view">
+      <div class="playlist-header">
+        <div class="library-title" style="margin-bottom:0">Playlists</div>
+        <button class="playlist-add-btn" onclick="openCreatePlaylist()">
+          <span>＋</span> New Playlist
+        </button>
+      </div>
+      <div class="playlists-grid" id="playlists-grid"></div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ── -->
+  <div class="screen" id="screen-settings">
+    <div class="scroll-view">
+
+      <div class="status-bar">
+        <div class="status-bar-title">Settings</div>
+        <div class="status-time" id="settings-time">9:41</div>
+      </div>
+
+      <div class="settings-hero">
+        <div class="settings-logo">RUSH</div>
+        <div class="settings-dev">Music Player · by <span>RUSH</span></div>
+      </div>
+
+      <!-- Premium -->
+      <div class="premium-card">
+        <div class="premium-icon">👑</div>
+        <div class="premium-text">
+          <div class="premium-title">RUSH Premium</div>
+          <div class="premium-sub">Unlock lossless audio & themes</div>
+        </div>
+        <div class="premium-badge">Pro</div>
+      </div>
+
+      <!-- Themes -->
+      <div class="settings-section">
+        <div class="settings-group-title">Appearance</div>
+        <div class="theme-grid" id="theme-grid"></div>
+      </div>
+
+      <!-- Audio -->
+      <div class="settings-section">
+        <div class="settings-group-title">Audio</div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">🎵</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Audio Quality</div>
+              <div class="settings-row-sub">320 kbps · Lossless</div>
+            </div>
+            <div class="settings-row-right">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">🎚</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Equalizer</div>
+              <div class="settings-row-sub">Bass Boost</div>
+            </div>
+            <div class="settings-row-right">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">🌊</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Crossfade</div>
+              <div class="settings-row-sub">3 seconds</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">🔇</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Volume Normalization</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI -->
+      <div class="settings-section">
+        <div class="settings-group-title">Interface</div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">✨</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Animations</div>
+              <div class="settings-row-sub">Premium transitions</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">🌌</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Galaxy Background</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked id="galaxy-toggle" onchange="toggleGalaxy(this)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">💿</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Disc Spin Animation</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="spin-toggle" onchange="state.spinEnabled=this.checked"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="settings-section">
+        <div class="settings-group-title">About</div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">📱</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">RUSH Music</div>
+              <div class="settings-row-sub">Version 1.0.0 · Premium</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">👤</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Developer</div>
+              <div class="settings-row-sub">RUSH</div>
+            </div>
+            <div class="settings-row-right glow-text">RUSH</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon" style="background:rgba(var(--accent-rgb),0.12)">⚖️</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Terms & Privacy</div>
+            </div>
+            <div class="settings-row-right">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:16px"></div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <div id="bottom-nav">
+    <button class="nav-btn active" data-nav="home" onclick="navigate('home')">
+      <div class="nav-icon">⊞</div>
+      <div class="nav-label">Home</div>
+    </button>
+    <button class="nav-btn" data-nav="library" onclick="navigate('library')">
+      <div class="nav-icon">♫</div>
+      <div class="nav-label">Library</div>
+    </button>
+    <button class="nav-btn" data-nav="playlists" onclick="navigate('playlists')">
+      <div class="nav-icon">≡</div>
+      <div class="nav-label">Playlists</div>
+    </button>
+    <button class="nav-btn" data-nav="settings" onclick="navigate('settings')">
+      <div class="nav-icon">⚙</div>
+      <div class="nav-label">Settings</div>
+    </button>
+  </div>
+
+  <!-- ── MODAL ── -->
+  <div id="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ JAVASCRIPT ════════════════════════════════ -->
+<script>
+/* ═════════════════════════════════════════════════════
+   DATA
+═════════════════════════════════════════════════════ */
+const SONGS = [
+  { id:1,  title:"Cosmic Drift",      artist:"Nova Echo",       album:"Stellar",    art:"🌌", color:"#0a4aff", bg:"#020c2f", dur:204, plays:48200 },
+  { id:2,  title:"Neon Horizon",      artist:"Prism Wave",      album:"Synthwave",  art:"⚡", color:"#ff0088", bg:"#1a002a", dur:187, plays:36100 },
+  { id:3,  title:"Dark Matter",       artist:"Void Signal",     album:"Eclipse",    art:"🌑", color:"#6600ff", bg:"#0d0020", dur:231, plays:29400 },
+  { id:4,  title:"Aurora Protocol",  artist:"Binary Star",     album:"Frequency",  art:"🌠", color:"#00ff88", bg:"#001a14", dur:198, plays:55700 },
+  { id:5,  title:"Midnight Rush",     artist:"Nova Echo",       album:"Stellar",    art:"🌃", color:"#00aaff", bg:"#001a2f", dur:215, plays:71200 },
+  { id:6,  title:"Photon Burst",      artist:"Prism Wave",      album:"Synthwave",  art:"🔥", color:"#ff6600", bg:"#200800", dur:173, plays:42300 },
+  { id:7,  title:"Gravity Pull",      artist:"Void Signal",     album:"Eclipse",    art:"🪐", color:"#9900ff", bg:"#0f0018", dur:244, plays:33800 },
+  { id:8,  title:"Signal Lost",       artist:"Binary Star",     album:"Frequency",  art:"📡", color:"#00ffcc", bg:"#001a16", dur:189, plays:28600 },
+  { id:9,  title:"Hyperdrive",        artist:"Nova Echo",       album:"Overdrive",  art:"🚀", color:"#ffcc00", bg:"#1a1400", dur:202, plays:61400 },
+  { id:10, title:"Crystal Matrix",    artist:"Prism Wave",      album:"Synthwave",  art:"💎", color:"#00ccff", bg:"#001a20", dur:226, plays:39700 },
+  { id:11, title:"Neural Storm",      artist:"Void Signal",     album:"Eclipse",    art:"🧠", color:"#ff3366", bg:"#1a0010", dur:211, plays:44900 },
+  { id:12, title:"Warp Speed",        artist:"Binary Star",     album:"Frequency",  art:"⭐", color:"#ffaa00", bg:"#1a0c00", dur:178, plays:52100 },
+];
+
+const LYRICS_MAP = {
+  1: "Through the cosmos I <span class='hl'>drift alone</span>\nStars align beneath my skin\nThe universe is calling me home\nCosmics drift, let the journey begin...",
+  2: "Neon lights on the horizon\nElectric pulse rising\nThe night is ours to <span class='hl'>own tonight</span>\nLet the neon guide us through...",
+  3: "In the darkness of dark matter\nWhere light ceases to be\nI found a signal <span class='hl'>calling me back</span>\nThrough infinity...",
+  4: "Aurora dancing overhead\nGreens and blues, alive and bright\nProtocol of light and dreams\nPainting colors through the night...",
+  5: "Midnight rush through neon streets\nThe city never sleeps\nRUSH through veins like electricity\n<span class='hl'>Midnight rush</span>, no counting sheep...",
+  default: "In the galaxy of sound\nWhere music knows no bound\nRUSH through stars and time\n<span class='hl'>Every note, every rhyme</span>..."
+};
+
+const THEMES = [
+  { key:"galaxy",   name:"Galaxy",    colors:["#020c1f","#00d4ff","#0066ff"],  accent:"#00d4ff", accent2:"#0066ff" },
+  { key:"neon",     name:"Neon",      colors:["#040010","#ff00e5","#8800ff"],  accent:"#ff00e5", accent2:"#8800ff" },
+  { key:"ocean",    name:"Ocean",     colors:["#001520","#00ffe0","#00aeff"],  accent:"#00ffe0", accent2:"#00aeff" },
+  { key:"purple",   name:"Purple",    colors:["#0d0018","#bf00ff","#7700cc"],  accent:"#bf00ff", accent2:"#7700cc" },
+  { key:"titanium", name:"Titanium",  colors:["#080808","#e8e8f0","#4466ff"],  accent:"#e8e8f0", accent2:"#4466ff" },
+  { key:"aurora",   name:"Aurora",    colors:["#000d18","#00ffaa","#0088ff"],  accent:"#00ffaa", accent2:"#0088ff" },
+];
+
+/* ═════════════════════════════════════════════════════
+   STATE
+═════════════════════════════════════════════════════ */
+const state = {
+  currentSong: 0,
+  playing: true,
+  progress: 32,
+  shuffle: false,
+  repeat: false,
+  volume: 75,
+  currentScreen: 'splash',
+  theme: localStorage.getItem('rush-theme') || 'galaxy',
+  favorites: JSON.parse(localStorage.getItem('rush-favs') || '[]'),
+  playlists: JSON.parse(localStorage.getItem('rush-playlists') || '[]'),
+  recentlyPlayed: [0, 4, 8, 1, 6],
+  libFilter: 'all',
+  libView: 'list',
+  libSearch: '',
+  spinEnabled: false,
+  isSpinning: false,
+  progressTimer: null,
+};
+
+/* ═════════════════════════════════════════════════════
+   GALAXY CANVAS
+═════════════════════════════════════════════════════ */
+(function initGalaxy() {
+  const canvas = document.getElementById('galaxy-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars, nebulas, animId;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    buildScene();
+  }
+
+  function buildScene() {
+    stars = Array.from({length:220}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.6+0.2,
+      a: Math.random(), speed: Math.random()*0.004+0.001,
+      drift: (Math.random()-0.5)*0.15,
+      phase: Math.random()*Math.PI*2
+    }));
+    nebulas = Array.from({length:6}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*160+60,
+      a: Math.random()*0.055+0.015,
+      c1: null, c2: null
+    }));
+  }
+
+  function getAccentHex() {
+    const t = document.getElementById('app');
+    const s = getComputedStyle(t);
+    return s.getPropertyValue('--accent').trim() || '#00d4ff';
+  }
+  function hexToRgb(h) {
+    const v = h.replace('#','');
+    const r=parseInt(v.slice(0,2),16),g=parseInt(v.slice(2,4),16),b=parseInt(v.slice(4,6),16);
+    return {r,g,b};
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    const accentHex = getAccentHex();
+    const rgb = hexToRgb(accentHex);
+    const a2Hex = getComputedStyle(document.getElementById('app')).getPropertyValue('--accent2').trim()||'#0066ff';
+    const rgb2 = hexToRgb(a2Hex);
+
+    // Nebulas
+    nebulas.forEach(n => {
+      const g = ctx.createRadialGradient(n.x,n.y,0, n.x,n.y,n.r);
+      g.addColorStop(0, `rgba(${rgb.r},${rgb.g},${rgb.b},${n.a})`);
+      g.addColorStop(0.5, `rgba(${rgb2.r},${rgb2.g},${rgb2.b},${n.a*0.4})`);
+      g.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=g; ctx.fill();
+    });
+
+    // Stars
+    stars.forEach(s => {
+      s.a = Math.abs(Math.sin(t*s.speed + s.phase));
+      s.x += s.drift * 0.08;
+      if (s.x > W) s.x=0; if (s.x < 0) s.x=W;
+      const alpha = s.a*0.8+0.1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+      ctx.fill();
+    });
+    t++; animId = requestAnimationFrame(draw);
+  }
+
+  window.toggleGalaxy = (el) => {
+    canvas.style.opacity = el.checked ? '0.65' : '0';
+  };
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+/* ═════════════════════════════════════════════════════
+   THEME ENGINE
+═════════════════════════════════════════════════════ */
+function applyTheme(key) {
+  state.theme = key;
+  localStorage.setItem('rush-theme', key);
+  document.getElementById('app').setAttribute('data-theme', key === 'galaxy' ? '' : key);
+  renderThemeGrid();
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('theme-grid');
+  if (!grid) return;
+  grid.innerHTML = THEMES.map(t => `
+    <div class="theme-chip ${t.key === state.theme ? 'active' : ''} glass-card"
+         onclick="applyTheme('${t.key}')" style="background:${t.colors[0]}">
+      <div class="theme-swatch"
+           style="background:linear-gradient(135deg,${t.colors[1]},${t.colors[2]})"></div>
+      <div class="theme-chip-name">${t.name}</div>
+    </div>
+  `).join('');
+}
+
+/* ═════════════════════════════════════════════════════
+   NAVIGATION
+═════════════════════════════════════════════════════ */
+function navigate(screen) {
+  const prev = document.getElementById('screen-' + state.currentScreen);
+  const next = document.getElementById('screen-' + screen);
+  if (!next || screen === state.currentScreen) return;
+
+  if (prev) {
+    prev.classList.add('exit');
+    prev.classList.remove('active');
+    setTimeout(() => prev.classList.remove('exit'), 400);
+  }
+
+  next.classList.add('active');
+  state.currentScreen = screen;
+
+  // Nav bar
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.nav === screen);
+  });
+
+  const navlessScreens = ['player'];
+  document.getElementById('bottom-nav').classList.toggle('hidden', navlessScreens.includes(screen));
+
+  // Screen-specific renders
+  if (screen === 'home')      renderHome();
+  if (screen === 'library')   renderLibrary();
+  if (screen === 'playlists') renderPlaylists();
+  if (screen === 'player')    renderPlayer();
+  if (screen === 'settings')  renderThemeGrid();
+}
+
+/* ═════════════════════════════════════════════════════
+   HOME RENDER
+═════════════════════════════════════════════════════ */
+function renderHome() {
+  // Greeting
+  const h = new Date().getHours();
+  const greet = h<12?'Good Morning ☀️':h<18?'Good Afternoon 🌤':h<21?'Good Evening 🌆':'Good Night 🌙';
+  const el = document.getElementById('hero-greeting');
+  if (el) el.textContent = greet;
+
+  // Now playing strip
+  const s = SONGS[state.currentSong];
+  updateMiniPlayer(s);
+
+  // Recently Played
+  const recentEl = document.getElementById('recent-scroll');
+  if (recentEl) {
+    recentEl.innerHTML = state.recentlyPlayed.map(i => {
+      const sg = SONGS[i];
+      return `<div class="song-card-v" onclick="playSong(${i})">
+        <div class="song-card-art" style="background:linear-gradient(135deg,${sg.color}44,${sg.bg})">
+          <span style="font-size:52px;z-index:1">${sg.art}</span>
+          <div class="art-shimmer"></div>
+        </div>
+        <div class="song-card-title">${sg.title}</div>
+        <div class="song-card-artist">${sg.artist}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Trending
+  const trendEl = document.getElementById('trending-list');
+  if (trendEl) {
+    const sorted = [...SONGS].sort((a,b)=>b.plays-a.plays).slice(0,5);
+    trendEl.innerHTML = sorted.map((sg,i) => {
+      const isFav = state.favorites.includes(sg.id);
+      return `<div class="trending-item" onclick="playSong(${SONGS.indexOf(sg)})">
+        <div class="t-rank">${i+1}</div>
+        <div class="t-art" style="background:linear-gradient(135deg,${sg.color}44,${sg.bg})">${sg.art}</div>
+        <div class="t-info">
+          <div class="t-title">${sg.title}</div>
+          <div class="t-artist">${sg.artist}</div>
+        </div>
+        <div class="t-plays">${fmtPlays(sg.plays)}</div>
+        <button class="t-fav" onclick="event.stopPropagation();quickFav(${sg.id},this)">${isFav?'❤️':'🤍'}</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Playlists
+  const plEl = document.getElementById('home-playlists');
+  if (plEl) {
+    const colors = ['#00d4ff','#ff00e5','#00ff88','#ff6600','#bf00ff'];
+    const icons  = ['🎵','🌙','🔥','⭐','💎'];
+    const pl = state.playlists.length ? state.playlists : [
+      {id:'demo1',name:'Favorites',songs:state.favorites.map(id=>SONGS.findIndex(s=>s.id===id)).filter(i=>i>=0)},
+      {id:'demo2',name:'Late Night',songs:[2,3,6,10]},
+      {id:'demo3',name:'Energy',   songs:[0,4,8,11]},
+    ];
+    plEl.innerHTML = pl.map((p,i) => `
+      <div class="playlist-card glass-card" onclick="navigate('playlists')"
+           style="background:linear-gradient(135deg,${colors[i%5]}22,${colors[(i+2)%5]}11)">
+        <div class="playlist-card-glow" style="background:${colors[i%5]}"></div>
+        <div class="playlist-card-icon">${icons[i%5]}</div>
+        <div>
+          <div class="playlist-card-name">${p.name}</div>
+          <div class="playlist-card-count">${p.songs.length} tracks</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Favorites
+  const favEl = document.getElementById('favorites-list');
+  if (favEl) {
+    const favSongs = SONGS.filter(s => state.favorites.includes(s.id));
+    if (!favSongs.length) {
+      favEl.innerHTML = `<div class="empty-state" style="padding:30px 40px">
+        <div class="empty-icon">🤍</div>
+        <div class="empty-sub">Tap ❤️ on any song to add favorites</div>
+      </div>`;
+    } else {
+      favEl.innerHTML = favSongs.slice(0,4).map(sg => {
+        const i = SONGS.indexOf(sg);
+        return `<div class="trending-item" onclick="playSong(${i})">
+          <div class="t-art" style="background:linear-gradient(135deg,${sg.color}44,${sg.bg})">${sg.art}</div>
+          <div class="t-info">
+            <div class="t-title">${sg.title}</div>
+            <div class="t-artist">${sg.artist}</div>
+          </div>
+          <button class="t-fav" onclick="event.stopPropagation();quickFav(${sg.id},this)">❤️</button>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+function updateMiniPlayer(s) {
+  const artEl   = document.getElementById('np-art-home');
+  const titleEl = document.getElementById('np-title-home');
+  const artEl2  = document.getElementById('np-artist-home');
+  const playBtn = document.getElementById('home-play-btn');
+  const eq      = document.getElementById('home-eq');
+  if (artEl)   artEl.textContent   = s.art;
+  if (titleEl) titleEl.textContent = s.title;
+  if (artEl2)  artEl2.textContent  = s.artist;
+  if (playBtn) playBtn.textContent = state.playing ? '⏸' : '▶';
+  if (eq) eq.classList.toggle('paused', !state.playing);
+}
+
+function fmtPlays(n) {
+  return n >= 1000 ? (n/1000).toFixed(1)+'K' : n;
+}
+
+function quickFav(id, el) {
+  const idx = state.favorites.indexOf(id);
+  if (idx === -1) {
+    state.favorites.push(id);
+    el.textContent = '❤️';
+    el.classList.add('heart-pop');
+    el.addEventListener('animationend', () => el.classList.remove('heart-pop'), {once:true});
+  } else {
+    state.favorites.splice(idx,1);
+    el.textContent = '🤍';
+  }
+  saveFavs();
+  if (state.currentSong !== undefined) updateFavBtn();
+}
+
+/* ═════════════════════════════════════════════════════
+   PLAYER
+═════════════════════════════════════════════════════ */
+function playSong(idx) {
+  state.currentSong = idx;
+  state.playing = true;
+  state.progress = 0;
+  if (!state.recentlyPlayed.includes(idx)) {
+    state.recentlyPlayed.unshift(idx);
+    if (state.recentlyPlayed.length > 8) state.recentlyPlayed.pop();
+  }
+  navigate('player');
+}
+
+function renderPlayer() {
+  const s = SONGS[state.currentSong];
+
+  // Background
+  const bg = document.getElementById('player-bg');
+  bg.style.background = `radial-gradient(ellipse at 50% 30%, ${s.color}35 0%, ${s.bg} 60%, #000 100%)`;
+
+  // Art
+  const art = document.getElementById('player-art');
+  art.textContent = s.art;
+  art.style.background = `linear-gradient(135deg, ${s.color}55, ${s.bg})`;
+  art.style.borderColor = `${s.color}44`;
+  if (state.spinEnabled && state.playing) art.classList.add('spinning');
+  else art.classList.remove('spinning');
+
+  document.getElementById('player-title').textContent  = s.title;
+  document.getElementById('player-artist').textContent = s.artist;
+
+  // Seek
+  updateSeek();
+
+  // Fav
+  updateFavBtn();
+
+  // Play
+  document.getElementById('main-play-btn').textContent = state.playing ? '⏸' : '▶';
+
+  // Shuffle/Repeat
+  document.getElementById('shuffle-btn').classList.toggle('active', state.shuffle);
+  document.getElementById('repeat-btn').classList.toggle('active', state.repeat);
+
+  // Lyrics
+  const lyr = LYRICS_MAP[s.id] || LYRICS_MAP.default;
+  document.getElementById('lyrics-text').innerHTML = lyr;
+
+  startProgress();
+}
+
+function updateSeek() {
+  const s = SONGS[state.currentSong];
+  const pct = (state.progress / s.dur) * 100;
+  const fill = document.getElementById('seek-fill');
+  const cur  = document.getElementById('seek-cur');
+  const dur  = document.getElementById('seek-dur');
+  if (fill) fill.style.width = pct + '%';
+  if (cur)  cur.textContent  = fmtTime(state.progress);
+  if (dur)  dur.textContent  = fmtTime(s.dur);
+}
+
+function fmtTime(sec) {
+  const m = Math.floor(sec/60), s = sec%60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function startProgress() {
+  clearInterval(state.progressTimer);
+  if (!state.playing) return;
+  state.progressTimer = setInterval(() => {
+    const s = SONGS[state.currentSong];
+    if (state.playing) {
+      state.progress++;
+      if (state.progress >= s.dur) {
+        state.progress = 0;
+        if (state.repeat) { /* restart */ }
+        else nextSong();
+      }
+      updateSeek();
+    }
+  }, 1000);
+}
+
+function togglePlay() {
+  state.playing = !state.playing;
+  const mainBtn = document.getElementById('main-play-btn');
+  const homeBtn = document.getElementById('home-play-btn');
+  const eq      = document.getElementById('home-eq');
+  const art     = document.getElementById('player-art');
+  if (mainBtn) mainBtn.textContent = state.playing ? '⏸' : '▶';
+  if (homeBtn) homeBtn.textContent = state.playing ? '⏸' : '▶';
+  if (eq) eq.classList.toggle('paused', !state.playing);
+  if (art && state.spinEnabled) art.classList.toggle('spinning', state.playing);
+  if (state.playing) startProgress();
+  else clearInterval(state.progressTimer);
+}
+
+function nextSong() {
+  const len = SONGS.length;
+  state.currentSong = state.shuffle
+    ? Math.floor(Math.random()*len)
+    : (state.currentSong + 1) % len;
+  state.progress = 0;
+  state.playing  = true;
+  renderPlayer();
+  updateMiniPlayer(SONGS[state.currentSong]);
+}
+
+function prevSong() {
+  state.currentSong = (state.currentSong - 1 + SONGS.length) % SONGS.length;
+  state.progress = 0;
+  state.playing  = true;
+  renderPlayer();
+  updateMiniPlayer(SONGS[state.currentSong]);
+}
+
+function toggleShuffle() {
+  state.shuffle = !state.shuffle;
+  document.getElementById('shuffle-btn').classList.toggle('active', state.shuffle);
+}
+
+function toggleRepeat() {
+  state.repeat = !state.repeat;
+  document.getElementById('repeat-btn').classList.toggle('active', state.repeat);
+}
+
+function toggleSpin() {
+  state.isSpinning = !state.isSpinning;
+  const art = document.getElementById('player-art');
+  if (art) art.classList.toggle('spinning', state.isSpinning && state.playing);
+}
+
+function setVolume(v) {
+  state.volume = v;
+}
+
+function toggleFavorite() {
+  const id = SONGS[state.currentSong].id;
+  const idx = state.favorites.indexOf(id);
+  if (idx === -1) {
+    state.favorites.push(id);
+    const btn = document.getElementById('fav-btn');
+    if (btn) { btn.textContent = '❤️'; btn.classList.add('heart-pop'); btn.addEventListener('animationend',()=>btn.classList.remove('heart-pop'),{once:true}); }
+  } else {
+    state.favorites.splice(idx,1);
+    const btn = document.getElementById('fav-btn');
+    if (btn) btn.textContent = '🤍';
+  }
+  saveFavs();
+}
+
+function updateFavBtn() {
+  const btn = document.getElementById('fav-btn');
+  if (btn) btn.textContent = state.favorites.includes(SONGS[state.currentSong].id) ? '❤️' : '🤍';
+}
+
+// Seek drag
+document.addEventListener('DOMContentLoaded', () => {
+  const track = document.getElementById('seek-track');
+  if (!track) return;
+  let dragging = false;
+  const getVal = (e) => {
+    const rect = track.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    return Math.max(0, Math.min(1, x / rect.width));
+  };
+  track.addEventListener('mousedown', e => { dragging=true; seek(getVal(e)); });
+  track.addEventListener('touchstart', e => { dragging=true; seek(getVal(e)); }, {passive:true});
+  document.addEventListener('mousemove', e => { if(dragging) seek(getVal(e)); });
+  document.addEventListener('touchmove', e => { if(dragging) seek(getVal(e)); }, {passive:true});
+  document.addEventListener('mouseup', () => dragging=false);
+  document.addEventListener('touchend', () => dragging=false);
+});
+
+function seek(frac) {
+  const s = SONGS[state.currentSong];
+  state.progress = Math.round(frac * s.dur);
+  updateSeek();
+}
+
+/* ═════════════════════════════════════════════════════
+   LIBRARY
+═════════════════════════════════════════════════════ */
+function renderLibrary() {
+  const q = (document.getElementById('lib-search')?.value || '').toLowerCase();
+  let songs = SONGS;
+
+  if (state.libFilter === 'favorites') songs = songs.filter(s => state.favorites.includes(s.id));
+  else if (state.libFilter === 'recent') songs = state.recentlyPlayed.map(i => SONGS[i]).filter(Boolean);
+  else if (state.libFilter === 'artists') songs = [...new Map(songs.map(s=>[s.artist,s])).values()];
+  else if (state.libFilter === 'albums') songs = [...new Map(songs.map(s=>[s.album,s])).values()];
+
+  if (q) songs = songs.filter(s => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
+
+  const lv = document.getElementById('lib-list-view');
+  const gv = document.getElementById('lib-grid-view');
+
+  if (state.libView === 'list') {
+    lv.classList.remove('hidden'); gv.classList.add('hidden');
+    if (!songs.length) {
+      lv.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No Results</div><div class="empty-sub">Try a different search</div></div>`;
+    } else {
+      lv.innerHTML = songs.map((sg,i) => {
+        const globalIdx = SONGS.indexOf(sg);
+        const isFav = state.favorites.includes(sg.id);
+        return `<div class="lib-item" onclick="playSong(${globalIdx})">
+          <div class="lib-art" style="background:linear-gradient(135deg,${sg.color}44,${sg.bg})">${sg.art}</div>
+          <div class="lib-info">
+            <div class="lib-title">${sg.title}</div>
+            <div class="lib-sub">${sg.artist} · ${sg.album}</div>
+          </div>
+          <div class="lib-dur">${fmtTime(sg.dur)}</div>
+          <button class="lib-fav" onclick="event.stopPropagation();quickFav(${sg.id},this)">${isFav?'❤️':'🤍'}</button>
+        </div>`;
+      }).join('');
+    }
+  } else {
+    lv.classList.add('hidden'); gv.classList.remove('hidden');
+    gv.innerHTML = songs.map(sg => {
+      const globalIdx = SONGS.indexOf(sg);
+      return `<div class="grid-item" onclick="playSong(${globalIdx})">
+        <div class="grid-art" style="background:linear-gradient(135deg,${sg.color}44,${sg.bg})">${sg.art}</div>
+        <div class="grid-info">
+          <div class="grid-title">${sg.title}</div>
+          <div class="grid-sub">${sg.artist}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function setFilter(btn, filter) {
+  state.libFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLibrary();
+}
+
+function setView(v) {
+  state.libView = v;
+  document.getElementById('view-list-btn').classList.toggle('active', v==='list');
+  document.getElementById('view-grid-btn').classList.toggle('active', v==='grid');
+  renderLibrary();
+}
+
+function filterLibrary() {
+  renderLibrary();
+}
+
+/* ═════════════════════════════════════════════════════
+   PLAYLISTS
+═════════════════════════════════════════════════════ */
+function renderPlaylists() {
+  const grid = document.getElementById('playlists-grid');
+  const colors = ['#00d4ff','#ff00e5','#00ff88','#ff6600','#bf00ff','#ffcc00'];
+  const gradients = [
+    ['#020c2f','#0a4aff'], ['#1a002a','#ff0088'],
+    ['#001a14','#00ff88'], ['#200800','#ff6600'],
+    ['#0f0018','#9900ff'], ['#1a1400','#ffcc00'],
+  ];
+
+  if (!state.playlists.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🎵</div>
+      <div class="empty-title">No Playlists Yet</div>
+      <div class="empty-sub">Tap + New Playlist to create one</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = state.playlists.map((p,i) => {
+    const g = gradients[i%gradients.length];
+    const songObjs = p.songs.map(idx => SONGS[idx]).filter(Boolean);
+    const emoji = songObjs[0]?.art || '🎵';
+    return `<div class="pl-card glass-card" onclick="viewPlaylist('${p.id}')"
+              style="background:linear-gradient(135deg,${g[0]},${g[1]}22)">
+      <div class="pl-art" style="background:linear-gradient(135deg,${g[1]}44,${g[0]})">
+        <div class="pl-art-inner">${emoji}</div>
+      </div>
+      <div class="pl-info">
+        <div class="pl-name">${p.name}</div>
+        <div class="pl-count">${p.songs.length} songs</div>
+      </div>
+      <button class="pl-del" onclick="event.stopPropagation();deletePlaylist('${p.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function openCreatePlaylist() {
+  const content = `
+    <div class="modal-title">New Playlist</div>
+    <input class="modal-input" id="pl-name-input" placeholder="Playlist name…" maxlength="40"/>
+    <div style="font-size:11px;color:var(--text-sub);margin-bottom:12px;letter-spacing:1px">ADD SONGS</div>
+    <div class="modal-song-list" id="modal-song-list">
+      ${SONGS.map((s,i) => `
+        <div class="modal-song-item" id="ms-${i}" onclick="toggleSongInNew(${i})">
+          <div class="modal-song-check" id="mc-${i}"></div>
+          <div style="font-size:20px">${s.art}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${s.title}</div>
+            <div style="font-size:11px;color:var(--text-sub)">${s.artist}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="modal-btn" onclick="createPlaylist()">Create Playlist</button>
+    <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+  `;
+  openModal(content);
+  window._newPlSongs = [];
+}
+
+window.toggleSongInNew = function(idx) {
+  const i = window._newPlSongs.indexOf(idx);
+  const item = document.getElementById(`ms-${idx}`);
+  const check = document.getElementById(`mc-${idx}`);
+  if (i === -1) {
+    window._newPlSongs.push(idx);
+    item.classList.add('selected');
+    check.textContent = '✓';
+  } else {
+    window._newPlSongs.splice(i,1);
+    item.classList.remove('selected');
+    check.textContent = '';
+  }
+};
+
+function createPlaylist() {
+  const nameEl = document.getElementById('pl-name-input');
+  const name = nameEl?.value.trim();
+  if (!name) { nameEl?.classList.add('shake'); nameEl?.addEventListener('animationend',()=>nameEl.classList.remove('shake'),{once:true}); return; }
+  const pl = { id: Date.now().toString(), name, songs: window._newPlSongs || [] };
+  state.playlists.push(pl);
+  savePlaylists();
+  closeModal();
+  renderPlaylists();
+}
+
+function deletePlaylist(id) {
+  state.playlists = state.playlists.filter(p => p.id !== id);
+  savePlaylists();
+  renderPlaylists();
+}
+
+function viewPlaylist(id) {
+  const pl = state.playlists.find(p => p.id === id);
+  if (!pl) return;
+  const songs = pl.songs.map(idx => SONGS[idx]).filter(Boolean);
+  const content = `
+    <div class="modal-title">${pl.name}</div>
+    <div style="font-size:12px;color:var(--text-sub);margin-bottom:14px">${songs.length} songs</div>
+    <div class="modal-song-list">
+      ${songs.length ? songs.map((s,i) => `
+        <div class="modal-song-item" onclick="playSong(${SONGS.indexOf(s)});closeModal()">
+          <div style="font-size:22px">${s.art}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${s.title}</div>
+            <div style="font-size:11px;color:var(--text-sub)">${s.artist}</div>
+          </div>
+        </div>
+      `).join('') : `<div class="empty-state" style="padding:30px 0"><div class="empty-icon">🎵</div><div class="empty-sub">No songs yet</div></div>`}
+    </div>
+    <button class="modal-btn secondary" onclick="closeModal()">Close</button>
+  `;
+  openModal(content);
+}
+
+function openAddToPlaylist() {
+  const s = SONGS[state.currentSong];
+  if (!state.playlists.length) {
+    openModal(`
+      <div class="modal-title">Add to Playlist</div>
+      <div class="empty-state" style="padding:20px 0">
+        <div class="empty-icon">🎵</div>
+        <div class="empty-sub">No playlists yet — create one first</div>
+      </div>
+      <button class="modal-btn" onclick="closeModal();navigate('playlists');setTimeout(openCreatePlaylist,300)">Create Playlist</button>
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+    `);
+    return;
+  }
+  openModal(`
+    <div class="modal-title">Add "${s.title}"</div>
+    <div class="modal-song-list">
+      ${state.playlists.map(p => {
+        const has = p.songs.includes(state.currentSong);
+        return `<div class="modal-song-item ${has?'selected':''}" onclick="addSongToPlaylist('${p.id}',this)">
+          <div class="modal-song-check">${has?'✓':''}</div>
+          <div style="font-size:22px">🎵</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${p.name}</div>
+            <div style="font-size:11px;color:var(--text-sub)">${p.songs.length} songs</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="modal-btn secondary" onclick="closeModal()">Done</button>
+  `);
+}
+
+window.addSongToPlaylist = function(plId, el) {
+  const pl = state.playlists.find(p => p.id === plId);
+  if (!pl) return;
+  const check = el.querySelector('.modal-song-check');
+  if (pl.songs.includes(state.currentSong)) {
+    pl.songs = pl.songs.filter(i => i !== state.currentSong);
+    el.classList.remove('selected');
+    check.textContent = '';
+  } else {
+    pl.songs.push(state.currentSong);
+    el.classList.add('selected');
+    check.textContent = '✓';
+  }
+  savePlaylists();
+};
+
+/* ═════════════════════════════════════════════════════
+   MODAL
+═════════════════════════════════════════════════════ */
+function openModal(content) {
+  document.getElementById('modal-content').innerHTML = content;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+/* ═════════════════════════════════════════════════════
+   PERSIST
+═════════════════════════════════════════════════════ */
+function saveFavs()      { localStorage.setItem('rush-favs', JSON.stringify(state.favorites)); }
+function savePlaylists() { localStorage.setItem('rush-playlists', JSON.stringify(state.playlists)); }
+
+/* ═════════════════════════════════════════════════════
+   TIME
+═════════════════════════════════════════════════════ */
+function updateClock() {
+  const el = document.getElementById('settings-time');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  }
+}
+setInterval(updateClock, 10000);
+
+/* ═════════════════════════════════════════════════════
+   INIT
+═════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Apply saved theme
+  applyTheme(state.theme);
+  updateClock();
+
+  // Show splash
+  const splash = document.getElementById('screen-splash');
+  splash.classList.add('active');
+
+  // Transition to home after 3s
+  setTimeout(() => {
+    splash.classList.remove('active');
+    splash.style.opacity = '0';
+    splash.style.transition = 'opacity 0.6s ease';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('bottom-nav').classList.remove('hidden');
+    }, 650);
+
+    state.currentScreen = 'splash'; // will be updated by navigate
+    navigate('home');
+  }, 3000);
+
+  // Start fake progress for splash song
+  startProgress();
+});
+
+// Prevent text selection on rapid taps
+document.addEventListener('selectstart', e => e.preventDefault());
+</script>
+</body>
+</html>
