@@ -2,420 +2,381 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <title>RUSH — Enter The Universe</title>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     :root {
-      --ink: #050810;
-      --paper: #f0ece2;
-      --rush-blue: #0057ff;
-      --rush-cyan: #00d4ff;
-      --rush-glow: #00aaff44;
-      --rush-line: #ffffff18;
-      --text-dim: #8899bb;
+      --ink:   #04070f;
+      --paper: #e8e4d9;
+      --blue:  #0057ff;
+      --cyan:  #00d4ff;
+      --dim:   #5a6a88;
+      --line:  rgba(255,255,255,0.07);
+      --ff-head: 'Trebuchet MS','Arial Black',sans-serif;
+      --ff-mono: 'Courier New',Courier,monospace;
+      --ff-body: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     }
 
-    html, body {
-      width: 100%; height: 100%;
-      background: var(--ink);
-      color: var(--paper);
-      font-family: 'DM Sans', sans-serif;
-      overflow-x: hidden;
+    html { -webkit-text-size-adjust:100%; }
+
+    body {
+      background:var(--ink);
+      color:var(--paper);
+      font-family:var(--ff-body);
+      min-height:100vh;
+      overflow-x:hidden;
     }
 
-    /* ── NOISE GRAIN OVERLAY ── */
+    /* GRAIN */
     body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 200px;
-      opacity: .35;
-      mix-blend-mode: overlay;
+      content:''; position:fixed; inset:0; z-index:999; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size:180px; opacity:.28; mix-blend-mode:overlay;
     }
 
-    /* ── CANVAS BG ── */
-    #starCanvas {
-      position: fixed; inset: 0; z-index: 0;
-    }
+    #bg { position:fixed; inset:0; z-index:0; display:block; }
 
-    /* ── HORIZONTAL SCAN LINE ── */
     .scan {
-      position: fixed; top: 0; left: 0; width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--rush-cyan), transparent);
-      animation: scanDown 6s linear infinite;
-      z-index: 1; pointer-events: none; opacity: .25;
+      position:fixed; top:-2px; left:0; width:100%; height:2px; z-index:2;
+      background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+      animation:scanMove 7s linear infinite;
+      pointer-events:none; opacity:.18;
     }
-    @keyframes scanDown { 0%{top:0%} 100%{top:100%} }
+    @keyframes scanMove { 0%{top:-2px} 100%{top:100vh} }
 
-    /* ── LAYOUT WRAPPER ── */
-    .wrapper {
-      position: relative; z-index: 2;
-      min-height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
+    /* LAYOUT */
+    .wrap {
+      position:relative; z-index:3;
+      min-height:100vh;
+      display:flex; flex-direction:column;
     }
 
-    /* ── TOP BAR ── */
+    /* TOPBAR */
     .topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 28px 48px;
-      border-bottom: 1px solid var(--rush-line);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
     }
-    .topbar-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2rem; letter-spacing: .2em;
-      color: var(--paper);
+    .logo {
+      font-family:var(--ff-head);
+      font-size:1.4rem; font-weight:900; letter-spacing:.18em; color:var(--paper);
     }
-    .topbar-logo span { color: var(--rush-cyan); }
+    .logo span { color:var(--cyan); }
     .topbar-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: .65rem; color: var(--text-dim); letter-spacing: .15em;
+      font-family:var(--ff-mono);
+      font-size:.5rem; color:var(--dim); letter-spacing:.1em;
     }
-    .topbar-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--rush-cyan);
-      box-shadow: 0 0 10px var(--rush-cyan);
-      animation: blink 2s ease-in-out infinite;
+    .dot {
+      width:8px; height:8px; border-radius:50%;
+      background:var(--cyan); box-shadow:0 0 8px var(--cyan);
+      animation:blink 2s ease-in-out infinite; flex-shrink:0;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
 
-    /* ── HERO CENTER ── */
+    /* HERO */
     .hero {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; gap: 0;
-      padding: 40px 20px 0;
+      flex:1;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center; padding:28px 16px 0;
     }
 
-    .hero-eyebrow {
-      font-family: 'Space Mono', monospace;
-      font-size: .65rem; letter-spacing: .4em; color: var(--rush-cyan);
-      text-transform: uppercase; margin-bottom: 24px;
-      opacity: 0; animation: fadeUp .8s .2s forwards;
+    .eyebrow {
+      font-family:var(--ff-mono);
+      font-size:.58rem; letter-spacing:.3em; color:var(--cyan);
+      text-transform:uppercase; margin-bottom:14px;
+      opacity:0; animation:fadeUp .8s .2s forwards;
     }
 
     .hero-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(110px, 22vw, 240px);
-      line-height: .85;
-      letter-spacing: -.01em;
-      background: linear-gradient(160deg, #ffffff 30%, var(--rush-cyan) 80%, var(--rush-blue));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 60px #0057ff55);
-      opacity: 0; animation: fadeUp .8s .4s forwards;
-      user-select: none;
+      font-family:var(--ff-head);
+      font-size:clamp(72px,30vw,200px);
+      font-weight:900; line-height:.88;
+      background:linear-gradient(160deg,#fff 25%,var(--cyan) 70%,var(--blue));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 40px rgba(0,85,255,.35));
+      opacity:0; animation:fadeUp .8s .35s forwards;
+      user-select:none;
     }
 
-    .hero-tagline {
-      font-family: 'DM Sans', sans-serif;
-      font-size: clamp(13px, 2vw, 17px);
-      font-weight: 300; color: var(--text-dim);
-      letter-spacing: .08em; margin-top: 18px;
-      opacity: 0; animation: fadeUp .8s .6s forwards;
+    .tagline {
+      font-size:clamp(11px,3.8vw,14px);
+      font-weight:300; color:var(--dim);
+      letter-spacing:.06em; margin-top:12px;
+      opacity:0; animation:fadeUp .8s .5s forwards;
+      max-width:300px; line-height:1.65;
     }
-    .hero-tagline strong { color: var(--paper); font-weight: 500; }
+    .tagline strong { color:var(--paper); font-weight:600; }
 
-    /* ── DIVIDER ── */
-    .divider {
-      width: 1px; height: 60px;
-      background: linear-gradient(to bottom, transparent, var(--rush-cyan), transparent);
-      margin: 32px auto;
-      opacity: 0; animation: fadeUp .8s .7s forwards;
-    }
-
-    /* ── LINK GRID ── */
-    .links-section {
-      padding: 0 clamp(20px, 5vw, 80px) 60px;
-      opacity: 0; animation: fadeUp .8s .8s forwards;
+    .vline {
+      width:1px; height:36px;
+      background:linear-gradient(to bottom,transparent,var(--cyan),transparent);
+      margin:20px auto;
+      opacity:0; animation:fadeUp .8s .6s forwards;
     }
 
+    /* LINKS */
+    .links-wrap {
+      width:100%; padding:0 16px 44px;
+      opacity:0; animation:fadeUp .8s .7s forwards;
+    }
     .links-label {
-      font-family: 'Space Mono', monospace;
-      font-size: .6rem; letter-spacing: .3em; color: var(--text-dim);
-      text-align: center; margin-bottom: 32px; text-transform: uppercase;
+      font-family:var(--ff-mono);
+      font-size:.52rem; letter-spacing:.25em; color:var(--dim);
+      text-align:center; margin-bottom:16px; text-transform:uppercase;
     }
 
     .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 14px;
-      max-width: 860px;
-      margin: 0 auto;
+      display:flex; flex-direction:column; gap:9px;
+      max-width:480px; margin:0 auto;
     }
 
-    /* ── PORTAL CARD ── */
+    /* PORTAL */
     .portal {
-      position: relative;
-      display: flex; align-items: center; gap: 18px;
-      padding: 20px 24px;
-      border: 1px solid var(--rush-line);
-      border-radius: 2px;
-      background: rgba(255,255,255,.02);
-      cursor: pointer;
-      text-decoration: none; color: var(--paper);
-      overflow: hidden;
-      transition: border-color .3s, background .3s, transform .25s;
+      position:relative;
+      display:flex; align-items:center; gap:13px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius:3px;
+      background:rgba(255,255,255,.025);
+      text-decoration:none; color:var(--paper);
+      overflow:hidden;
+      -webkit-tap-highlight-color:transparent;
+      transition:border-color .22s, background .22s, transform .18s;
+      cursor:pointer;
     }
     .portal::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(120deg, var(--rush-blue), var(--rush-cyan));
-      opacity: 0; transition: opacity .3s;
-      z-index: 0;
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(120deg,var(--blue),var(--cyan));
+      opacity:0; transition:opacity .22s; z-index:0;
     }
-    .portal:hover::before { opacity: .08; }
-    .portal:hover {
-      border-color: var(--rush-cyan);
-      transform: translateY(-2px);
+    .portal:hover::before,.portal:active::before { opacity:.07; }
+    .portal:hover,.portal:active {
+      border-color:var(--cyan);
+      transform:translateY(-1px);
     }
 
-    .portal-icon {
-      position: relative; z-index: 1;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: rgba(0,85,255,.15);
-      border: 1px solid rgba(0,212,255,.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-      flex-shrink: 0;
-      transition: background .3s, box-shadow .3s;
+    .p-icon {
+      position:relative; z-index:1; flex-shrink:0;
+      width:38px; height:38px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.9rem;
+      background:rgba(0,85,255,.12);
+      border:1px solid rgba(0,212,255,.18);
     }
-    .portal:hover .portal-icon {
-      background: rgba(0,212,255,.15);
-      box-shadow: 0 0 18px rgba(0,212,255,.25);
+    .p-text {
+      position:relative; z-index:1;
+      display:flex; flex-direction:column; gap:2px;
     }
-
-    .portal-text {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; gap: 3px;
+    .p-title { font-size:.84rem; font-weight:600; letter-spacing:.04em; }
+    .p-desc  { font-size:.62rem; color:var(--dim); }
+    .p-arr {
+      position:relative; z-index:1; margin-left:auto; flex-shrink:0;
+      font-size:.68rem; color:var(--dim);
+      transition:transform .22s, color .22s;
     }
-    .portal-title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: .95rem; font-weight: 500; letter-spacing: .04em;
-    }
-    .portal-desc {
-      font-size: .7rem; color: var(--text-dim); letter-spacing: .05em;
+    .portal:hover .p-arr,.portal:active .p-arr {
+      transform:translateX(3px); color:var(--cyan);
     }
 
-    .portal-arrow {
-      position: relative; z-index: 1;
-      margin-left: auto;
-      font-size: .75rem; color: var(--text-dim);
-      transition: transform .3s, color .3s;
+    /* icon colors */
+    .pi-main   { color:var(--cyan); }
+    .pi-gaming { color:#a78bfa; border-color:#a78bfa28!important; background:#a78bfa10!important; }
+    .pi-music  { color:#34d399; border-color:#34d39928!important; background:#34d39910!important; }
+    .pi-about  { color:#fbbf24; border-color:#fbbf2428!important; background:#fbbf2410!important; }
+    .pi-yt     { color:#ff4444; border-color:#ff444428!important; background:#ff444410!important; }
+    .pi-ig     { color:#e1306c; border-color:#e1306c28!important; background:#e1306c10!important; }
+    .pi-fb     { color:#1877f2; border-color:#1877f228!important; background:#1877f210!important; }
+
+    .portal-main {
+      border-color:rgba(0,212,255,.22);
+      background:rgba(0,85,255,.07);
+      justify-content:flex-start;
+      padding:16px;
     }
-    .portal:hover .portal-arrow { transform: translateX(4px); color: var(--rush-cyan); }
+    .portal-main .p-title { font-size:.9rem; letter-spacing:.09em; }
+    .portal-main:hover { border-color:var(--cyan); }
 
-    /* Color accents per portal */
-    .p-yt .portal-icon  { color: #ff4444; border-color: #ff444430; background: #ff444415; }
-    .p-ig .portal-icon  { color: #e1306c; border-color: #e1306c30; background: #e1306c15; }
-    .p-fb .portal-icon  { color: #1877f2; border-color: #1877f230; background: #1877f215; }
-    .p-main .portal-icon { color: var(--rush-cyan); }
-    .p-gaming .portal-icon { color: #a78bfa; border-color: #a78bfa30; background: #a78bfa15; }
-    .p-music .portal-icon { color: #34d399; border-color: #34d39930; background: #34d39915; }
-    .p-w2 .portal-icon { color: #fbbf24; border-color: #fbbf2430; background: #fbbf2415; }
-
-    /* ── WIDE ENTER CARD ── */
-    .portal-enter {
-      grid-column: 1 / -1;
-      justify-content: center;
-      border-color: rgba(0,212,255,.3);
-      background: rgba(0,85,255,.06);
-      padding: 24px;
-    }
-    .portal-enter .portal-title { font-size: 1.05rem; letter-spacing: .12em; }
-    .portal-enter:hover { border-color: var(--rush-cyan); }
-
-    /* ── FOOTER ── */
+    /* FOOTER */
     .footer {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 48px;
-      border-top: 1px solid var(--rush-line);
-      font-family: 'Space Mono', monospace;
-      font-size: .6rem; color: var(--text-dim);
-      letter-spacing: .15em;
+      border-top:1px solid var(--line);
+      padding:13px 20px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-family:var(--ff-mono);
+      font-size:.5rem; color:var(--dim); letter-spacing:.12em;
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from{opacity:0;transform:translateY(16px)}
+      to  {opacity:1;transform:translateY(0)}
     }
 
-    /* ── MOBILE ── */
-    @media (max-width: 600px) {
-      .topbar { padding: 20px 22px; }
-      .footer  { padding: 16px 22px; flex-direction: column; gap: 6px; text-align: center; }
-      .hero { padding-top: 20px; }
+    /* TABLET+ : 2 column grid */
+    @media(min-width:560px){
+      .topbar { padding:20px 32px; }
+      .footer  { padding:15px 32px; }
+      .links-wrap { padding:0 32px 52px; }
+      .links-grid {
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        max-width:660px;
+      }
+      .portal-main { grid-column:1/-1; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="starCanvas"></canvas>
+<canvas id="bg"></canvas>
 <div class="scan"></div>
 
-<div class="wrapper">
+<div class="wrap">
 
-  <!-- TOP BAR -->
   <header class="topbar">
-    <div class="topbar-logo">R<span>U</span>SH</div>
-    <div class="topbar-tag">PERSONAL UNIVERSE · EST. 2025</div>
-    <div class="topbar-dot"></div>
+    <div class="logo">R<span>U</span>SH</div>
+    <div class="topbar-tag">PERSONAL UNIVERSE · 2025</div>
+    <div class="dot"></div>
   </header>
 
-  <!-- HERO -->
   <section class="hero">
-    <p class="hero-eyebrow">Welcome to the universe of</p>
+    <p class="eyebrow">Welcome to the universe of</p>
     <h1 class="hero-name">RUSH</h1>
-    <p class="hero-tagline">Your stories. Your music. Your <strong>everything.</strong></p>
-    <div class="divider"></div>
+    <p class="tagline">Your stories. Your music. Your <strong>everything.</strong></p>
+    <div class="vline"></div>
 
-    <!-- LINKS -->
-    <div class="links-section">
+    <div class="links-wrap">
       <p class="links-label">// Navigate Your Universe</p>
       <div class="links-grid">
 
-        <!-- MAIN PLATFORM -->
-        <a class="portal p-main portal-enter" href="index.html">
-          <div class="portal-icon"><i class="fas fa-house-chimney"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">RUSH PLATFORM</span>
-            <span class="portal-desc">Main Hub · Posts · Feed · Timeline</span>
+        <a class="portal portal-main" href="index.html">
+          <div class="p-icon pi-main"><i class="fas fa-house-chimney"></i></div>
+          <div class="p-text">
+            <span class="p-title">RUSH PLATFORM</span>
+            <span class="p-desc">Main Hub · Posts · Feed · Timeline</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- GAMING -->
-        <a class="portal p-gaming" href="rush-gaming.html">
-          <div class="portal-icon"><i class="fas fa-gamepad"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">RUSH GAMING</span>
-            <span class="portal-desc">Gaming Zone · Next Page</span>
+        <a class="portal" href="rush-gaming.html">
+          <div class="p-icon pi-gaming"><i class="fas fa-gamepad"></i></div>
+          <div class="p-text">
+            <span class="p-title">RUSH GAMING</span>
+            <span class="p-desc">Gaming Zone</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- MUSIC -->
-        <a class="portal p-music" href="rush-music.html">
-          <div class="portal-icon"><i class="fas fa-headphones-simple"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">RUSH MUSIC</span>
-            <span class="portal-desc">Music Player · Your Beats</span>
+        <a class="portal" href="rush-music.html">
+          <div class="p-icon pi-music"><i class="fas fa-headphones"></i></div>
+          <div class="p-text">
+            <span class="p-title">RUSH MUSIC</span>
+            <span class="p-desc">Music Player · Your Beats</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- WEBSITE 2 -->
-        <a class="portal p-w2" href="index-2.html">
-          <div class="portal-icon"><i class="fas fa-layer-group"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">WEBSITE 2</span>
-            <span class="portal-desc">Second Universe · Explore</span>
+        <a class="portal" href="index-2.html">
+          <div class="p-icon pi-about"><i class="fas fa-user-astronaut"></i></div>
+          <div class="p-text">
+            <span class="p-title">ABOUT ME</span>
+            <span class="p-desc">Developer · Creator · Rushdhi</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- YOUTUBE -->
-        <a class="portal p-yt" href="https://youtube.com" target="_blank">
-          <div class="portal-icon"><i class="fab fa-youtube"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">YOUTUBE</span>
-            <span class="portal-desc">Watch · Stream · Subscribe</span>
+        <a class="portal" href="https://youtube.com" target="_blank" rel="noopener">
+          <div class="p-icon pi-yt"><i class="fab fa-youtube"></i></div>
+          <div class="p-text">
+            <span class="p-title">YOUTUBE</span>
+            <span class="p-desc">Watch · Stream</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- INSTAGRAM -->
-        <a class="portal p-ig" href="https://instagram.com" target="_blank">
-          <div class="portal-icon"><i class="fab fa-instagram"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">INSTAGRAM</span>
-            <span class="portal-desc">Reels · Stories · Photos</span>
+        <a class="portal" href="https://instagram.com" target="_blank" rel="noopener">
+          <div class="p-icon pi-ig"><i class="fab fa-instagram"></i></div>
+          <div class="p-text">
+            <span class="p-title">INSTAGRAM</span>
+            <span class="p-desc">Reels · Stories</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
-        <!-- FACEBOOK -->
-        <a class="portal p-fb" href="https://facebook.com" target="_blank">
-          <div class="portal-icon"><i class="fab fa-facebook"></i></div>
-          <div class="portal-text">
-            <span class="portal-title">FACEBOOK</span>
-            <span class="portal-desc">Feed · Connect · Share</span>
+        <a class="portal" href="https://facebook.com" target="_blank" rel="noopener">
+          <div class="p-icon pi-fb"><i class="fab fa-facebook"></i></div>
+          <div class="p-text">
+            <span class="p-title">FACEBOOK</span>
+            <span class="p-desc">Feed · Connect</span>
           </div>
-          <span class="portal-arrow"><i class="fas fa-arrow-right"></i></span>
+          <span class="p-arr"><i class="fas fa-arrow-right"></i></span>
         </a>
 
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <span>RUSH © 2025</span>
-    <span>YOUR UNIVERSE · YOUR RULES</span>
     <span>ALL SYSTEMS GO</span>
   </footer>
 
 </div>
 
 <script>
-  // ── STAR CANVAS ──
-  const canvas = document.getElementById('starCanvas');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  let W, H;
+(function(){
+  const cv = document.getElementById('bg');
+  const cx = cv.getContext('2d');
+  let W, H, stars = [];
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+  function resize(){
+    W = cv.width  = window.innerWidth;
+    H = cv.height = window.innerHeight;
   }
   resize();
   window.addEventListener('resize', resize);
 
-  function initStars(n) {
-    stars = [];
-    for (let i = 0; i < n; i++) {
-      stars.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: Math.random() * 1.2 + 0.1,
-        a: Math.random(),
-        speed: Math.random() * 0.003 + 0.001,
-        drift: (Math.random() - 0.5) * 0.06,
-      });
-    }
-  }
-  initStars(220);
-
-  function drawStars() {
-    ctx.clearRect(0, 0, W, H);
-    stars.forEach(s => {
-      s.a += s.speed;
-      s.x += s.drift;
-      if (s.x < 0) s.x = W;
-      if (s.x > W) s.x = 0;
-      const alpha = (Math.sin(s.a) * 0.5 + 0.5) * 0.8 + 0.1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(160,210,255,${alpha})`;
-      ctx.fill();
+  for(let i=0;i<160;i++){
+    stars.push({
+      x:Math.random()*1000, y:Math.random()*1000,
+      r:Math.random()*1.1+.15,
+      phase:Math.random()*Math.PI*2,
+      speed:Math.random()*.004+.001,
+      dx:(Math.random()-.5)*.035,
+      dy:(Math.random()-.5)*.012
     });
-
-    // subtle center glow
-    const g = ctx.createRadialGradient(W/2, H*0.38, 0, W/2, H*0.38, W*0.45);
-    g.addColorStop(0, 'rgba(0,85,255,0.07)');
-    g.addColorStop(1, 'transparent');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    requestAnimationFrame(drawStars);
   }
-  drawStars();
+
+  function draw(){
+    cx.clearRect(0,0,W,H);
+
+    // bg glow
+    const g = cx.createRadialGradient(W/2,H*.4,0,W/2,H*.4,W*.55);
+    g.addColorStop(0,'rgba(0,55,180,.065)');
+    g.addColorStop(1,'transparent');
+    cx.fillStyle=g; cx.fillRect(0,0,W,H);
+
+    stars.forEach(s=>{
+      s.phase+=s.speed;
+      s.x+=s.dx; s.y+=s.dy;
+      // wrap around actual canvas size
+      if(s.x<0)s.x=W; if(s.x>W)s.x=0;
+      if(s.y<0)s.y=H; if(s.y>H)s.y=0;
+      const a=(Math.sin(s.phase)*.45+.55)*.85;
+      cx.beginPath();
+      cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      cx.fillStyle='rgba(160,210,255,'+a+')';
+      cx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
-    </html>
-  
+  </html>
+      
