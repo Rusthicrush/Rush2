@@ -110,6 +110,23 @@ body::after {
 }
 @keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
+/* ── ANALYTICS BADGE ── */
+.analytics-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.6rem; letter-spacing: 0.15em;
+  color: var(--muted); text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(79,168,232,0.04);
+}
+.analytics-badge .ab-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  animation: dotBlink 2s ease-in-out infinite;
+}
+
 /* ── HERO SECTION ── */
 .hero {
   display: grid;
@@ -273,6 +290,35 @@ body::after {
 .s-name { font-size: 0.82rem; font-weight: 500; }
 .s-handle { font-size: 0.65rem; color: var(--muted); margin-top: 1px; }
 
+/* ── VISITOR COUNTER ── */
+.visitor-section {
+  margin-bottom: 56px;
+  opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
+}
+.visitor-box {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  padding: 22px 26px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.visitor-label {
+  font-size: 0.58rem; letter-spacing: 0.28em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.visitor-count {
+  font-family: var(--ff-serif);
+  font-size: 2rem; font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+}
+.visitor-sub {
+  font-size: 0.65rem; color: var(--muted);
+  margin-top: 2px; font-family: var(--ff-sans);
+}
+
 /* ── FOOTER ── */
 .footer {
   border-top: 1px solid var(--border);
@@ -305,6 +351,7 @@ body::after {
   .info-cell.wide { grid-column: 1; }
   .social-grid { grid-template-columns: 1fr 1fr; }
   .footer { flex-direction: column; gap: 8px; text-align: center; }
+  .visitor-box { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 </style>
 </head>
@@ -468,6 +515,26 @@ body::after {
     </div>
   </section>
 
+  <!-- VISITOR COUNTER -->
+  <section class="visitor-section">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <span class="section-divider-label">Live Visitors</span>
+      <div class="section-divider-line"></div>
+    </div>
+    <div class="visitor-box">
+      <div>
+        <div class="visitor-label">Total Profile Views</div>
+        <div class="visitor-count" id="visitorCount">—</div>
+        <div class="visitor-sub" id="visitorStatus">Firebase இணைக்கிறோம்...</div>
+      </div>
+      <div class="analytics-badge">
+        <span class="ab-dot"></span>
+        Firebase Connected
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="footer">
     <span class="footer-left">Rushdhi — Personal Profile</span>
@@ -475,6 +542,80 @@ body::after {
   </footer>
 
 </div>
+
+<!-- ══════════════════════════════════════════
+     FIREBASE SDK — CDN (type="module")
+     உன் config இங்க paste பண்ணிருக்கேன் ✅
+══════════════════════════════════════════ -->
+<script type="module">
+
+  // ── 1. Firebase imports (CDN) ──
+  import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    increment
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ── 2. உன் Firebase Config ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyCI9GZa1NIcjTSbaV5mxW9aa6rdEd9W-MU",
+    authDomain:        "personal-web-c01d1.firebaseapp.com",
+    projectId:         "personal-web-c01d1",
+    storageBucket:     "personal-web-c01d1.firebasestorage.app",
+    messagingSenderId: "849443579808",
+    appId:             "1:849443579808:web:0a8019c80ff731fe5fa6c5",
+    measurementId:     "G-9E4ZKFXXYY"
+  };
+
+  // ── 3. Initialize ──
+  const app       = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db        = getFirestore(app);
+
+  console.log("✅ Firebase connected — personal-web-c01d1");
+
+  // ── 4. Analytics — page_view log ──
+  logEvent(analytics, 'page_view', {
+    page_title: 'Rushdhi Profile',
+    page_location: window.location.href
+  });
+
+  // ── 5. Visitor Counter (Firestore) ──
+  const countRef = doc(db, "stats", "visitors");
+
+  async function updateVisitorCount() {
+    try {
+      const snap = await getDoc(countRef);
+
+      if (snap.exists()) {
+        // Document இருக்கு — count++ பண்ணு
+        await updateDoc(countRef, { count: increment(1) });
+        const updated = await getDoc(countRef);
+        showCount(updated.data().count);
+      } else {
+        // First visit — document create பண்ணு
+        await setDoc(countRef, { count: 1 });
+        showCount(1);
+      }
+    } catch (err) {
+      console.error("Firestore error:", err);
+      document.getElementById('visitorCount').textContent = '—';
+      document.getElementById('visitorStatus').textContent = 'Firestore rules check பண்ணு';
+    }
+  }
+
+  function showCount(n) {
+    document.getElementById('visitorCount').textContent = n.toLocaleString();
+    document.getElementById('visitorStatus').textContent = 'உன் profile-ஐ பார்த்தவர்கள்';
+  }
+
+  updateVisitorCount();
+
+</script>
 </body>
             </html>
-                  
