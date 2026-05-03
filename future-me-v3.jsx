@@ -8,7 +8,7 @@ const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
 const FB_URL = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
 
 // Claude API Key - இதை நீங்கள் பூர்த்தி செய்யவும்
-const CLAUDE_API_KEY = "YOUR_CLAUDE_API_KEY"; 
+const CLAUDE_API_KEY = "https://api.anthropic.com/v1/organizations/api_keys/apikey_01Rj2N8SVvo6BePZj99NhmiT"; 
 
 const WA_NUMBER = "94727676806";
 
