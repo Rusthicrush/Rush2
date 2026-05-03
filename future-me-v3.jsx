@@ -23,7 +23,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);"; // Firebase Web API Key
+const analytics = getAnalytics(app);"; // Firebase Web API Key"
 // REST URL (no SDK needed!)
 const FB_URL = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
 // ══════════════════════════════════════════
