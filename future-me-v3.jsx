@@ -2,8 +2,28 @@ import { useState, useEffect, useRef } from "react";
 
 // ══════════════════════════════════════════
 // FIREBASE REST CONFIG — replace these 2:
-const FB_PROJECT = "YOUR_PROJECT_ID";        // e.g. "future-me-abc12"
-const FB_API_KEY  = "YOUR_FIREBASE_API_KEY"; // Firebase Web API Key
+const FB_PROJECT = "my-ca692";        // e.g. "future-me-abc12"
+const FB_API_KEY  = "// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY",
+  authDomain: "my-ca692.firebaseapp.com",
+  projectId: "my-ca692",
+  storageBucket: "my-ca692.firebasestorage.app",
+  messagingSenderId: "401111475090",
+  appId: "1:401111475090:web:e31700ac4ebcfaf7f3174b",
+  measurementId: "G-6LWCTDB6VD"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);"; // Firebase Web API Key
 // REST URL (no SDK needed!)
 const FB_URL = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
 // ══════════════════════════════════════════
