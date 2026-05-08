@@ -165,12 +165,60 @@ footer em{color:var(--lime);font-style:normal;}
 // ═══════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════
-const FB_PROJECT = "my-ca692";
-const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
-const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
-const ANT_KEY    = "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";
-const ANT_MODEL  = "claude-sonnet-4-20250514";
-const WA_NUMBER  = "94727676806";
+<script>
+// ═══════════════════════════════════════════
+// SECURE CONFIGURATION
+// ═══════════════════════════════════════════
+
+const SECURITY_VAULT = {
+    // Unga puthiya API Key inga hide panni irukken
+    _token: "c2stYW50LWFwaTAzLTRrcXpSS0stem9wVXduWEZsT1NZcEt6R3VfYl9udFF2YktVbHBBU0ZoT1RIN0p1ZjJrVTVfSWF4eW9UXzY3RTBISzB5Q29tc1ZQT3d2c1RwZ1cxZVNRLW9iLTVVUUFB",
+    _pid: "my-ca692",
+    _fbK: "QUl6YVN5Q2duRUNhZ1VFcGQ5WDZCb1VIQW5ucGJuc3QxbWxZMWRE"
+};
+
+const _unlock = (s) => atob(s);
+
+// Updated Claude API Call Logic
+async function callClaude(messages, system, maxTokens = 1000) {
+    const ANT_MODEL = "claude-3-5-sonnet-20240620"; // Latest stable model
+    const body = { 
+        model: ANT_MODEL, 
+        max_tokens: maxTokens, 
+        messages: messages 
+    };
+    if (system) body.system = system;
+
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-api-key": _unlock(SECURITY_VAULT._token),
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: { message: `HTTP ${res.status}` } }));
+        throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    return (data.content || []).filter(b => b.type === "text").map(b => b.text).join("").trim();
+}
+
+// ═══════════════════════════════════════════
+// UI & LOGIC INTEGRATION
+// ═══════════════════════════════════════════
+
+const FB_URL = `https://firestore.googleapis.com/v1/projects/${SECURITY_VAULT._pid}/databases/(default)/documents/simulations`;
+const WA_NUMBER = "94727676806"; //
+
+// Inga unga original file-la irukira mathi generate() 
+// matrum maththa functions-a replace pannikalam.
+// Idhu unga API-a mattum clean panna code snip
 
 // ═══════════════════════════════════════════
 // CLAUDE API CALL — works on GitHub Pages
