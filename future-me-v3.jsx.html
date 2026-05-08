@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FUTURE ME — AI Life Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--lime:#c8ff00;--cyan:#00e5ff;--pink:#ff3d7f;--bg:#03030a;--card:#0b0b16;--border:#1a1a30;--muted:#555572;--text:#e2e2f0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--lime)}
+input[type=range]{accent-color:var(--lime)}::placeholder{color:#333355}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rstP{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.9;transform:scale(1.015)}}
+@keyframes badgeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+canvas#galaxy{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#rst-wm{position:fixed;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;}
+#rst-wm span{font-family:'Bebas Neue',sans-serif;font-size:clamp(100px,26vw,300px);letter-spacing:.2em;color:transparent;-webkit-text-stroke:1px rgba(200,255,0,0.055);text-shadow:0 0 120px rgba(200,255,0,0.03);animation:rstP 7s ease-in-out infinite;user-select:none;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(3,3,10,.92);backdrop-filter:blur(22px);border-bottom:1px solid rgba(200,255,0,.07);padding:.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.15em;color:var(--lime);flex-shrink:0;}
+.nav-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.nav-links{display:flex;gap:1rem;}
+.nav-btn{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.16em;color:var(--muted);cursor:pointer;text-transform:uppercase;background:none;border:none;transition:color .2s;}
+.nav-btn.active,.nav-btn:hover{color:var(--lime);}
+.lang-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.lang-btn{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;padding:.3rem .7rem;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--lime);color:var(--bg);font-weight:700;}
+section{position:relative;z-index:10;}
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.badge{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.25em;color:var(--lime);background:rgba(200,255,0,.07);border:1px solid rgba(200,255,0,.17);padding:.4rem 1.1rem;border-radius:999px;margin-bottom:2rem;animation:fu .5s ease both;}
+h1.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,14vw,9.5rem);line-height:.88;animation:fu .5s .1s ease both;}
+h1.hero-title .lime{color:var(--lime);}h1.hero-title .cyan{color:var(--cyan);}
+.hero-sub{font-family:'Space Mono',monospace;font-size:clamp(.65rem,2vw,.83rem);color:var(--muted);margin-top:1.5rem;line-height:1.9;animation:fu .5s .2s ease both;}
+.hero-btns{margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fu .5s .3s ease both;}
+.btn-p{background:var(--lime);color:var(--bg);border:none;padding:.9rem 2rem;font-family:'Space Mono',monospace;font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:opacity .2s;}
+.btn-p:hover{opacity:.85;}.btn-p:disabled{opacity:.4;cursor:not-allowed;}
+.btn-g{background:transparent;color:var(--muted);border:1px solid var(--border);padding:.9rem 2rem;font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .2s,border-color .2s;}
+.btn-g:hover{color:var(--text);border-color:var(--muted);}
+.btn-wa{background:#25D366!important;color:#fff!important;border-color:#25D366!important;}
+#simulate{padding:5rem 0;background:rgba(11,11,22,.82);backdrop-filter:blur(18px);}
+.container{max-width:900px;margin:0 auto;padding:0 1.5rem;}
+.sec-tag{font-family:'Space Mono',monospace;font-size:.59rem;letter-spacing:.3em;color:var(--lime);text-transform:uppercase;margin-bottom:.55rem;}
+h2.sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,4.5rem);line-height:1;}
+.sec-sub{color:var(--muted);font-size:.84rem;line-height:1.7;margin-top:.4rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:2rem;}
+.full{grid-column:1/-1;}
+label.lbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;display:block;}
+label.lbl .lv{color:var(--lime);}
+.inp{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:.82rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;width:100%;transition:border-color .2s;}
+.inp:focus{border-color:rgba(200,255,0,.4);}
+select.inp{background:rgba(11,11,22,.95);}
+.tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.25rem;}
+.tag{background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--muted);padding:.32rem .82rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .18s;border-radius:2px;}
+.tag.active{background:rgba(200,255,0,.10);border-color:var(--lime);color:var(--lime);}
+.sim-center{display:flex;flex-direction:column;align-items:center;gap:.8rem;margin-top:.5rem;}
+.btn-sim{width:100%;max-width:340px;font-size:.82rem;padding:1rem 2rem;}
+.sim-note{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);}
+#loading{display:none;flex-direction:column;align-items:center;gap:1.5rem;padding:4rem 2rem;text-align:center;}
+#loading.show{display:flex;}
+.spinner{width:54px;height:54px;border:2px solid var(--border);border-top-color:var(--lime);border-radius:50%;animation:spin .8s linear infinite;}
+.load-title{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.2em;}
+.phase-list{margin-top:.75rem;display:flex;flex-direction:column;gap:.38rem;}
+.phase{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--border);transition:color .3s;}
+.phase.done{color:var(--lime);}
+#result{display:none;margin-top:3rem;}
+#result.show{display:block;}
+.res-label{font-family:'Space Mono',monospace;font-size:.59rem;letter-spacing:.3em;color:var(--lime);text-transform:uppercase;margin-bottom:.55rem;}
+.res-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,4.5rem);line-height:1;}
+.res-card{background:rgba(11,11,22,.9);border:1px solid var(--border);padding:2.5rem;margin-top:1.5rem;position:relative;overflow:hidden;}
+.res-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--lime),var(--cyan),var(--pink));}
+.meta-row{display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.meta-k{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
+.meta-v{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--lime);}
+.divider{height:1px;background:var(--border);margin:1.5rem 0;}
+#res-text{font-size:.94rem;line-height:1.95;color:var(--text);white-space:pre-wrap;}
+.fb-row{display:inline-flex;align-items:center;gap:.4rem;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);padding:.28rem .7rem;margin-top:.8rem;border-radius:2px;}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.fb-dot.saving{animation:spin 1s linear infinite;background:var(--cyan);}
+.fb-dot.ok{background:var(--lime);}
+.fb-dot.fail{background:var(--pink);}
+.act-btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;}
+#history{padding:5rem 0;background:rgba(8,8,20,.8);backdrop-filter:blur(18px);}
+.hist-wrap{display:flex;flex-direction:column;gap:1rem;margin-top:2rem;}
+.hist-item{background:rgba(255,255,255,.025);border:1px solid var(--border);padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;cursor:pointer;transition:border-color .2s;}
+.hist-item:hover{border-color:rgba(200,255,0,.2);}
+.hist-info{flex:1;min-width:0;}
+.hist-name{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:.2rem;}
+.hist-prev{font-size:.77rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-date{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:.18rem;}
+.hist-del{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.32rem .62rem;font-size:.68rem;cursor:pointer;flex-shrink:0;transition:color .2s,border-color .2s;}
+.hist-del:hover{color:var(--pink);border-color:var(--pink);}
+.empty-hist{text-align:center;padding:3rem;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);border:1px dashed var(--border);margin-top:2rem;}
+#letter{padding:5rem 0;}
+.let-box{background:rgba(11,11,22,.85);border:1px solid var(--border);padding:2rem;margin-top:1.5rem;}
+.dear{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--cyan);margin-bottom:1.5rem;}
+textarea.inp{resize:none;min-height:110px;border:none;border-bottom:1px solid var(--border);background:transparent;padding-bottom:1rem;}
+.let-footer{margin-top:1.5rem;display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;}
+.let-date{flex:1;min-width:200px;}
+.sealed-box{background:rgba(11,11,22,.85);border:1px solid rgba(0,229,255,.22);padding:2rem;margin-top:1.5rem;text-align:center;}
+.sealed-h{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--cyan);}
+.sealed-note{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.5rem;}
+.sealed-note em{color:var(--cyan);font-style:normal;}
+.cd-wrap{margin-top:1.5rem;display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;}
+.cd-blk{display:flex;flex-direction:column;align-items:center;gap:.18rem;}
+.cd-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--lime);background:rgba(200,255,0,.06);border:1px solid rgba(200,255,0,.14);padding:.38rem .62rem;min-width:50px;text-align:center;}
+.cd-lbl{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.2em;}
+.unlocked{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--lime);}
+/* ── Chatbot ── */
+#chatbot{padding:5rem 0;background:rgba(6,6,18,.85);backdrop-filter:blur(18px);}
+.chat-wrap{max-width:700px;margin:2rem auto 0;border:1px solid var(--border);background:rgba(11,11,22,.97);position:relative;overflow:hidden;}
+.chat-bar{height:2px;background:linear-gradient(90deg,var(--cyan),var(--lime),var(--pink));}
+.chat-msgs{height:400px;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;scroll-behavior:smooth;}
+.chat-msgs::-webkit-scrollbar{width:2px}.chat-msgs::-webkit-scrollbar-thumb{background:var(--lime)}
+.msg{display:flex;gap:.75rem;align-items:flex-start;animation:fu .25s ease both;}
+.msg.user{flex-direction:row-reverse;}
+.msg-avatar{width:30px;height:30px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.72rem;letter-spacing:.08em;}
+.msg.ai .msg-avatar{background:rgba(200,255,0,.1);border:1px solid rgba(200,255,0,.25);color:var(--lime);}
+.msg.user .msg-avatar{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);color:var(--cyan);}
+.msg-bubble{max-width:82%;padding:.75rem 1rem;font-size:.875rem;line-height:1.75;}
+.msg.ai .msg-bubble{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);border-radius:0 4px 4px 4px;}
+.msg.user .msg-bubble{background:rgba(200,255,0,.07);border:1px solid rgba(200,255,0,.18);color:var(--text);border-radius:4px 0 4px 4px;}
+.typing-bubble{display:flex;gap:5px;align-items:center;height:20px;}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:tdot 1.1s infinite ease-in-out;}
+.tdot:nth-child(2){animation-delay:.18s}.tdot:nth-child(3){animation-delay:.36s}
+.chat-sugs{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1.5rem .8rem;}
+.sug-btn{background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--muted);padding:.3rem .8rem;font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;cursor:pointer;border-radius:2px;transition:all .18s;white-space:nowrap;}
+.sug-btn:hover{color:var(--lime);border-color:rgba(200,255,0,.3);}
+.chat-input-row{display:flex;border-top:1px solid var(--border);}
+#chat-inp{flex:1;background:transparent;border:none;padding:.9rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;min-width:0;}
+#chat-inp::placeholder{color:var(--muted);}
+#chat-send{background:var(--lime);color:var(--bg);border:none;padding:.9rem 1.3rem;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;cursor:pointer;flex-shrink:0;transition:opacity .2s;white-space:nowrap;}
+#chat-send:hover{opacity:.85;}
+#chat-send:disabled{opacity:.35;cursor:not-allowed;}
+/* ── Modal ── */
+#modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
+#modal-ov.show{display:flex;}
+.modal-box{background:var(--card);border:1px solid var(--border);max-width:700px;width:100%;max-height:80vh;overflow-y:auto;padding:2rem;position:relative;}
+.modal-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--lime));}
+.modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:1px solid var(--border);color:var(--muted);padding:.33rem .62rem;cursor:pointer;font-family:'Space Mono',monospace;font-size:.63rem;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--lime);margin-bottom:.38rem;}
+.modal-meta{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:1.5rem;}
+.modal-text{font-size:.92rem;line-height:1.95;color:var(--text);white-space:pre-wrap;}
+#toast{display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--lime);color:var(--bg);font-family:'Space Mono',monospace;font-size:.7rem;padding:.72rem 1.5rem;z-index:9999;white-space:nowrap;box-shadow:0 8px 30px rgba(200,255,0,.3);border-radius:2px;}
+#toast.show{display:block;}
+#wa-badge{display:none;position:fixed;bottom:5rem;right:1.5rem;z-index:999;background:#25D366;color:#fff;font-family:'Space Mono',monospace;font-size:.63rem;padding:.58rem 1rem;cursor:pointer;border-radius:4px;box-shadow:0 4px 20px rgba(37,211,102,.4);animation:badgeIn .4s ease;}
+#wa-badge.show{display:block;}
+footer{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);position:relative;z-index:10;}
+footer em{color:var(--lime);font-style:normal;}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}.full{grid-column:1;}
+  .act-btns,.hero-btns{flex-direction:column;align-items:stretch;}
+  .nav-right{gap:.6rem;}
+  .chat-sugs{padding:.5rem 1rem .7rem;}
+  .sug-btn{font-size:.5rem;}
+}
+</style>
+</head>
+<body>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
+const FB_PROJECT = "my-ca692";
+const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
+const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
+const ANT_KEY    = "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";
+const ANT_MODEL  = "claude-sonnet-4-20250514";
+const WA_NUMBER  = "94727676806";
+
+// ═══════════════════════════════════════════
+// CLAUDE API CALL — works on GitHub Pages
+// ═══════════════════════════════════════════
+async function callClaude(messages, system, maxTokens=1000){
+  const body = {model:ANT_MODEL, max_tokens:maxTokens, messages};
+  if(system) body.system = system;
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANT_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({error:{message:`HTTP ${res.status}`}}));
+    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
+  if(!text) throw new Error("Empty response from Claude");
+  return text;
+}
+
+// ═══════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════
+const TR = {
+  en:{
+    badge:"✦ AI-Powered Future Simulation",
+    h1:"WHO WILL",h2:"YOU",h3:"BECOME?",
+    heroSub:"Enter your present self.<br/>We'll reveal who you'll be.",
+    startBtn:"⚡ START SIMULATION",histBtn:"VIEW HISTORY",
+    stepTag:"// Step 01",simTitle:"YOUR PRESENT SELF",
+    simSub:"Fill in your reality. No filter. The AI builds your future.",
+    lName:"Your Name",lAge:"Current Age",lDream:"Your Big Dream / Goal",
+    lSkills:"Current Skills",lFear:"Biggest Fear / Obstacle",
+    lSleep:"Sleep Hours / Night",lPhone:"Phone Usage / Day",
+    lBad:"Bad Habits — tap to select",lGood:"Good Habits — tap to select",
+    lTime:"Simulation Timeline",
+    simBtn:"⚡ SIMULATE MY FUTURE",simNote:"Claude AI · Firebase · localStorage",
+    loadTxt:"SIMULATING YOUR FUTURE...",
+    p0:"▸ Analyzing your habits",p1:"▸ Calculating life trajectory",
+    p2:"▸ Writing your future story",p3:"▸ Saving to Firebase",
+    resLbl:"// Simulation Result",
+    btnSave:"💾 SAVE LOCAL",btnWA:"📲 SHARE ON WHATSAPP",btnCopy:"📋 COPY",btnResim:"↺ RE-SIMULATE",
+    archTag:"// Archive",archTitle:"PAST SIMULATIONS",archSub:"Locally saved predictions.",
+    noHist:"No saves yet.<br/>Run a simulation and tap Save Local.",
+    letTag:"// Open After 5 Years",letTitle:"DEAR FUTURE ME",
+    letSub:"Write a letter. Sealed until you're ready.",
+    dear:"✉ Dear Future Me,",
+    letPh:"Right now I am feeling… My biggest dream is… I promise myself that…",
+    lUnlock:"Unlock Date",sealBtn:"🔒 SEAL LETTER",
+    sealedH:"🔒 LETTER SEALED",opensOn:"Opens on",breakBtn:"Break Seal Early",
+    chatTag:"// AI Assistant",chatTitle:"TALK TO YOUR FUTURE",
+    chatSub:"Ask anything — life advice, career, habits. Claude AI answers.",
+    chatPh:"Ask your future self anything…",chatSend:"SEND ⚡",
+    chatWelcome:"Hey! I'm your Future Me assistant. Ask me anything about life decisions, habits, or your simulation. I'm here to help you think clearly. 🌟",
+    fbSaving:"Saving to Firebase…",fbOk:"✅ Saved to Firebase",fbFail:"⚠ Saved locally only",
+    tSaved:"💾 Saved locally!",tCopy:"📋 Copied!",tDel:"🗑 Deleted",
+    tDream:"⚠ Enter your dream first!",tWrite:"✏ Write your letter!",
+    tDate:"⚠ Choose a future date!",tSealed:"🔒 Letter sealed!",
+    tErr:"❌ Error — check console",tFB:"☁ Saved to Firebase!",
+    breakQ:"Break the seal? Letter will be revealed.",
+    mName:"Name",mAge:"Age",mTime:"Timeline",mDream:"Dream",yr:"Yrs",
+    notify:"📲 Notify Rusthi:",
+    t1:"1 Year From Now",t3:"3 Years From Now",t5:"5 Years From Now",t10:"10 Years From Now",
+    bad:["Late Sleep","Procrastination","Too Much Social Media","No Exercise","Junk Food","No Reading","Gaming Addiction","Overthinking"],
+    good:["Daily Coding","Reading Books","Exercise","Learning Skills","Early Wake","Music / Art","Saving Money","Prayer / Meditation"],
+    promptLang:"English",
+    sugs:["How do I break bad habits?","What skills should I learn now?","How to stay motivated daily?","Will I achieve my dream?"]
+  },
+  ta:{
+    badge:"✦ AI எதிர்கால சிமுலேஷன்",
+    h1:"நீ யாராக",h2:"மாற",h3:"போகிறாய்?",
+    heroSub:"உன் இன்றைய நிலையை சொல்.<br/>உன் எதிர்காலத்தை நாங்கள் காட்டுவோம்.",
+    startBtn:"⚡ சிமுலேஷன் தொடங்கு",histBtn:"வரலாறு பார்",
+    stepTag:"// படி 01",simTitle:"உன் இன்றைய நிலை",
+    simSub:"உண்மையை சொல். மறைக்காதே. AI உன் எதிர்காலம் கட்டும்.",
+    lName:"உன் பெயர்",lAge:"தற்போதைய வயது",lDream:"உன் பெரிய கனவு / இலக்கு",
+    lSkills:"தற்போதைய திறன்கள்",lFear:"மிகப்பெரிய பயம் / தடை",
+    lSleep:"தூக்க நேரம் / இரவு",lPhone:"போன் பயன்பாடு / நாள்",
+    lBad:"கெட்ட பழக்கங்கள் — தட்டி தேர்வு செய்",lGood:"நல்ல பழக்கங்கள் — தட்டி தேர்வு செய்",
+    lTime:"சிமுலேஷன் காலம்",
+    simBtn:"⚡ என் எதிர்காலம் சிமுலேட் செய்",simNote:"Claude AI · Firebase · localStorage",
+    loadTxt:"உன் எதிர்காலம் கணக்கிடப்படுகிறது...",
+    p0:"▸ உன் பழக்கங்கள் பகுப்பாய்வு",p1:"▸ வாழ்க்கை பாதை கணக்கீடு",
+    p2:"▸ உன் எதிர்கால கதை எழுதுகிறோம்",p3:"▸ Firebase-ல் சேமிக்கிறோம்",
+    resLbl:"// சிமுலேஷன் முடிவு",
+    btnSave:"💾 சேமி",btnWA:"📲 WHATSAPP-ல் பகிர்",btnCopy:"📋 நகல் எடு",btnResim:"↺ மீண்டும் சிமுலேட்",
+    archTag:"// காப்பகம்",archTitle:"பழைய சிமுலேஷன்கள்",archSub:"உள்ளூரில் சேமிக்கப்பட்ட கணிப்புகள்.",
+    noHist:"இன்னும் எதுவும் சேமிக்கவில்லை.<br/>சிமுலேட் செய்து Save அழுத்து.",
+    letTag:"// 5 ஆண்டுகளுக்கு பிறகு திற",letTitle:"அன்புள்ள என் எதிர்கால நானே",
+    letSub:"ஒரு கடிதம் எழுது. உன் நேரத்தில் திறக்கப்படும்.",
+    dear:"✉ அன்புள்ள என் எதிர்கால நானே,",
+    letPh:"இப்போது நான் உணர்கிறேன்… என் மிகப்பெரிய கனவு… நான் வாக்குறுதி தருகிறேன்…",
+    lUnlock:"திறக்கும் தேதி",sealBtn:"🔒 கடிதம் சீல் செய்",
+    sealedH:"🔒 கடிதம் சீல் ஆனது",opensOn:"திறக்கும் தேதி",breakBtn:"சீல் உடை",
+    chatTag:"// AI உதவியாளர்",chatTitle:"உன் எதிர்காலத்தோடு பேசு",
+    chatSub:"எதையும் கேள் — வாழ்க்கை, தொழில், பழக்கங்கள். Claude AI பதிலளிக்கும்.",
+    chatPh:"உன் எதிர்கால நானிடம் கேள்…",chatSend:"அனுப்பு ⚡",
+    chatWelcome:"வணக்கம்! நான் உன் Future Me AI. வாழ்க்கை முடிவுகள், பழக்கங்கள், கனவு பற்றி எதையும் கேள். உனக்காக இங்கே இருக்கேன். 🌟",
+    fbSaving:"Firebase-ல் சேமிக்கிறோம்…",fbOk:"✅ Firebase-ல் சேமிக்கப்பட்டது",fbFail:"⚠ உள்ளூரில் மட்டும் சேமிக்கப்பட்டது",
+    tSaved:"💾 சேமிக்கப்பட்டது!",tCopy:"📋 நகல் எடுக்கப்பட்டது!",tDel:"🗑 நீக்கப்பட்டது",
+    tDream:"⚠ உன் கனவை முதலில் சொல்!",tWrite:"✏ கடிதம் எழுது!",
+    tDate:"⚠ எதிர்கால தேதி தேர்வு செய்!",tSealed:"🔒 கடிதம் சீல் ஆனது!",
+    tErr:"❌ பிழை — console பார்",tFB:"☁ Firebase-ல் சேமிக்கப்பட்டது!",
+    breakQ:"சீல் உடைக்கவா? கடிதம் வெளிப்படும்.",
+    mName:"பெயர்",mAge:"வயது",mTime:"காலம்",mDream:"கனவு",yr:"ஆண்டுகள்",
+    notify:"📲 Rusthi-க்கு தெரிவி:",
+    t1:"1 ஆண்டு பிறகு",t3:"3 ஆண்டுகள் பிறகு",t5:"5 ஆண்டுகள் பிறகு",t10:"10 ஆண்டுகள் பிறகு",
+    bad:["தாமதமாக தூங்குவது","தள்ளிப்போடுவது","அதிக சமூக ஊடகம்","உடற்பயிற்சி இல்லை","குப்பை உணவு","படிக்காமல் இருப்பது","கேமிங் அடிமைத்தனம்","அதிகமாக யோசிப்பது"],
+    good:["தினமும் கோடிங்","புத்தகம் படிப்பது","உடற்பயிற்சி","திறன் கற்றல்","காலையில் எழுவது","இசை / கலை","பணம் சேமிப்பு","தியானம் / ஆன்மிகம்"],
+    promptLang:"Tamil",
+    sugs:["கெட்ட பழக்கங்களை எப்படி விடுவது?","இப்போது என்ன கற்க வேண்டும்?","தினமும் motivated-ஆக இருப்பது எப்படி?","என் கனவை அடைவேனா?"]
+  }
+};
+
+let lang = localStorage.getItem('fme_lang')||'en';
+const tr = k => TR[lang]?.[k] ?? TR.en?.[k] ?? k;
+const $  = id => document.getElementById(id);
+const st = (id,v) => {const e=$(id);if(e)e.textContent=v;};
+const sh = (id,v) => {const e=$(id);if(e)e.innerHTML=v;};
+
+function setLang(l){lang=l;localStorage.setItem('fme_lang',l);applyLang();}
+
+function applyLang(){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    const map={simulate:lang==='ta'?'சிமுலேட்':'SIMULATE',history:lang==='ta'?'வரலாறு':'HISTORY',letter:lang==='ta'?'5ஆண்டு கடிதம்':'5YR LETTER',chatbot:lang==='ta'?'AI சாட்':'AI CHAT'};
+    if(map[b.dataset.sec]) b.textContent=map[b.dataset.sec];
+  });
+  const L=TR[lang];
+  st('badge-t',L.badge);sh('hero-sub',L.heroSub);
+  st('h1',L.h1);st('h2',L.h2);st('h3',L.h3);
+  st('start-btn',L.startBtn);st('hist-btn',L.histBtn);
+  st('step-tag',L.stepTag);st('sim-title',L.simTitle);st('sim-sub',L.simSub);
+  st('l-name',L.lName);st('l-age',L.lAge);st('l-dream',L.lDream);
+  st('l-skills',L.lSkills);st('l-fear',L.lFear);
+  st('l-sleep',L.lSleep);st('l-phone',L.lPhone);
+  st('l-bad',L.lBad);st('l-good',L.lGood);st('l-time',L.lTime);
+  st('sim-btn',L.simBtn);st('sim-note',L.simNote);
+  st('load-txt',L.loadTxt);
+  st('p0',L.p0);st('p1',L.p1);st('p2',L.p2);st('p3',L.p3);
+  st('res-lbl',L.resLbl);
+  st('btn-save',L.btnSave);st('btn-wa',L.btnWA);
+  st('btn-copy',L.btnCopy);st('btn-resim',L.btnResim);
+  const sel=$('f-years');
+  if(sel){sel.options[0].text=L.t1;sel.options[1].text=L.t3;sel.options[2].text=L.t5;sel.options[3].text=L.t10;}
+  st('arch-tag',L.archTag);st('arch-title',L.archTitle);st('arch-sub',L.archSub);
+  st('let-tag',L.letTag);st('let-title',L.letTitle);st('let-sub',L.letSub);
+  st('dear-t',L.dear);st('l-unlock',L.lUnlock);st('seal-btn',L.sealBtn);
+  st('sealed-h',L.sealedH);st('opens-on',L.opensOn);st('break-btn',L.breakBtn);
+  st('chat-tag',L.chatTag);st('chat-title',L.chatTitle);st('chat-sub',L.chatSub);
+  const ci=$('chat-inp');if(ci)ci.placeholder=L.chatPh;
+  st('chat-send-btn',L.chatSend);
+  const lta=$('letter-txt');if(lta)lta.placeholder=L.letPh;
+  const phs={'f-name':lang==='ta'?'உதா: ரஸ்தி':'e.g. Rusthi','f-dream':lang==='ta'?'உதா: சொந்த கேரேஜ்...':'e.g. Own a garage...','f-skills':lang==='ta'?'உதா: கோடிங், கிட்டார்...':'e.g. coding, guitar...','f-fear':lang==='ta'?'உதா: சோம்பல், பணமில்லை...':'e.g. lazy, no money...'};
+  Object.entries(phs).forEach(([id,p])=>{const e=$(id);if(e)e.placeholder=p;});
+  buildTags();
+  buildSuggestions();
+  renderHistory();
+}
+</script>
+
+<canvas id="galaxy"></canvas>
+<div id="rst-wm"><span>RST</span></div>
+
+<nav>
+  <div class="nav-logo">FUTURE ME</div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <button class="nav-btn active" data-sec="simulate" onclick="goSec('simulate')">SIMULATE</button>
+      <button class="nav-btn" data-sec="history"  onclick="goSec('history')">HISTORY</button>
+      <button class="nav-btn" data-sec="letter"   onclick="goSec('letter')">5YR LETTER</button>
+      <button class="nav-btn" data-sec="chatbot"  onclick="goSec('chatbot')">AI CHAT</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        data-lang="ta" onclick="setLang('ta')">தமிழ்</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge"><span id="badge-t">✦ AI-Powered Future Simulation</span></div>
+  <h1 class="hero-title">
+    <span id="h1">WHO WILL</span><br/>
+    <span class="lime" id="h2">YOU</span><br/>
+    <span class="cyan" id="h3">BECOME?</span>
+  </h1>
+  <p class="hero-sub" id="hero-sub">Enter your present self.<br/>We'll reveal who you'll be.</p>
+  <div class="hero-btns">
+    <button class="btn-p" id="start-btn" onclick="goSec('simulate')">⚡ START SIMULATION</button>
+    <button class="btn-g" id="hist-btn"  onclick="goSec('history')">VIEW HISTORY</button>
+  </div>
+</section>
+
+<!-- SIMULATE -->
+<section id="simulate">
+  <div class="container">
+    <div class="sec-tag" id="step-tag">// Step 01</div>
+    <h2 class="sec-title" id="sim-title">YOUR PRESENT SELF</h2>
+    <p class="sec-sub" id="sim-sub">Fill in your reality. No filter. The AI builds your future.</p>
+    <div class="form-grid">
+      <div>
+        <label class="lbl"><span id="l-name">Your Name</span></label>
+        <input class="inp" id="f-name" placeholder="e.g. Rusthi" type="text"/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-age">Current Age</span></label>
+        <input class="inp" id="f-age" placeholder="18" type="number" min="1" max="120"/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-dream">Your Big Dream / Goal</span></label>
+        <input class="inp" id="f-dream" placeholder="e.g. Own a garage, music producer..."/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-skills">Current Skills</span></label>
+        <input class="inp" id="f-skills" placeholder="e.g. coding, guitar, football..."/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-fear">Biggest Fear / Obstacle</span></label>
+        <input class="inp" id="f-fear" placeholder="e.g. lazy, no money..."/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-sleep">Sleep Hours / Night</span> — <span id="sv" class="lv">7</span>h</label>
+        <input type="range" id="f-sleep" min="3" max="12" value="7" style="width:100%;margin-top:.5rem" oninput="$('sv').textContent=this.value"/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-phone">Phone Usage / Day</span> — <span id="pv" class="lv">5</span>h</label>
+        <input type="range" id="f-phone" min="0" max="16" value="5" style="width:100%;margin-top:.5rem" oninput="$('pv').textContent=this.value"/>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-bad">Bad Habits — tap to select</label>
+        <div class="tags" id="bad-tags"></div>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-good">Good Habits — tap to select</label>
+        <div class="tags" id="good-tags"></div>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-time">Simulation Timeline</label>
+        <select class="inp" id="f-years">
+          <option value="1">1 Year From Now</option>
+          <option value="3">3 Years From Now</option>
+          <option value="5" selected>5 Years From Now</option>
+          <option value="10">10 Years From Now</option>
+        </select>
+      </div>
+      <div class="full sim-center">
+        <button class="btn-p btn-sim" id="sim-btn" onclick="generate()">⚡ SIMULATE MY FUTURE</button>
+        <p class="sim-note" id="sim-note">Claude AI · Firebase · localStorage</p>
+      </div>
+    </div>
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <div>
+        <div class="load-title" id="load-txt">SIMULATING YOUR FUTURE...</div>
+        <div class="phase-list">
+          <div class="phase" id="p0">▸ Analyzing your habits</div>
+          <div class="phase" id="p1">▸ Calculating life trajectory</div>
+          <div class="phase" id="p2">▸ Writing your future story</div>
+          <div class="phase" id="p3">▸ Saving to Firebase</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="result">
+      <div class="res-label" id="res-lbl">// Simulation Result</div>
+      <h2 class="res-name" id="res-name">YOUR FUTURE</h2>
+      <div class="res-card">
+        <div class="res-bar"></div>
+        <div class="meta-row" id="meta-row"></div>
+        <div class="divider"></div>
+        <div id="res-text"></div>
+        <div class="fb-row">
+          <div class="fb-dot" id="fb-dot"></div>
+          <span id="fb-txt">Firebase</span>
+        </div>
+        <div class="divider"></div>
+        <div class="act-btns">
+          <button class="btn-p" id="btn-save" onclick="saveLocal()">💾 SAVE LOCAL</button>
+          <button class="btn-g btn-wa" id="btn-wa" onclick="shareWA()">📲 SHARE ON WHATSAPP</button>
+          <button class="btn-g" id="btn-copy" onclick="shareCopy()">📋 COPY</button>
+          <button class="btn-g" id="btn-resim" onclick="generate()">↺ RE-SIMULATE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+  <div class="container">
+    <div class="sec-tag" id="arch-tag">// Archive</div>
+    <h2 class="sec-title" id="arch-title">PAST SIMULATIONS</h2>
+    <p class="sec-sub" id="arch-sub">Locally saved predictions.</p>
+    <div id="hist-list"></div>
+  </div>
+</section>
+
+<!-- LETTER -->
+<section id="letter">
+  <div class="container">
+    <div class="sec-tag" id="let-tag">// Open After 5 Years</div>
+    <h2 class="sec-title" id="let-title">DEAR FUTURE ME</h2>
+    <p class="sec-sub" id="let-sub">Write a letter. Sealed until you're ready.</p>
+    <div id="let-write">
+      <div class="let-box">
+        <div class="dear" id="dear-t">✉ Dear Future Me,</div>
+        <textarea class="inp" id="letter-txt" rows="5" placeholder="Right now I am feeling…"></textarea>
+        <div class="let-footer">
+          <div class="let-date">
+            <label class="lbl" id="l-unlock">Unlock Date</label>
+            <input type="date" class="inp" id="unlock-date" style="font-family:'Space Mono',monospace;font-size:.76rem"/>
+          </div>
+          <button class="btn-p" id="seal-btn" onclick="sealLetter()">🔒 SEAL LETTER</button>
+        </div>
+      </div>
+    </div>
+    <div id="let-sealed" style="display:none">
+      <div class="sealed-box">
+        <div class="sealed-h" id="sealed-h">🔒 LETTER SEALED</div>
+        <p class="sealed-note"><span id="opens-on">Opens on</span> <em id="sealed-date"></em></p>
+        <div class="cd-wrap" id="countdown"></div>
+        <button class="btn-g" id="break-btn" style="margin-top:1.5rem;font-size:.6rem" onclick="breakSeal()">Break Seal Early</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHATBOT -->
+<section id="chatbot">
+  <div class="container">
+    <div class="sec-tag" id="chat-tag">// AI Assistant</div>
+    <h2 class="sec-title" id="chat-title">TALK TO YOUR FUTURE</h2>
+    <p class="sec-sub" id="chat-sub">Ask anything — life advice, career, habits. Claude AI answers.</p>
+    <div class="chat-wrap">
+      <div class="chat-bar"></div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg ai">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-bubble" id="chat-welcome-msg">Hey! I'm your Future Me assistant. Ask me anything about life decisions, habits, or your simulation. I'm here to help you think clearly. 🌟</div>
+        </div>
+      </div>
+      <div class="chat-sugs" id="chat-sugs"></div>
+      <div class="chat-input-row">
+        <input id="chat-inp" placeholder="Ask your future self anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"/>
+        <button id="chat-send-btn" onclick="sendChat()">SEND ⚡</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><em>FUTURE ME</em> by RST · Claude AI · Firebase · All data yours</footer>
+
+<!-- Modal -->
+<div id="modal-ov" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal()">✕ CLOSE</button>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-meta"  id="m-meta"></div>
+    <div class="divider"></div>
+    <div class="modal-text"  id="m-text"></div>
+    <div style="margin-top:1.5rem">
+      <button class="btn-g btn-wa" id="m-wa" style="font-size:.65rem;padding:.6rem 1.2rem">📲 Share on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="wa-badge"></div>
+<div id="toast"></div>
+
+<script>
+// ── Galaxy Canvas ─────────────────────────
+(()=>{
+  const cv=$('galaxy'),cx=cv.getContext('2d');
+  let W,H,stars=[],nebs=[];
+  const resize=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;};
+  const init=()=>{
+    stars=Array.from({length:260},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,a:Math.random()*.8+.2,to:Math.random()*Math.PI*2,sp:Math.random()*.012+.003}));
+    const cs=['rgba(200,255,0,','rgba(0,229,255,','rgba(255,61,127,','rgba(90,60,220,'];
+    nebs=Array.from({length:7},(_,i)=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*240+90,c:cs[i%cs.length],a:Math.random()*.038+.01}));
+  };
+  let tm=0;
+  const draw=()=>{
+    cx.clearRect(0,0,W,H);
+    const bg=cx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H));
+    bg.addColorStop(0,'#07072c');bg.addColorStop(1,'#03030a');
+    cx.fillStyle=bg;cx.fillRect(0,0,W,H);
+    nebs.forEach(n=>{const g=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);g.addColorStop(0,n.c+n.a+')');g.addColorStop(1,n.c+'0)');cx.fillStyle=g;cx.beginPath();cx.arc(n.x,n.y,n.r,0,Math.PI*2);cx.fill();});
+    tm+=.012;
+    stars.forEach(s=>{cx.globalAlpha=s.a*(0.35+0.65*Math.sin(tm*50*s.sp+s.to));cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fill();});
+    cx.globalAlpha=1;requestAnimationFrame(draw);
+  };
+  resize();init();draw();
+  addEventListener('resize',()=>{resize();init();});
+})();
+
+// ── Init unlock date ──────────────────────
+(()=>{const d=new Date();d.setFullYear(d.getFullYear()+5);$('unlock-date').value=d.toISOString().split('T')[0];})();
+
+// ── Tags ──────────────────────────────────
+const selBad=new Set(),selGood=new Set();
+function buildTags(){
+  ['bad-tags','good-tags'].forEach((id,gi)=>{
+    const el=$(id);if(!el)return;
+    el.innerHTML='';
+    const list=TR[lang][gi===0?'bad':'good'];
+    const sel=gi===0?selBad:selGood;
+    list.forEach((h,i)=>{
+      const b=document.createElement('button');
+      b.className='tag'+(sel.has(i)?' active':'');
+      b.textContent=h;
+      b.onclick=()=>{sel.has(i)?(sel.delete(i),b.classList.remove('active')):(sel.add(i),b.classList.add('active'));};
+      el.appendChild(b);
+    });
+  });
+}
+
+// ── Nav ───────────────────────────────────
+function goSec(sec){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.sec===sec));
+  const el=$(sec);if(el)el.scrollIntoView({behavior:'smooth'});
+}
+
+// ── Toast ─────────────────────────────────
+let _tt;
+function showToast(msg){
+  const e=$('toast');e.textContent=msg;e.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2800);
+}
+
+// ── Phase anim ────────────────────────────
+function animPhases(){
+  [0,1,2,3].forEach(i=>{
+    const p=$('p'+i);if(p)p.classList.remove('done');
+    setTimeout(()=>{const p=$('p'+i);if(p)p.classList.add('done');},i*900);
+  });
+}
+
+// ── Firebase save ─────────────────────────
+async function fbSave(rec){
+  try{
+    const body={fields:{
+      name:{stringValue:rec.input.name||''},
+      age:{stringValue:String(rec.input.age||'')},
+      dream:{stringValue:rec.input.dream||''},
+      skills:{stringValue:rec.input.skills||''},
+      fear:{stringValue:rec.input.fear||''},
+      sleep:{integerValue:rec.input.sleep||7},
+      phone:{integerValue:rec.input.phone||5},
+      years:{stringValue:String(rec.input.years||'5')},
+      bad:{arrayValue:{values:(rec.input.bad||[]).map(v=>({stringValue:v}))}},
+      good:{arrayValue:{values:(rec.input.good||[]).map(v=>({stringValue:v}))}},
+      result:{stringValue:rec.text||''},
+      ts:{stringValue:new Date().toISOString()},
+      lang:{stringValue:lang},
+    }};
+    const res=await fetch(`${FB_URL}?key=${FB_API_KEY}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+    if(!res.ok){const t=await res.text().catch(()=>'');console.error('FB err:',res.status,t);return false;}
+    return true;
+  }catch(e){console.error('FB error:',e.message);return false;}
+}
+
+function setFbStatus(s){
+  const dot=$('fb-dot'),txt=$('fb-txt');
+  dot.className='fb-dot';
+  if(s==='saving'){dot.classList.add('saving');txt.textContent=tr('fbSaving');}
+  else if(s==='ok'){dot.classList.add('ok');txt.textContent=tr('fbOk');}
+  else{dot.classList.add('fail');txt.textContent=tr('fbFail');}
+}
+
+// ── WA msg builder ────────────────────────
+function buildWA(rec){
+  const{name,age,dream,years,bad,good}=rec.input;
+  return encodeURIComponent(`🔮 *FUTURE ME Simulation*\n\n👤 *${name||'?'}* | Age ${age||'?'}\n🌟 Dream: ${dream||''}\n⏳ Timeline: +${years||'5'} years\n⚠️ Bad: ${(bad||[]).join(', ')||'none'}\n✅ Good: ${(good||[]).join(', ')||'none'}\n\n📖 *Preview:*\n${(rec.text||'').slice(0,200)}…`);
+}
+
+// ── Typewriter ────────────────────────────
+function typeWriter(el,text){
+  el.textContent='';let i=0;
+  const iv=setInterval(()=>{if(i<text.length)el.textContent=text.slice(0,++i);else clearInterval(iv);},9);
+}
+
+// ── WA badge ──────────────────────────────
+let _bt;
+function showOwnerBadge(name,url){
+  const b=$('wa-badge');
+  b.textContent=`${tr('notify')} ${name}`;
+  b.classList.add('show');
+  b.onclick=()=>{window.open(url,'_blank');b.classList.remove('show');};
+  clearTimeout(_bt);_bt=setTimeout(()=>b.classList.remove('show'),9000);
+}
+
+// ── State ─────────────────────────────────
+let curRec=null;
+let hist=[];
+try{hist=JSON.parse(localStorage.getItem('fme_h')||'[]');}catch(e){hist=[];}
+
+// ── SIMULATE ──────────────────────────────
+async function generate(){
+  const name=$('f-name').value.trim();
+  const age=$('f-age').value.trim();
+  const dream=$('f-dream').value.trim();
+  const skills=$('f-skills').value.trim();
+  const fear=$('f-fear').value.trim();
+  const sleep=$('f-sleep').value;
+  const phone=$('f-phone').value;
+  const years=$('f-years').value;
+  const bad=[...selBad].map(i=>TR[lang].bad[i]).filter(Boolean);
+  const good=[...selGood].map(i=>TR[lang].good[i]).filter(Boolean);
+
+  if(!dream){showToast(tr('tDream'));return;}
+
+  const simBtn=$('sim-btn');
+  simBtn.disabled=true;
+  $('loading').classList.add('show');
+  $('result').classList.remove('show');
+  animPhases();
+
+  const prompt=`You are a powerful AI life simulator. Write a vivid emotional future story in second-person ("you"), under 350 words, flowing prose only — no headers, no bullets. Write in ${TR[lang].promptLang}.
+
+Person: ${name||'You'}, age ${age||'?'}
+Dream: ${dream}
+Skills: ${skills||'none'} | Fear: ${fear||'none'}
+Sleep: ${sleep}hr/night | Phone: ${phone}hr/day
+Bad habits: ${bad.join(', ')||'none'}
+Good habits: ${good.join(', ')||'none'}
+Simulate: ${years} years ahead
+
+Cover: where they are now → what changed because of habits → vivid scene ${years} years later → the turning point → direct message to present self. Bad habits = real painful consequences. Good habits = real earned rewards. Be honest and deeply personal.`;
+
+  try{
+    const text = await callClaude([{role:'user',content:prompt}], null, 1000);
+    const rec={text,input:{name,age,dream,skills,fear,sleep:+sleep,phone:+phone,years,bad,good},ts:Date.now(),id:Date.now()};
+    curRec=rec;
+
+    $('loading').classList.remove('show');
+    $('res-name').textContent=`${(name||'YOUR').toUpperCase()}'S FUTURE`;
+    const L=TR[lang];
+    $('meta-row').innerHTML=[[L.mName,name||'You'],[L.mAge,age||'?'],[L.mTime,`+${years} ${L.yr}`],[L.mDream,dream.slice(0,24)+(dream.length>24?'…':'')]].map(([k,v])=>`<div><div class="meta-k">${k}</div><div class="meta-v">${v}</div></div>`).join('');
+    typeWriter($('res-text'),text);
+    $('result').classList.add('show');
+
+    setFbStatus('saving');
+    fbSave(rec).then(ok=>{
+      setFbStatus(ok?'ok':'fail');
+      if(ok)showToast(tr('tFB'));
+    }).catch(()=>setFbStatus('fail'));
+
+    showOwnerBadge(name||'User',`https://wa.me/${WA_NUMBER}?text=${buildWA(rec)}`);
+
+  }catch(e){
+    console.error('Simulation error:',e);
+    showToast(tr('tErr'));
+    $('loading').classList.remove('show');
+  } finally {
+    simBtn.disabled=false;
+  }
+}
+
+// ── Save / Share ──────────────────────────
+function saveLocal(){
+  if(!curRec)return;
+  hist=[curRec,...hist].slice(0,50);
+  try{localStorage.setItem('fme_h',JSON.stringify(hist));}catch(e){}
+  renderHistory();showToast(tr('tSaved'));
+}
+function shareWA(){if(curRec)window.open(`https://wa.me/?text=${buildWA(curRec)}`,'_blank');}
+function shareCopy(){
+  if(!curRec)return;
+  const txt=(curRec.text||'').slice(0,300)+'…';
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast(tr('tCopy'))).catch(()=>fbCopy(txt));
+  else fbCopy(txt);
+}
+function fbCopy(txt){
+  const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showToast(tr('tCopy'));}catch(e){}
+  document.body.removeChild(ta);
+}
+
+// ── History ───────────────────────────────
+function fmt(ts){try{return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}}
+function renderHistory(){
+  const el=$('hist-list');if(!el)return;
+  if(!hist.length){sh('hist-list',`<div class="empty-hist">${tr('noHist')}</div>`);return;}
+  el.innerHTML='<div class="hist-wrap">'+hist.map(h=>`
+    <div class="hist-item" onclick="openModal(${h.id})">
+      <div class="hist-info">
+        <div class="hist-name">${h.input?.name||'?'} — +${h.input?.years||'?'}YR</div>
+        <div class="hist-prev">${(h.text||'').slice(0,88)}…</div>
+        <div class="hist-date">📅 ${fmt(h.ts)}</div>
+      </div>
+      <button class="hist-del" onclick="event.stopPropagation();delHist(${h.id})">✕</button>
+    </div>`).join('')+'</div>';
+}
+function delHist(id){
+  hist=hist.filter(x=>x.id!==id);
+  try{localStorage.setItem('fme_h',JSON.stringify(hist));}catch(e){}
+  renderHistory();showToast(tr('tDel'));
+}
+
+// ── Modal ─────────────────────────────────
+function openModal(id){
+  const h=hist.find(x=>x.id===id);if(!h)return;
+  $('m-title').textContent=`${h.input?.name||'?'} — ${h.input?.years||'?'} Years Later`;
+  $('m-meta').textContent=`${fmt(h.ts)} · Dream: ${h.input?.dream||'—'}`;
+  $('m-text').textContent=h.text||'';
+  $('m-wa').onclick=()=>window.open(`https://wa.me/?text=${buildWA(h)}`,'_blank');
+  $('modal-ov').classList.add('show');
+}
+function closeModal(){$('modal-ov').classList.remove('show');}
+
+// ── Letter ────────────────────────────────
+let sealed=null;
+try{const s=JSON.parse(localStorage.getItem('fme_let')||'null');if(s&&s.unlock>Date.now())sealed=s;}catch(e){}
+let cdIv;
+function renderLetter(){
+  if(sealed&&sealed.unlock>Date.now()){
+    $('let-write').style.display='none';$('let-sealed').style.display='block';
+    $('sealed-date').textContent=fmt(sealed.unlock);startCD(sealed.unlock);
+  }else{
+    $('let-write').style.display='block';$('let-sealed').style.display='none';clearInterval(cdIv);
+  }
+}
+function sealLetter(){
+  const txt=$('letter-txt').value.trim();
+  if(!txt){showToast(tr('tWrite'));return;}
+  const unlock=new Date($('unlock-date').value).getTime();
+  if(!unlock||unlock<=Date.now()){showToast(tr('tDate'));return;}
+  sealed={txt,unlock};
+  try{localStorage.setItem('fme_let',JSON.stringify(sealed));}catch(e){}
+  renderLetter();showToast(tr('tSealed'));
+}
+function breakSeal(){
+  if(!confirm(tr('breakQ')))return;
+  $('letter-txt').value=sealed?.txt||'';sealed=null;
+  try{localStorage.removeItem('fme_let');}catch(e){}
+  clearInterval(cdIv);renderLetter();
+}
+function startCD(ts){
+  clearInterval(cdIv);
+  const render=()=>{
+    const diff=ts-Date.now();
+    const el=$('countdown');if(!el)return;
+    if(diff<=0){el.innerHTML='<div class="unlocked">🔓 UNLOCKED!</div>';clearInterval(cdIv);return;}
+    const d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000);
+    el.innerHTML=[[d,'DAYS'],[h,'HRS'],[m,'MIN'],[s,'SEC']].map(([n,l])=>`<div class="cd-blk"><div class="cd-num">${String(n).padStart(2,'0')}</div><div class="cd-lbl">${l}</div></div>`).join('');
+  };
+  render();cdIv=setInterval(render,1000);
+}
+
+// ── CHATBOT ───────────────────────────────
+let chatHistory=[];
+let chatSugsShown=true;
+
+function buildSuggestions(){
+  const el=$('chat-sugs');if(!el)return;
+  if(!chatSugsShown){el.style.display='none';return;}
+  el.innerHTML='';
+  const sugs=tr('sugs')||[];
+  sugs.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='sug-btn';b.textContent=s;
+    b.onclick=()=>{$('chat-inp').value=s;hideSugs();sendChat();};
+    el.appendChild(b);
+  });
+  // Update welcome message language
+  const wm=$('chat-welcome-msg');
+  if(wm)wm.textContent=tr('chatWelcome');
+}
+
+function hideSugs(){
+  chatSugsShown=false;
+  const el=$('chat-sugs');if(el)el.style.display='none';
+}
+
+function appendMsg(role,text,isTyping=false){
+  const msgs=$('chat-msgs');
+  const wrap=document.createElement('div');
+  wrap.className='msg '+(role==='user'?'user':'ai');
+  const av=document.createElement('div');
+  av.className='msg-avatar';av.textContent=role==='user'?'YOU':'AI';
+  const bub=document.createElement('div');
+  bub.className='msg-bubble';
+  if(isTyping){
+    bub.innerHTML='<div class="typing-bubble"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>';
+    wrap.id='chat-typing';
+  } else {
+    // Render line breaks
+    bub.innerHTML=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
+  }
+  wrap.appendChild(av);wrap.appendChild(bub);
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+  return wrap;
+}
+
+async function sendChat(){
+  const inp=$('chat-inp');
+  const userMsg=inp.value.trim();
+  if(!userMsg)return;
+
+  hideSugs();
+  inp.value='';
+  const sendBtn=$('chat-send-btn');
+  sendBtn.disabled=true;
+
+  appendMsg('user',userMsg);
+  chatHistory.push({role:'user',content:userMsg});
+
+  const typing=appendMsg('ai','',true);
+
+  // Context from current simulation
+  const curName=$('f-name')?.value?.trim()||'';
+  const curDream=$('f-dream')?.value?.trim()||'';
+  const simSnippet=curRec?curRec.text.slice(0,300):'';
+  const sysPrompt=`You are "Future Me AI", a wise and motivating life coach inside the FUTURE ME app by RST. Give honest, concise, personal advice (under 180 words per reply). Be warm, direct, and inspiring. Respond in ${TR[lang].promptLang}.${curName?` The user's name is ${curName}.`:''}${curDream?` Their dream: ${curDream}.`:''}${simSnippet?` Their simulation preview: "${simSnippet}…"`:''}`;
+
+  try{
+    const aiText=await callClaude(chatHistory, sysPrompt, 400);
+    chatHistory.push({role:'assistant',content:aiText});
+    typing.remove();
+    appendMsg('ai',aiText);
+  }catch(e){
+    console.error('Chat error:',e);
+    typing.remove();
+    appendMsg('ai',`⚠️ ${tr('tErr')}: ${e.message}`);
+  }
+  sendBtn.disabled=false;
+  inp.focus();
+}
+
+// ── Boot ──────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  applyLang();
+  renderHistory();
+  renderLetter();
+});
+</script>
+</body>
+</html>
