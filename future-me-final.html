@@ -160,13 +160,6 @@ footer em{color:var(--lime);font-style:normal;}
 </style>
 <body>
 
-<script type="importmap">
-{"imports":{"@google/generative-ai":"https://esm.run/@google/generative-ai"}}
-</script>
-<script type="module">
-import { GoogleGenerativeAI } from "@google/generative-ai";
-window.__geminiSDK = GoogleGenerativeAI;
-</script>
 <script>
 // ═══════════════════════════════════════════
 // CONFIG
@@ -174,11 +167,7 @@ window.__geminiSDK = GoogleGenerativeAI;
 const FB_PROJECT = "my-ca692";
 const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
 const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
-const GEM_MODEL  = "gemini-2.0-flash";
-// ── Proxy URL (Cloudflare Worker) — key hidden server-side
-const PROXY_URL  = "https://future-me-ai.rusthicrush.workers.dev";
-// Fallback direct key (only if no proxy set up yet)
-const GEM_KEY    = "AIzaSyDwUCq8bk88GlrX6r7tDF7759cirBRI5PM";
+const AI_MODEL = "claude-haiku-4-5-20251001"; // free via built-in browser access
 const WA_NUMBER  = "94727676806";
 
 // ── Key hardcoded (Gemini free tier) ────
@@ -187,51 +176,31 @@ const WA_NUMBER  = "94727676806";
 // CLAUDE API CALL — works on GitHub Pages
 // ═══════════════════════════════════════════
 // ═══════════════════════════════════════════
-// GEMINI API CALL
-// Route 1: Cloudflare Worker proxy (key hidden)
-// Route 2: Official SDK fallback (CORS-safe)
+// AI CALL — Claude, direct browser access
+// No API key needed from user
 // ═══════════════════════════════════════════
 async function callGemini(messages, system, maxTokens=1000){
-  // ── Route 1: Proxy ──────────────────────
-  if(PROXY_URL){
-    const res = await fetch(PROXY_URL+"/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages, system, maxTokens })
-    });
-    if(res.ok){
-      const data = await res.json();
-      if(data.text) return data.text;
-    }
-    // If proxy fails, fall through to SDK
-    console.warn("Proxy failed, falling back to SDK");
-  }
+  const body = { model: AI_MODEL, max_tokens: maxTokens, messages };
+  if(system) body.system = system;
 
-  // ── Route 2: Official SDK (CORS-safe) ───
-  let tries = 0;
-  while(!window.__geminiSDK && tries++ < 40){ await new Promise(r=>setTimeout(r,100)); }
-  if(!window.__geminiSDK) throw new Error("Gemini SDK failed to load — check internet");
-
-  const genAI = new window.__geminiSDK(GEM_KEY);
-  const model = genAI.getGenerativeModel({
-    model: GEM_MODEL,
-    systemInstruction: system || undefined,
-    generationConfig: { maxOutputTokens: maxTokens, temperature: 0.9 }
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify(body)
   });
 
-  const history = [];
-  for(let i = 0; i < messages.length - 1; i++){
-    history.push({
-      role: messages[i].role === "assistant" ? "model" : "user",
-      parts: [{ text: messages[i].content }]
-    });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({error:{message:"HTTP "+res.status}}));
+    throw new Error(err.error?.message || "HTTP "+res.status);
   }
 
-  const lastMsg = messages[messages.length - 1].content;
-  const chat = model.startChat({ history });
-  const result = await chat.sendMessage(lastMsg);
-  const text = result.response.text().trim();
-  if(!text) throw new Error("Empty response from Gemini");
+  const data = await res.json();
+  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
+  if(!text) throw new Error("Empty response");
   return text;
 }
 // ═══════════════════════════════════════════
@@ -250,7 +219,7 @@ const TR = {
     lSleep:"Sleep Hours / Night",lPhone:"Phone Usage / Day",
     lBad:"Bad Habits — tap to select",lGood:"Good Habits — tap to select",
     lTime:"Simulation Timeline",
-    simBtn:"⚡ SIMULATE MY FUTURE",simNote:"Gemini AI · Firebase · localStorage",
+    simBtn:"⚡ SIMULATE MY FUTURE",simNote:"Claude AI · Firebase · localStorage",
     loadTxt:"SIMULATING YOUR FUTURE...",
     p0:"▸ Analyzing your habits",p1:"▸ Calculating life trajectory",
     p2:"▸ Writing your future story",p3:"▸ Saving to Firebase",
@@ -294,7 +263,7 @@ const TR = {
     lSleep:"தூக்க நேரம் / இரவு",lPhone:"போன் பயன்பாடு / நாள்",
     lBad:"கெட்ட பழக்கங்கள் — தட்டி தேர்வு செய்",lGood:"நல்ல பழக்கங்கள் — தட்டி தேர்வு செய்",
     lTime:"சிமுலேஷன் காலம்",
-    simBtn:"⚡ என் எதிர்காலம் சிமுலேட் செய்",simNote:"Gemini AI · Firebase · localStorage",
+    simBtn:"⚡ என் எதிர்காலம் சிமுலேட் செய்",simNote:"Claude AI · Firebase · localStorage",
     loadTxt:"உன் எதிர்காலம் கணக்கிடப்படுகிறது...",
     p0:"▸ உன் பழக்கங்கள் பகுப்பாய்வு",p1:"▸ வாழ்க்கை பாதை கணக்கீடு",
     p2:"▸ உன் எதிர்கால கதை எழுதுகிறோம்",p3:"▸ Firebase-ல் சேமிக்கிறோம்",
