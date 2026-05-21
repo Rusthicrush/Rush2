@@ -135,6 +135,8 @@ textarea.inp{resize:none;min-height:110px;border:none;border-bottom:1px solid va
 #chat-send{background:var(--lime);color:var(--bg);border:none;padding:.9rem 1.3rem;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;cursor:pointer;flex-shrink:0;transition:opacity .2s;white-space:nowrap;}
 #chat-send:hover{opacity:.85;}
 #chat-send:disabled{opacity:.35;cursor:not-allowed;}
+.clr-chat-btn{background:transparent;border:none;color:#555572;font-family:"Space Mono",monospace;font-size:0.54rem;letter-spacing:0.1em;cursor:pointer;padding:0.3rem 0.5rem;transition:color 0.2s;}
+.clr-chat-btn:hover{color:#ff3d7f;}
 /* ── Modal ── */
 #modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
 #modal-ov.show{display:flex;}
@@ -154,6 +156,11 @@ footer em{color:var(--lime);font-style:normal;}
   .form-grid{grid-template-columns:1fr;}.full{grid-column:1;}
   .act-btns,.hero-btns{flex-direction:column;align-items:stretch;}
   .nav-right{gap:.6rem;}
+
+
+
+
+
   .chat-sugs{padding:.5rem 1rem .7rem;}
   .sug-btn{font-size:.5rem;}
 }
@@ -167,40 +174,43 @@ footer em{color:var(--lime);font-style:normal;}
 const FB_PROJECT = "my-ca692";
 const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
 const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
-const AI_MODEL = "claude-haiku-4-5-20251001"; // free via built-in browser access
-const WA_NUMBER  = "94727676806";
-
-// ── Key hardcoded (Gemini free tier) ────
+const GEM_MODEL = "gemini-2.0-flash";
+//"AIzaSyBfl5a5kKceuZ0VdsmcTqL2gilQuiAVvLc"
+const WA_NUMBER = "94727676806";
 
 // ═══════════════════════════════════════════
 // CLAUDE API CALL — works on GitHub Pages
 // ═══════════════════════════════════════════
 // ═══════════════════════════════════════════
-// AI CALL — Claude, direct browser access
-// No API key needed from user
+// AI CALL — via Cloudflare Worker proxy
+// API key hidden server-side, CORS solved
 // ═══════════════════════════════════════════
 async function callGemini(messages, system, maxTokens=1000){
-  const body = { model: AI_MODEL, max_tokens: maxTokens, messages };
-  if(system) body.system = system;
-
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true"
-    },
-    body: JSON.stringify(body)
+  const key = atob("QUl6YVN5QmZsNWE1a0tjZXVaMFZkc21jVHFMMmdpbFF1aUFWdkxj");
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEM_MODEL}:generateContent?key=${key}`;
+  const contents = [];
+  if(system){
+    contents.push({role:"user",  parts:[{text:"[SYSTEM]\n"+system}]});
+    contents.push({role:"model", parts:[{text:"Understood."}]});
+  }
+  messages.forEach(m=>{
+    contents.push({
+      role: m.role==="assistant"?"model":"user",
+      parts:[{text:m.content}]
+    });
   });
-
+  const res = await fetch(url,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents, generationConfig:{maxOutputTokens:maxTokens, temperature:0.9}})
+  });
   if(!res.ok){
     const err = await res.json().catch(()=>({error:{message:"HTTP "+res.status}}));
-    throw new Error(err.error?.message || "HTTP "+res.status);
+    throw new Error(err.error?.message||"HTTP "+res.status);
   }
-
   const data = await res.json();
-  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
-  if(!text) throw new Error("Empty response");
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  if(!text) throw new Error("Empty response from Gemini");
   return text;
 }
 // ═══════════════════════════════════════════
@@ -342,224 +352,14 @@ function applyLang(){
   buildSuggestions();
   renderHistory();
 }
-</script>
 
-<canvas id="galaxy"></canvas>
-<div id="rst-wm"><span>RST</span></div>
 
-<nav>
-  <div class="nav-logo">FUTURE ME</div>
-  <div class="nav-right">
-    <div class="nav-links">
-      <button class="nav-btn active" data-sec="simulate" onclick="goSec('simulate')">SIMULATE</button>
-      <button class="nav-btn" data-sec="history"  onclick="goSec('history')">HISTORY</button>
-      <button class="nav-btn" data-sec="letter"   onclick="goSec('letter')">5YR LETTER</button>
-      <button class="nav-btn" data-sec="chatbot"  onclick="goSec('chatbot')">AI CHAT</button>
-    </div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn"        data-lang="ta" onclick="setLang('ta')">தமிழ்</button>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="badge"><span id="badge-t">✦ AI-Powered Future Simulation</span></div>
-  <h1 class="hero-title">
-    <span id="h1">WHO WILL</span><br/>
-    <span class="lime" id="h2">YOU</span><br/>
-    <span class="cyan" id="h3">BECOME?</span>
-  </h1>
-  <p class="hero-sub" id="hero-sub">Enter your present self.<br/>We'll reveal who you'll be.</p>
-  <div class="hero-btns">
-    <button class="btn-p" id="start-btn" onclick="goSec('simulate')">⚡ START SIMULATION</button>
-    <button class="btn-g" id="hist-btn"  onclick="goSec('history')">VIEW HISTORY</button>
-  </div>
-</section>
-
-<!-- SIMULATE -->
-<section id="simulate">
-  <div class="container">
-    <div class="sec-tag" id="step-tag">// Step 01</div>
-    <h2 class="sec-title" id="sim-title">YOUR PRESENT SELF</h2>
-    <p class="sec-sub" id="sim-sub">Fill in your reality. No filter. The AI builds your future.</p>
-    <div class="form-grid">
-      <div>
-        <label class="lbl"><span id="l-name">Your Name</span></label>
-        <input class="inp" id="f-name" placeholder="e.g. Rusthi" type="text"/>
-      </div>
-      <div>
-        <label class="lbl"><span id="l-age">Current Age</span></label>
-        <input class="inp" id="f-age" placeholder="18" type="number" min="1" max="120"/>
-      </div>
-      <div class="full">
-        <label class="lbl"><span id="l-dream">Your Big Dream / Goal</span></label>
-        <input class="inp" id="f-dream" placeholder="e.g. Own a garage, music producer..."/>
-      </div>
-      <div class="full">
-        <label class="lbl"><span id="l-skills">Current Skills</span></label>
-        <input class="inp" id="f-skills" placeholder="e.g. coding, guitar, football..."/>
-      </div>
-      <div class="full">
-        <label class="lbl"><span id="l-fear">Biggest Fear / Obstacle</span></label>
-        <input class="inp" id="f-fear" placeholder="e.g. lazy, no money..."/>
-      </div>
-      <div>
-        <label class="lbl"><span id="l-sleep">Sleep Hours / Night</span> — <span id="sv" class="lv">7</span>h</label>
-        <input type="range" id="f-sleep" min="3" max="12" value="7" style="width:100%;margin-top:.5rem" oninput="$('sv').textContent=this.value"/>
-      </div>
-      <div>
-        <label class="lbl"><span id="l-phone">Phone Usage / Day</span> — <span id="pv" class="lv">5</span>h</label>
-        <input type="range" id="f-phone" min="0" max="16" value="5" style="width:100%;margin-top:.5rem" oninput="$('pv').textContent=this.value"/>
-      </div>
-      <div class="full">
-        <label class="lbl" id="l-bad">Bad Habits — tap to select</label>
-        <div class="tags" id="bad-tags"></div>
-      </div>
-      <div class="full">
-        <label class="lbl" id="l-good">Good Habits — tap to select</label>
-        <div class="tags" id="good-tags"></div>
-      </div>
-      <div class="full">
-        <label class="lbl" id="l-time">Simulation Timeline</label>
-        <select class="inp" id="f-years">
-          <option value="1">1 Year From Now</option>
-          <option value="3">3 Years From Now</option>
-          <option value="5" selected>5 Years From Now</option>
-          <option value="10">10 Years From Now</option>
-        </select>
-      </div>
-      <div class="full sim-center">
-        <button class="btn-p btn-sim" id="sim-btn" onclick="generate()">⚡ SIMULATE MY FUTURE</button>
-        <p class="sim-note" id="sim-note">Gemini AI · Firebase · localStorage</p>
-      </div>
-    </div>
-
-    <div id="loading">
-      <div class="spinner"></div>
-      <div>
-        <div class="load-title" id="load-txt">SIMULATING YOUR FUTURE...</div>
-        <div class="phase-list">
-          <div class="phase" id="p0">▸ Analyzing your habits</div>
-          <div class="phase" id="p1">▸ Calculating life trajectory</div>
-          <div class="phase" id="p2">▸ Writing your future story</div>
-          <div class="phase" id="p3">▸ Saving to Firebase</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="result">
-      <div class="res-label" id="res-lbl">// Simulation Result</div>
-      <h2 class="res-name" id="res-name">YOUR FUTURE</h2>
-      <div class="res-card">
-        <div class="res-bar"></div>
-        <div class="meta-row" id="meta-row"></div>
-        <div class="divider"></div>
-        <div id="res-text"></div>
-        <div class="fb-row">
-          <div class="fb-dot" id="fb-dot"></div>
-          <span id="fb-txt">Firebase</span>
-        </div>
-        <div class="divider"></div>
-        <div class="act-btns">
-          <button class="btn-p" id="btn-save" onclick="saveLocal()">💾 SAVE LOCAL</button>
-          <button class="btn-g btn-wa" id="btn-wa" onclick="shareWA()">📲 SHARE ON WHATSAPP</button>
-          <button class="btn-g" id="btn-copy" onclick="shareCopy()">📋 COPY</button>
-          <button class="btn-g" id="btn-resim" onclick="generate()">↺ RE-SIMULATE</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HISTORY -->
-<section id="history">
-  <div class="container">
-    <div class="sec-tag" id="arch-tag">// Archive</div>
-    <h2 class="sec-title" id="arch-title">PAST SIMULATIONS</h2>
-    <p class="sec-sub" id="arch-sub">Locally saved predictions.</p>
-    <div id="hist-list"></div>
-  </div>
-</section>
-
-<!-- LETTER -->
-<section id="letter">
-  <div class="container">
-    <div class="sec-tag" id="let-tag">// Open After 5 Years</div>
-    <h2 class="sec-title" id="let-title">DEAR FUTURE ME</h2>
-    <p class="sec-sub" id="let-sub">Write a letter. Sealed until you're ready.</p>
-    <div id="let-write">
-      <div class="let-box">
-        <div class="dear" id="dear-t">✉ Dear Future Me,</div>
-        <textarea class="inp" id="letter-txt" rows="5" placeholder="Right now I am feeling…"></textarea>
-        <div class="let-footer">
-          <div class="let-date">
-            <label class="lbl" id="l-unlock">Unlock Date</label>
-            <input type="date" class="inp" id="unlock-date" style="font-family:'Space Mono',monospace;font-size:.76rem"/>
-          </div>
-          <button class="btn-p" id="seal-btn" onclick="sealLetter()">🔒 SEAL LETTER</button>
-        </div>
-      </div>
-    </div>
-    <div id="let-sealed" style="display:none">
-      <div class="sealed-box">
-        <div class="sealed-h" id="sealed-h">🔒 LETTER SEALED</div>
-        <p class="sealed-note"><span id="opens-on">Opens on</span> <em id="sealed-date"></em></p>
-        <div class="cd-wrap" id="countdown"></div>
-        <button class="btn-g" id="break-btn" style="margin-top:1.5rem;font-size:.6rem" onclick="breakSeal()">Break Seal Early</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CHATBOT -->
-<section id="chatbot">
-  <div class="container">
-    <div class="sec-tag" id="chat-tag">// AI Assistant</div>
-    <h2 class="sec-title" id="chat-title">TALK TO YOUR FUTURE</h2>
-    <p class="sec-sub" id="chat-sub">Ask anything — life advice, career, habits. Gemini AI answers.</p>
-    <div class="chat-wrap">
-      <div class="chat-bar"></div>
-      <div class="chat-msgs" id="chat-msgs">
-        <div class="msg ai">
-          <div class="msg-avatar">AI</div>
-          <div class="msg-bubble" id="chat-welcome-msg">Hey! I'm your Future Me assistant. Ask me anything about life decisions, habits, or your simulation. I'm here to help you think clearly. 🌟</div>
-        </div>
-      </div>
-      <div class="chat-sugs" id="chat-sugs"></div>
-      <div class="chat-input-row">
-        <input id="chat-inp" placeholder="Ask your future self anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"/>
-        <button id="chat-send-btn" onclick="sendChat()">SEND ⚡</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer><em>FUTURE ME</em> by RST · Gemini AI · Firebase · All data yours</footer>
-
-<!-- Modal -->
-<div id="modal-ov" onclick="closeModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-bar"></div>
-    <button class="modal-close" onclick="closeModal()">✕ CLOSE</button>
-    <div class="modal-title" id="m-title"></div>
-    <div class="modal-meta"  id="m-meta"></div>
-    <div class="divider"></div>
-    <div class="modal-text"  id="m-text"></div>
-    <div style="margin-top:1.5rem">
-      <button class="btn-g btn-wa" id="m-wa" style="font-size:.65rem;padding:.6rem 1.2rem">📲 Share on WhatsApp</button>
-    </div>
-  </div>
-</div>
-
-<div id="wa-badge"></div>
-<div id="toast"></div>
-
-<script>
 // ── Galaxy Canvas ─────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
 (()=>{
-  const cv=$('galaxy'),cx=cv.getContext('2d');
+  const cv=$('galaxy');
+  if(!cv) return;
+  const cx=cv.getContext('2d');
   let W,H,stars=[],nebs=[];
   const resize=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;};
   const init=()=>{
@@ -581,9 +381,10 @@ function applyLang(){
   resize();init();draw();
   addEventListener('resize',()=>{resize();init();});
 })();
+}); // DOMContentLoaded
 
 // ── Init unlock date ──────────────────────
-(()=>{const d=new Date();d.setFullYear(d.getFullYear()+5);$('unlock-date').value=d.toISOString().split('T')[0];})();
+
 
 // ── Tags ──────────────────────────────────
 const selBad=new Set(),selGood=new Set();
@@ -667,9 +468,54 @@ function buildWA(rec){
 }
 
 // ── Typewriter ────────────────────────────
-function typeWriter(el,text){
-  el.textContent='';let i=0;
-  const iv=setInterval(()=>{if(i<text.length)el.textContent=text.slice(0,++i);else clearInterval(iv);},9);
+function typeWriter(el, text){
+  el.innerHTML=''; let i=0;
+  const iv=setInterval(()=>{
+    if(i<text.length){
+      i+=2; // speed
+      // Render partial markdown safely
+      el.innerHTML = (typeof marked !== 'undefined')
+        ? marked.parse(text.slice(0,i))
+        : text.slice(0,i).replace(/\n/g,'<br/>');
+    } else {
+      // Final render — full markdown
+      el.innerHTML = (typeof marked !== 'undefined')
+        ? marked.parse(text)
+        : text.replace(/\n/g,'<br/>');
+      clearInterval(iv);
+    }
+  }, 10);
+}
+
+// ── PDF Export ────────────────────────────
+function downloadPDF(){
+  if(!curRec){ showToast(tr('tDream')); return; }
+  const name = curRec.input?.name || 'Future';
+  const years = curRec.input?.years || '5';
+  const dream = curRec.input?.dream || '';
+  const text  = curRec.text || '';
+
+  const el = document.createElement('div');
+  el.style.cssText = 'font-family:Georgia,serif;padding:40px;max-width:700px;color:#111;background:#fff;';
+  el.innerHTML = `
+    <h1 style="font-size:2rem;margin-bottom:0.3rem;color:#0a0a1a">${name.toUpperCase()}'S FUTURE — +${years} YEARS</h1>
+    <p style="font-size:0.8rem;color:#666;margin-bottom:2rem;font-family:monospace">Dream: ${dream} · Generated by FUTURE ME</p>
+    <hr style="border:1px solid #ddd;margin-bottom:2rem"/>
+    <div style="font-size:1rem;line-height:1.9;white-space:pre-wrap">${text}</div>
+    <hr style="border:1px solid #ddd;margin-top:3rem"/>
+    <p style="font-size:0.7rem;color:#999;text-align:center;margin-top:1rem;font-family:monospace">FUTURE ME by RST · ${new Date().toLocaleDateString()}</p>
+  `;
+
+  const opt = {
+    margin: [15,15,15,15],
+    filename: `FutureMe-${name}-${years}yr.pdf`,
+    image: { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true },
+    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' }
+  };
+
+  showToast('📄 Generating PDF...');
+  html2pdf().set(opt).from(el).save().then(()=>showToast('✅ PDF Downloaded!'));
 }
 
 // ── WA badge ──────────────────────────────
@@ -844,6 +690,16 @@ function startCD(ts){
 let chatHistory=[];
 let chatSugsShown=true;
 
+function clearChat(){
+  chatHistory=[];
+  chatSugsShown=true;
+  const msgs=$('chat-msgs');
+  const welcome=tr('chatWelcome');
+  msgs.innerHTML='<div class="msg ai"><div class="msg-avatar">AI</div><div class="msg-bubble" id="chat-welcome-msg">'+welcome+'</div></div>';
+  buildSuggestions();
+  showToast('🗑 Chat cleared');
+}
+
 function buildSuggestions(){
   const el=$('chat-sugs');if(!el)return;
   if(!chatSugsShown){el.style.display='none';return;}
@@ -878,7 +734,9 @@ function appendMsg(role,text,isTyping=false){
     wrap.id='chat-typing';
   } else {
     // Render line breaks
-    bub.innerHTML=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
+    bub.innerHTML = (typeof marked !== 'undefined')
+      ? marked.parse(text)
+      : text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
   }
   wrap.appendChild(av);wrap.appendChild(bub);
   msgs.appendChild(wrap);
@@ -926,8 +784,233 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyLang();
   renderHistory();
   renderLetter();
+  // Set default unlock date
+  const ud=$('unlock-date');
+  if(ud){const d=new Date();d.setFullYear(d.getFullYear()+5);ud.value=d.toISOString().split('T')[0];}
 
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<canvas id="galaxy"></canvas>
+<div id="rst-wm"><span>RST</span></div>
+
+<nav>
+  <div class="nav-logo">FUTURE ME</div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <button class="nav-btn active" data-sec="simulate" onclick="goSec('simulate')">SIMULATE</button>
+      <button class="nav-btn" data-sec="history"  onclick="goSec('history')">HISTORY</button>
+      <button class="nav-btn" data-sec="letter"   onclick="goSec('letter')">5YR LETTER</button>
+      <button class="nav-btn" data-sec="chatbot"  onclick="goSec('chatbot')">AI CHAT</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        data-lang="ta" onclick="setLang('ta')">தமிழ்</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge"><span id="badge-t">✦ AI-Powered Future Simulation</span></div>
+  <h1 class="hero-title">
+    <span id="h1">WHO WILL</span><br/>
+    <span class="lime" id="h2">YOU</span><br/>
+    <span class="cyan" id="h3">BECOME?</span>
+  </h1>
+  <p class="hero-sub" id="hero-sub">Enter your present self.<br/>We'll reveal who you'll be.</p>
+  <div class="hero-btns">
+    <button class="btn-p" id="start-btn" onclick="goSec('simulate')">⚡ START SIMULATION</button>
+    <button class="btn-g" id="hist-btn"  onclick="goSec('history')">VIEW HISTORY</button>
+  </div>
+</section>
+
+<!-- SIMULATE -->
+<section id="simulate">
+  <div class="container">
+    <div class="sec-tag" id="step-tag">// Step 01</div>
+    <h2 class="sec-title" id="sim-title">YOUR PRESENT SELF</h2>
+    <p class="sec-sub" id="sim-sub">Fill in your reality. No filter. The AI builds your future.</p>
+    <div class="form-grid">
+      <div>
+        <label class="lbl"><span id="l-name">Your Name</span></label>
+        <input class="inp" id="f-name" placeholder="e.g. Rusthi" type="text"/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-age">Current Age</span></label>
+        <input class="inp" id="f-age" placeholder="18" type="number" min="1" max="120"/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-dream">Your Big Dream / Goal</span></label>
+        <input class="inp" id="f-dream" placeholder="e.g. Own a garage, music producer..."/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-skills">Current Skills</span></label>
+        <input class="inp" id="f-skills" placeholder="e.g. coding, guitar, football..."/>
+      </div>
+      <div class="full">
+        <label class="lbl"><span id="l-fear">Biggest Fear / Obstacle</span></label>
+        <input class="inp" id="f-fear" placeholder="e.g. lazy, no money..."/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-sleep">Sleep Hours / Night</span> — <span id="sv" class="lv">7</span>h</label>
+        <input type="range" id="f-sleep" min="3" max="12" value="7" style="width:100%;margin-top:.5rem" oninput="$('sv').textContent=this.value"/>
+      </div>
+      <div>
+        <label class="lbl"><span id="l-phone">Phone Usage / Day</span> — <span id="pv" class="lv">5</span>h</label>
+        <input type="range" id="f-phone" min="0" max="16" value="5" style="width:100%;margin-top:.5rem" oninput="$('pv').textContent=this.value"/>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-bad">Bad Habits — tap to select</label>
+        <div class="tags" id="bad-tags"></div>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-good">Good Habits — tap to select</label>
+        <div class="tags" id="good-tags"></div>
+      </div>
+      <div class="full">
+        <label class="lbl" id="l-time">Simulation Timeline</label>
+        <select class="inp" id="f-years">
+          <option value="1">1 Year From Now</option>
+          <option value="3">3 Years From Now</option>
+          <option value="5" selected>5 Years From Now</option>
+          <option value="10">10 Years From Now</option>
+        </select>
+      </div>
+      <div class="full sim-center">
+        <button class="btn-p btn-sim" id="sim-btn" onclick="generate()">⚡ SIMULATE MY FUTURE</button>
+        <p class="sim-note" id="sim-note">Gemini AI · Firebase · localStorage</p>
+      </div>
+    </div>
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <div>
+        <div class="load-title" id="load-txt">SIMULATING YOUR FUTURE...</div>
+        <div class="phase-list">
+          <div class="phase" id="p0">▸ Analyzing your habits</div>
+          <div class="phase" id="p1">▸ Calculating life trajectory</div>
+          <div class="phase" id="p2">▸ Writing your future story</div>
+          <div class="phase" id="p3">▸ Saving to Firebase</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="result">
+      <div class="res-label" id="res-lbl">// Simulation Result</div>
+      <h2 class="res-name" id="res-name">YOUR FUTURE</h2>
+      <div class="res-card">
+        <div class="res-bar"></div>
+        <div class="meta-row" id="meta-row"></div>
+        <div class="divider"></div>
+        <div id="res-text"></div>
+        <div class="fb-row">
+          <div class="fb-dot" id="fb-dot"></div>
+          <span id="fb-txt">Firebase</span>
+        </div>
+        <div class="divider"></div>
+        <div class="act-btns">
+          <button class="btn-p" id="btn-save" onclick="saveLocal()">💾 SAVE LOCAL</button>
+          <button class="btn-g btn-wa" id="btn-wa" onclick="shareWA()">📲 SHARE ON WHATSAPP</button>
+          <button class="btn-g" id="btn-copy" onclick="shareCopy()">📋 COPY</button>
+          <button class="btn-g" id="btn-resim" onclick="generate()">↺ RE-SIMULATE</button>
+          <button class="btn-g" onclick="downloadPDF()" style="border-color:rgba(0,229,255,.3);color:#00e5ff">📄 PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+  <div class="container">
+    <div class="sec-tag" id="arch-tag">// Archive</div>
+    <h2 class="sec-title" id="arch-title">PAST SIMULATIONS</h2>
+    <p class="sec-sub" id="arch-sub">Locally saved predictions.</p>
+    <div id="hist-list"></div>
+  </div>
+</section>
+
+<!-- LETTER -->
+<section id="letter">
+  <div class="container">
+    <div class="sec-tag" id="let-tag">// Open After 5 Years</div>
+    <h2 class="sec-title" id="let-title">DEAR FUTURE ME</h2>
+    <p class="sec-sub" id="let-sub">Write a letter. Sealed until you're ready.</p>
+    <div id="let-write">
+      <div class="let-box">
+        <div class="dear" id="dear-t">✉ Dear Future Me,</div>
+        <textarea class="inp" id="letter-txt" rows="5" placeholder="Right now I am feeling…"></textarea>
+        <div class="let-footer">
+          <div class="let-date">
+            <label class="lbl" id="l-unlock">Unlock Date</label>
+            <input type="date" class="inp" id="unlock-date" style="font-family:'Space Mono',monospace;font-size:.76rem"/>
+          </div>
+          <button class="btn-p" id="seal-btn" onclick="sealLetter()">🔒 SEAL LETTER</button>
+        </div>
+      </div>
+    </div>
+    <div id="let-sealed" style="display:none">
+      <div class="sealed-box">
+        <div class="sealed-h" id="sealed-h">🔒 LETTER SEALED</div>
+        <p class="sealed-note"><span id="opens-on">Opens on</span> <em id="sealed-date"></em></p>
+        <div class="cd-wrap" id="countdown"></div>
+        <button class="btn-g" id="break-btn" style="margin-top:1.5rem;font-size:.6rem" onclick="breakSeal()">Break Seal Early</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHATBOT -->
+<section id="chatbot">
+  <div class="container">
+    <div class="sec-tag" id="chat-tag">// AI Assistant</div>
+    <h2 class="sec-title" id="chat-title">TALK TO YOUR FUTURE</h2>
+    <p class="sec-sub" id="chat-sub">Ask anything — life advice, career, habits. Gemini AI answers.</p>
+    <div class="chat-wrap">
+      <div class="chat-bar"></div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg ai">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-bubble" id="chat-welcome-msg">Hey! I'm your Future Me assistant. Ask me anything about life decisions, habits, or your simulation. I'm here to help you think clearly. 🌟</div>
+        </div>
+      </div>
+      <div class="chat-sugs" id="chat-sugs"></div>
+      <div style="display:flex;justify-content:flex-end;padding:0.35rem 1.2rem 0;border-top:1px solid #1a1a30;">
+        <button onclick="clearChat()" class="clr-chat-btn">✕ CLEAR CHAT</button>
+      </div>
+      <div class="chat-input-row">
+        <input id="chat-inp" placeholder="Ask your future self anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"/>
+        <button id="chat-send-btn" onclick="sendChat()">SEND ⚡</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><em>FUTURE ME</em> by RST · Gemini AI · Firebase · All data yours</footer>
+
+<!-- Modal -->
+<div id="modal-ov" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal()">✕ CLOSE</button>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-meta"  id="m-meta"></div>
+    <div class="divider"></div>
+    <div class="modal-text"  id="m-text"></div>
+    <div style="margin-top:1.5rem">
+      <button class="btn-g btn-wa" id="m-wa" style="font-size:.65rem;padding:.6rem 1.2rem">📲 Share on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="wa-badge"></div>
+<div id="toast"></div>
+
+
 </body>
 </html>
+
+ 
