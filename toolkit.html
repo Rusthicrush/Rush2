@@ -133,6 +133,7 @@ nav{
   padding:24px 20px;cursor:pointer;
   transition:transform .3s cubic-bezier(.175,.885,.32,1.275),box-shadow .3s,border-color .3s;
   position:relative;overflow:hidden;text-align:center;
+  will-change:transform;
 }
 .tool-card::before{
   content:'';position:absolute;inset:0;border-radius:var(--radius);
@@ -424,6 +425,16 @@ select.tool-input{cursor:pointer}
 @keyframes glowPulse{0%,100%{text-shadow:var(--glow)}50%{text-shadow:0 0 40px #00bfff,0 0 80px #00bfff44}}
 .animate-in{animation:fadeInUp .5s forwards}
 .hero-title{animation:glowPulse 3s ease-in-out infinite}
+
+/* MOBILE PERF — reduce heavy effects */
+@media(max-width:768px){
+  .tool-card{backdrop-filter:none;-webkit-backdrop-filter:none}
+  nav{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .modal{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .glow-circle{display:none}
+  .hero-title{animation:none}
+  @keyframes pulse{0%,100%{box-shadow:none}50%{box-shadow:none}}
+}
 
 /* GLOW CIRCLES BG */
 .glow-circle{
@@ -779,6 +790,7 @@ select.tool-input{cursor:pointer}
 const bgCanvas = document.getElementById('bgCanvas');
 const bgCtx = bgCanvas.getContext('2d');
 let stars = [], particles = [];
+const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
 
 function resizeBg(){
   bgCanvas.width = window.innerWidth;
@@ -787,8 +799,9 @@ function resizeBg(){
 resizeBg();
 window.addEventListener('resize', resizeBg);
 
-// Stars
-for(let i=0;i<180;i++){
+// Stars — reduced count, skip on very low-end
+const starCount = isMobile ? 40 : 80;
+for(let i=0;i<starCount;i++){
   stars.push({
     x:Math.random()*window.innerWidth,
     y:Math.random()*window.innerHeight,
@@ -797,8 +810,9 @@ for(let i=0;i<180;i++){
     s:Math.random()*.003+.001
   });
 }
-// Particles
-for(let i=0;i<40;i++){
+// Particles — mobile skip entirely, desktop reduced
+const particleCount = isMobile ? 0 : 20;
+for(let i=0;i<particleCount;i++){
   particles.push({
     x:Math.random()*window.innerWidth,
     y:Math.random()*window.innerHeight,
@@ -809,7 +823,9 @@ for(let i=0;i<40;i++){
   });
 }
 
+let bgFrameCount = 0;
 function drawBg(){
+  bgFrameCount++;
   bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
   // Stars
   stars.forEach(s=>{
@@ -820,26 +836,32 @@ function drawBg(){
     bgCtx.fillStyle=`rgba(255,255,255,${s.a*0.7})`;
     bgCtx.fill();
   });
-  // Particles
-  particles.forEach(p=>{
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<0||p.x>bgCanvas.width)p.vx=-p.vx;
-    if(p.y<0||p.y>bgCanvas.height)p.vy=-p.vy;
-    bgCtx.beginPath();
-    bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    bgCtx.fillStyle=`rgba(0,191,255,${p.a})`;
-    bgCtx.fill();
-  });
-  // Connect nearby particles
-  for(let i=0;i<particles.length;i++){
-    for(let j=i+1;j<particles.length;j++){
-      const d=Math.hypot(particles[i].x-particles[j].x,particles[i].y-particles[j].y);
-      if(d<120){
-        bgCtx.beginPath();
-        bgCtx.moveTo(particles[i].x,particles[i].y);
-        bgCtx.lineTo(particles[j].x,particles[j].y);
-        bgCtx.strokeStyle=`rgba(0,191,255,${(1-d/120)*.15})`;
-        bgCtx.stroke();
+  // Particles (desktop only)
+  if(!isMobile){
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>bgCanvas.width)p.vx=-p.vx;
+      if(p.y<0||p.y>bgCanvas.height)p.vy=-p.vy;
+      bgCtx.beginPath();
+      bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      bgCtx.fillStyle=`rgba(0,191,255,${p.a})`;
+      bgCtx.fill();
+    });
+    // Connect lines — only every 3rd frame to save CPU
+    if(bgFrameCount % 3 === 0){
+      for(let i=0;i<particles.length;i++){
+        for(let j=i+1;j<particles.length;j++){
+          const dx=particles[i].x-particles[j].x;
+          const dy=particles[i].y-particles[j].y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<120){
+            bgCtx.beginPath();
+            bgCtx.moveTo(particles[i].x,particles[i].y);
+            bgCtx.lineTo(particles[j].x,particles[j].y);
+            bgCtx.strokeStyle=`rgba(0,191,255,${(1-d/120)*.15})`;
+            bgCtx.stroke();
+          }
+        }
       }
     }
   }
@@ -2053,30 +2075,53 @@ function closeHacker(){
 // ============================================================
 // CARD TILT EFFECT
 // ============================================================
-document.querySelectorAll('.tool-card').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=e.clientX-r.left,y=e.clientY-r.top;
-    const cx=r.width/2,cy=r.height/2;
-    const rx=(y-cy)/cy*8,ry=(x-cx)/cx*-8;
-    card.style.transform=`perspective(400px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px) scale(1.02)`;
+// ============================================================
+// CARD TILT EFFECT — desktop only, throttled
+// ============================================================
+if(!isMobile){
+  let tiltFrame = null;
+  document.querySelectorAll('.tool-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      if(tiltFrame) return;
+      tiltFrame = requestAnimationFrame(()=>{
+        tiltFrame = null;
+        const r=card.getBoundingClientRect();
+        const x=e.clientX-r.left,y=e.clientY-r.top;
+        const cx=r.width/2,cy=r.height/2;
+        const rx=(y-cy)/cy*8,ry=(x-cx)/cx*-8;
+        card.style.transform=`perspective(400px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px) scale(1.02)`;
+      });
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform='';
+    });
   });
-  card.addEventListener('mouseleave',()=>{
-    card.style.transform='';
-  });
-});
+}
 
+// ============================================================
+// ANIMATE CARDS ON SCROLL
+// ============================================================
 // ============================================================
 // ANIMATE CARDS ON SCROLL
 // ============================================================
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
-    if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';e.target.style.transition='opacity .5s, transform .5s';}
+    if(e.isIntersecting){
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+      e.target.style.willChange='auto';
+      observer.unobserve(e.target);
+    }
   });
 },{threshold:.1});
 document.querySelectorAll('.tool-card').forEach((c,i)=>{
-  c.style.opacity='0';c.style.transform='translateY(30px)';
-  c.style.transitionDelay=(i%8)*0.05+'s';
+  c.style.opacity='0';
+  c.style.transform='translateY(30px)';
+  c.style.transition=isMobile
+    ?'opacity .3s, transform .3s'
+    :`opacity .5s, transform .5s`;
+  c.style.transitionDelay=(i%8)*0.04+'s';
+  c.style.willChange='opacity, transform';
   observer.observe(c);
 });
 
