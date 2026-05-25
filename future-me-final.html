@@ -193,7 +193,7 @@ async function callGemini(messages, system, maxTokens=1000){
       "X-Title":"Future Me"
     },
     body:JSON.stringify({
-      model:"llama3-8b-8192",
+      model:"llama-3.1-8b-instant",
       max_tokens:maxTokens,
       messages:system?[{role:"system",content:system},...messages]:messages
     })
