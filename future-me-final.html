@@ -174,7 +174,7 @@ footer em{color:var(--lime);font-style:normal;}
 const FB_PROJECT = "my-ca692";
 const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
 const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
-const GEM_MODEL = "gemini-2.5-flash";
+const OR_KEY = "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";
 //"AIzaSyCdJNnGjqYJDLL2kexwbCiEwZk_WJVuor4"
 const WA_NUMBER = "94727676806";
 
@@ -186,31 +186,23 @@ const WA_NUMBER = "94727676806";
 // API key hidden server-side, CORS solved
 // ═══════════════════════════════════════════
 async function callGemini(messages, system, maxTokens=1000){
-  const key = atob("QUl6YVN5QmZsNWE1a0tjZXVaMFZkc21jVHFMMmdpbFF1aUFWdkxj");
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEM_MODEL}:generateContent?key=${key}`;
-  const contents = [];
-  if(system){
-    contents.push({role:"user",  parts:[{text:"[SYSTEM]\n"+system}]});
-    contents.push({role:"model", parts:[{text:"Understood."}]});
-  }
-  messages.forEach(m=>{
-    contents.push({
-      role: m.role==="assistant"?"model":"user",
-      parts:[{text:m.content}]
-    });
-  });
-  const res = await fetch(url,{
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({contents, generationConfig:{maxOutputTokens:maxTokens, temperature:0.9}})
+    headers:{
+      "Authorization":"Bearer "+OR_KEY,
+      "Content-Type":"application/json",
+      "HTTP-Referer":"https://rusthicrush.github.io",
+      "X-Title":"Future Me"
+    },
+    body:JSON.stringify({
+      model:"google/gemini-2.0-flash-exp:free",
+      max_tokens:maxTokens,
+      messages:system?[{role:"system",content:system},...messages]:messages
+    })
   });
-  if(!res.ok){
-    const err = await res.json().catch(()=>({error:{message:"HTTP "+res.status}}));
-    throw new Error(err.error?.message||"HTTP "+res.status);
-  }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-  if(!text) throw new Error("Empty response from Gemini");
+  const text = data.choices?.[0]?.message?.content?.trim();
+  if(!text) throw new Error("Empty response");
   return text;
 }
 // ═══════════════════════════════════════════
