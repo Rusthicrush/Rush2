@@ -186,16 +186,17 @@ const WA_NUMBER = "94727676806";
 // API key hidden server-side, CORS solved
 // ═══════════════════════════════════════════
 async function callGemini(messages, system, maxTokens=1000){
+  const msgs = system ? [{role:"system",content:system},...messages] : messages;
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
     method:"POST",
     headers:{
-      "Content-Type":"application/json",
-      "X-Title":"Future Me"
+      "Authorization":"Bearer "+OR_KEY,
+      "Content-Type":"application/json"
     },
     body:JSON.stringify({
       model:"llama-3.1-8b-instant",
       max_tokens:maxTokens,
-      messages:system?[{role:"system",content:system},...messages]:messages
+      messages:msgs
     })
   });
   const data = await res.json();
