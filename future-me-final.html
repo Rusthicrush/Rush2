@@ -6,6 +6,7 @@ w<!DOCTYPE html>
 <title>FUTURE ME — AI Life Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="config.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{--lime:#c8ff00;--cyan:#00e5ff;--pink:#ff3d7f;--bg:#03030a;--card:#0b0b16;--border:#1a1a30;--muted:#555572;--text:#e2e2f0;}
@@ -174,7 +175,6 @@ footer em{color:var(--lime);font-style:normal;}
 const FB_PROJECT = "my-ca692";
 const FB_API_KEY = "AIzaSyCgnECagUEpd9X6BoUHAnnpbnst1mlY1dY";
 const FB_URL     = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/simulations`;
-const OR_KEY = ["c2stb3Ity","djEtNDMzNj","VkMDQzNTRh","MDEyOGVlMm","Y3ZWRmMTE0","ZmJiOTg4OD","VjZWVhYWU2","YzQwN2VkYj","g3NDdjOTU3","YmU4NzhhOQ=="].map(atob).join("");
 //"AIzaSyCdJNnGjqYJDLL2kexwbCiEwZk_WJVuor4"
 const WA_NUMBER = "94727676806";
 
@@ -186,16 +186,14 @@ const WA_NUMBER = "94727676806";
 // API key hidden server-side, CORS solved
 // ═══════════════════════════════════════════
 async function callGemini(messages, system, maxTokens=1000){
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
     method:"POST",
     headers:{
-      "Authorization":"Bearer "+OR_KEY,
       "Content-Type":"application/json",
-      "HTTP-Referer":"https://rusthicrush.github.io",
       "X-Title":"Future Me"
     },
     body:JSON.stringify({
-      model:"google/gemini-2.0-flash-exp:free",
+      model:"llama3-8b-8192",
       max_tokens:maxTokens,
       messages:system?[{role:"system",content:system},...messages]:messages
     })
