@@ -142,59 +142,58 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <script type="module">
   // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyAo-9M1ZCzGvFxIL41sSydZvrvHnB4tXhI",
     authDomain:        "love-insurance-57943.firebaseapp.com",
-    databaseURL:       "https://love-insurance-57943-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId:         "love-insurance-57943",
-    storageBucket:     "love-insurance-57943.appspot.com",
+    storageBucket:     "love-insurance-57943.firebasestorage.app",
     messagingSenderId: "508532055892",
-    appId:             "YOUR_APP_ID"
+    appId:             "1:508532055892:web:99ebd1af06b95cc81232c1",
+    measurementId:     "G-M1FTXSZLBP"
   };
   // ─────────────────────────────────────────────────────────────
 
   const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
+  const db  = getFirestore(app);
 
   // Expose Firebase helpers globally so the main script can use them
   window._fb = {
     // Save person-1 session data
     async saveSession(key, data) {
       try {
-        await set(ref(db, `lik_sessions/${key}`), data);
+        await setDoc(doc(db, 'lik_sessions', key), data);
         return true;
       } catch(e) { console.error('FB saveSession:', e); return false; }
     },
     // Save partner answers into existing session
     async savePartnerAnswers(key, answers) {
       try {
-        await set(ref(db, `lik_sessions/${key}/partnerAnswers`), answers);
+        await setDoc(doc(db, 'lik_sessions', key), { partnerAnswers: answers }, { merge: true });
         return true;
       } catch(e) { console.error('FB savePartnerAnswers:', e); return false; }
     },
     // One-time read of session
     async getSession(key) {
       try {
-        const snap = await get(ref(db, `lik_sessions/${key}`));
-        return snap.exists() ? snap.val() : null;
+        const snap = await getDoc(doc(db, 'lik_sessions', key));
+        return snap.exists() ? snap.data() : null;
       } catch(e) { console.error('FB getSession:', e); return null; }
     },
     // Save final result (score + names) for analytics / history
     async saveResult(data) {
-      const key = 'result_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
       try {
-        await set(ref(db, `lik_results/${key}`), {
+        await addDoc(collection(db, 'lik_results'), {
           ...data,
-          timestamp: new Date().toISOString()
+          timestamp: serverTimestamp()
         });
       } catch(e) { console.error('FB saveResult:', e); }
     },
     // Real-time listener — calls callback when partnerAnswers arrive
     watchSession(key, callback) {
-      const unsubscribe = onValue(ref(db, `lik_sessions/${key}/partnerAnswers`), snap => {
-        if (snap.exists()) callback(snap.val());
+      const unsubscribe = onSnapshot(doc(db, 'lik_sessions', key), snap => {
+        if (snap.exists() && snap.data().partnerAnswers) callback(snap.data().partnerAnswers);
       });
       return unsubscribe; // call this to stop listening
     }
@@ -231,6 +230,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
   <p class="easter">✨ Some names carry a different kind of magic...</p>
+  <div style="text-align:center;padding:10px 0 4px;">
+    <a href="https://rusthicrush.github.io/Rush2/" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,107,157,0.25);border-radius:99px;padding:8px 20px;text-decoration:none;color:rgba(240,240,248,0.65);font-size:0.75rem;font-family:'DM Sans',sans-serif;transition:all 0.3s;"
+       onmouseover="this.style.borderColor='rgba(255,107,157,0.6)';this.style.color='rgba(240,240,248,0.9)';this.style.background='rgba(255,107,157,0.1)';"
+       onmouseout="this.style.borderColor='rgba(255,107,157,0.25)';this.style.color='rgba(240,240,248,0.65)';this.style.background='rgba(255,255,255,0.05)';">
+      🏠 <span>rusthicrush.github.io/Rush2</span>
+    </a>
+  </div>
 </div>
 
 <!-- ===== QUIZ SETUP ===== -->
