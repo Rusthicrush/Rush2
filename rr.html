@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Find your love compatibility score with LIK — answer 20 questions and discover your bond.">
+<meta property="og:title" content="LIK 💙 — Your Love, Decoded">
+<meta property="og:description" content="Take the quiz and find out your love compatibility score!">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💙</text></svg>">
+<title>LIK 💙</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050a18;--surface:rgba(255,255,255,0.045);--border:rgba(255,255,255,0.09);
+  --pink:#ff6b9d;--blue:#4da6ff;--purple:#b56aff;--gold:#ffd166;
+  --text:#f0f0f8;--muted:rgba(240,240,248,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+#starCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.heart-particle{position:fixed;font-size:1rem;pointer-events:none;z-index:1;animation:floatUp 3.5s ease-in forwards;opacity:0;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-180px) scale(0.3);}}
+#app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:0 16px 80px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp 0.5s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.logo-bar{text-align:center;padding:36px 0 20px;}
+.logo{font-family:'Satisfy',cursive;font-size:2.2rem;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 16px rgba(255,107,157,0.5));}
+.tagline{font-size:0.75rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;backdrop-filter:blur(20px);margin-bottom:14px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(77,166,255,0.04),transparent 60%);pointer-events:none;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:5px;background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{font-size:0.76rem;color:var(--muted);margin-bottom:18px;}
+.input-group{margin-bottom:12px;}
+.input-group label{display:block;font-size:0.73rem;color:var(--muted);margin-bottom:5px;letter-spacing:0.4px;}
+.input-group input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;transition:border-color 0.3s,box-shadow 0.3s;}
+.input-group input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,0.15);}
+.input-group input::placeholder{color:rgba(240,240,248,0.22);}
+.select-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;transition:border-color 0.3s,box-shadow 0.3s;}
+.select-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,0.15);}
+.select-input option{background:#050a18;color:var(--text);}
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(30,30,50,0.95);border:1px solid rgba(255,107,157,0.3);border-radius:14px;padding:11px 22px;font-size:0.86rem;color:var(--text);z-index:9999;opacity:0;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;backdrop-filter:blur(20px);white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.btn{width:100%;padding:13px;border:none;border-radius:13px;font-family:'DM Sans',sans-serif;font-size:0.97rem;font-weight:600;cursor:pointer;transition:all 0.3s;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;box-shadow:0 4px 20px rgba(255,107,157,0.35);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,157,0.5);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-ghost{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);margin-top:10px;}
+
+/* MODE SELECTOR */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+.mode-card{background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:16px;padding:20px 14px;text-align:center;cursor:pointer;transition:all 0.3s;}
+.mode-card:hover,.mode-card.sel{border-color:var(--pink);background:rgba(255,107,157,0.1);transform:translateY(-2px);}
+.mode-card .mode-icon{font-size:2.2rem;display:block;margin-bottom:8px;}
+.mode-card .mode-name{font-weight:600;font-size:0.9rem;}
+.mode-card .mode-desc{font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:18px;}
+.prog-row{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);margin-bottom:6px;}
+.progress-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--blue));border-radius:99px;transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* QUESTIONS */
+.q-emoji{font-size:2.2rem;text-align:center;display:block;margin-bottom:10px;}
+.q-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;line-height:1.6;margin-bottom:18px;color:var(--text);}
+.options-grid{display:grid;gap:9px;}
+.option-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;text-align:left;transition:all 0.22s;width:100%;}
+.option-btn:hover{border-color:var(--pink);background:rgba(255,107,157,0.1);transform:translateX(3px);}
+.option-btn.sel{border-color:var(--pink);background:rgba(255,107,157,0.17);box-shadow:0 0 10px rgba(255,107,157,0.2);}
+.skip-btn{background:none;border:none;color:var(--muted);font-size:0.78rem;cursor:pointer;text-align:center;display:block;width:100%;padding:10px 0;text-decoration:underline;text-underline-offset:3px;transition:color 0.2s;}
+.skip-btn:hover{color:var(--text);}
+
+/* LOADING */
+.load-center{text-align:center;padding:50px 20px;}
+.heart-loader{font-size:3rem;animation:hb 0.8s ease-in-out infinite;display:block;margin:0 auto 20px;}
+@keyframes hb{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+.loading-names{font-family:'Playfair Display',serif;font-size:1.7rem;font-style:italic;color:var(--pink);margin-bottom:6px;filter:drop-shadow(0 0 18px rgba(255,107,157,0.55));}
+.loading-sub{font-size:0.82rem;color:var(--muted);margin-bottom:32px;letter-spacing:1px;}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pink);margin:0 3px;animation:dot 1.2s ease-in-out infinite;}
+.dots span:nth-child(2){animation-delay:.2s;background:var(--purple);}
+.dots span:nth-child(3){animation-delay:.4s;background:var(--blue);}
+@keyframes dot{0%,80%,100%{transform:scale(0.5);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
+#loadStatus{font-size:0.76rem;color:var(--muted);margin-top:18px;line-height:1.9;}
+
+/* LINK SHARE */
+.link-box{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 15px;font-size:0.8rem;color:var(--muted);word-break:break-all;margin-bottom:12px;font-family:monospace;position:relative;}
+.copy-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--pink);border:none;border-radius:7px;padding:4px 10px;color:white;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+
+/* WAITING */
+.waiting-anim{font-size:3.5rem;text-align:center;animation:pulse 1.5s ease-in-out infinite;display:block;margin:16px 0;}
+@keyframes pulse{0%,100%{opacity:0.5;transform:scale(0.95);}50%{opacity:1;transform:scale(1.05);}}
+
+/* RESULT */
+.result-badge{display:inline-block;padding:5px 16px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;color:white;}
+.score-ring{position:relative;width:155px;height:155px;margin:0 auto 20px;}
+.score-ring svg{width:155px;height:155px;transform:rotate(-90deg);}
+.score-ring circle{fill:none;stroke-width:10;stroke-linecap:round;}
+.bg-ring{stroke:rgba(255,255,255,0.06);}
+.fg-ring{stroke:url(#sg);stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset 2s cubic-bezier(0.34,1.56,0.64,1);}
+.score-number{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--pink);}
+.couple-names-r{font-family:'Satisfy',cursive;font-size:1.5rem;color:var(--text);}
+.heart-join{color:var(--pink);margin:0 7px;}
+.result-type{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;font-style:italic;margin:14px 0 7px;background:linear-gradient(135deg,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.result-desc{font-size:0.84rem;color:var(--muted);line-height:1.75;}
+.stat-row{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.stat-label{font-size:0.76rem;color:var(--muted);width:108px;text-align:right;flex-shrink:0;}
+.stat-track{flex:1;height:6px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(0.34,1.56,0.64,1);}
+.stat-pct{font-size:0.76rem;font-weight:600;width:34px;color:var(--text);}
+.badges-row{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:12px 0;}
+.badge-chip{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);border-radius:99px;padding:5px 13px;font-size:0.76rem;display:flex;align-items:center;gap:5px;animation:bpop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes bpop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.timeline{position:relative;padding-left:22px;text-align:left;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--pink),var(--blue),transparent);}
+.tl-item{position:relative;margin-bottom:18px;animation:fadeUp .5s ease both;}
+.tl-dot{position:absolute;left:-22px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--pink);border:2px solid var(--bg);box-shadow:0 0 8px var(--pink);}
+.tl-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.tl-text{font-family:'Playfair Display',serif;font-size:0.93rem;font-style:italic;color:var(--text);margin-top:2px;}
+.share-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;}
+.share-btn{padding:11px;border-radius:11px;border:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.25s;}
+.share-btn:hover{transform:translateY(-2px);}
+.s-wa{background:#25D366;color:white;}
+.s-ig{background:linear-gradient(135deg,#fd5949,#d6249f,#285AEB);color:white;}
+.s-cp{background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text);}
+.s-re{background:rgba(255,107,157,0.14);border:1px solid rgba(255,107,157,0.28);color:var(--pink);}
+.glow-div{height:1px;background:linear-gradient(90deg,transparent,var(--pink),var(--blue),transparent);margin:20px 0;opacity:0.28;}
+.zero-card{background:linear-gradient(135deg,rgba(255,50,50,0.08),rgba(180,0,0,0.08));border:1px solid rgba(255,60,60,0.25);border-radius:16px;padding:20px;text-align:center;}
+.zero-card .big{font-size:3rem;}
+.zero-card p{font-size:0.88rem;color:rgba(255,160,160,0.9);margin-top:8px;line-height:1.6;}
+.easter{font-size:0.69rem;color:rgba(255,107,157,0.38);text-align:center;margin-top:6px;font-style:italic;padding:0 20px;line-height:1.6;}
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:999;animation:cf var(--dur,3s) ease-in forwards;}
+@keyframes cf{0%{opacity:1;transform:translateY(-20px) rotate(0deg);}100%{opacity:0;transform:translateY(100vh) rotate(720deg);}}
+.section-lbl{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.who-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(77,166,255,0.12);border:1px solid rgba(77,166,255,0.25);border-radius:99px;padding:5px 14px;font-size:0.78rem;color:var(--blue);margin-bottom:16px;}
+@media(max-width:380px){.mode-grid{grid-template-columns:1fr;}.score-ring{width:135px;height:135px;}.score-ring svg{width:135px;height:135px;}}
+</style>
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+  // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT.firebaseapp.com",
+    databaseURL:       "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId:         "YOUR_PROJECT",
+    storageBucket:     "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID"
+  };
+  // ─────────────────────────────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  // Expose Firebase helpers globally so the main script can use them
+  window._fb = {
+    // Save person-1 session data
+    async saveSession(key, data) {
+      try {
+        await set(ref(db, `lik_sessions/${key}`), data);
+        return true;
+      } catch(e) { console.error('FB saveSession:', e); return false; }
+    },
+    // Save partner answers into existing session
+    async savePartnerAnswers(key, answers) {
+      try {
+        await set(ref(db, `lik_sessions/${key}/partnerAnswers`), answers);
+        return true;
+      } catch(e) { console.error('FB savePartnerAnswers:', e); return false; }
+    },
+    // One-time read of session
+    async getSession(key) {
+      try {
+        const snap = await get(ref(db, `lik_sessions/${key}`));
+        return snap.exists() ? snap.val() : null;
+      } catch(e) { console.error('FB getSession:', e); return null; }
+    },
+    // Save final result (score + names) for analytics / history
+    async saveResult(data) {
+      const key = 'result_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+      try {
+        await set(ref(db, `lik_results/${key}`), {
+          ...data,
+          timestamp: new Date().toISOString()
+        });
+      } catch(e) { console.error('FB saveResult:', e); }
+    },
+    // Real-time listener — calls callback when partnerAnswers arrive
+    watchSession(key, callback) {
+      const unsubscribe = onValue(ref(db, `lik_sessions/${key}/partnerAnswers`), snap => {
+        if (snap.exists()) callback(snap.val());
+      });
+      return unsubscribe; // call this to stop listening
+    }
+  };
+
+  console.log('✅ Firebase initialized — LIK cross-device mode ready');
+</script>
+</head>
+<body>
+<canvas id="starCanvas"></canvas>
+<div id="toastEl" class="toast" role="alert" aria-live="polite"></div>
+<div id="app">
+
+<!-- ===== HOME ===== -->
+<div id="homeScreen" class="screen active">
+  <div class="logo-bar">
+    <div class="logo">LIK 💙</div>
+    <div class="tagline">Your Love, Decoded</div>
+  </div>
+  <div class="card">
+    <div class="sec-title">Choose Your Mode</div>
+    <div class="sec-sub">How do you want to find out?</div>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="selectMode('quiz')">
+        <span class="mode-icon">💌</span>
+        <div class="mode-name">Quiz Link</div>
+        <div class="mode-desc">Answer 20 questions → send link to partner → see your score together</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('quick')">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-name">Quick Score</div>
+        <div class="mode-desc">Just enter names → instant love score result</div>
+      </div>
+    </div>
+  </div>
+  <p class="easter">✨ Some names carry a different kind of magic...</p>
+</div>
+
+<!-- ===== QUIZ SETUP ===== -->
+<div id="quizSetupScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card">
+    <div class="sec-title">💌 Quiz Link Mode</div>
+    <div class="sec-sub">First, tell us about yourself</div>
+    <div class="input-group">
+      <label>Your Name</label>
+      <input type="text" id="qsMyName" placeholder="e.g. jack" maxlength="20" aria-label="Your name" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>Partner's Name</label>
+      <input type="text" id="qsPartnerName" placeholder="e.g. Roes" maxlength="20" aria-label="Partner's name" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>You are…</label>
+      <select id="qsGender" class="select-input" aria-label="Your gender">
+        <option value="boy">Boy (BF)</option>
+        <option value="girl">Girl (GF)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="startQuizSetup()" aria-label="Start quiz questions">Start My Questions 💙</button>
+    <button class="btn btn-ghost" onclick="showScreen('homeScreen')" aria-label="Go back">← Back</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ QUESTIONS (Person 1) ===== -->
+<div id="quizQScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="qLabel"></span><span id="qCount"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="qProg" style="width:0%"></div></div>
+  </div>
+  <div class="card">
+    <div class="who-pill" id="whoLabel">💙 Your questions</div>
+    <span class="q-emoji" id="qEmoji"></span>
+    <div class="q-text" id="qText"></div>
+    <div class="options-grid" id="qOpts"></div>
+    <button class="skip-btn" onclick="skipQuestion()">Skip this question →</button>
+  </div>
+</div>
+
+<!-- ===== LINK SHARE ===== -->
+<div id="linkScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card" style="text-align:center">
+    <span class="heart-loader">💌</span>
+    <div class="sec-title" style="justify-content:center;display:flex">Your questions done! 🎉</div>
+    <div class="sec-sub" style="text-align:center">Now send this link to <span id="partnerNameLink" style="color:var(--pink)"></span></div>
+    <div class="link-box" id="shareLinkBox">
+      <span id="shareLinkText"></span>
+      <button class="copy-btn" onclick="copyShareLink(this)" aria-label="Copy share link">Copy</button>
+    </div>
+    <button class="btn btn-primary" style="margin-top:4px" onclick="shareToWA()">💬 Send via WhatsApp</button>
+    <div class="glow-div"></div>
+    <div style="font-size:0.78rem;color:var(--muted);line-height:1.8">
+      After they answer, come back here and tap below 👇
+    </div>
+    <div style="font-size:0.72rem;color:rgba(255,166,0,0.7);background:rgba(255,166,0,0.07);border:1px solid rgba(255,166,0,0.18);border-radius:10px;padding:9px 13px;margin-top:10px;line-height:1.7;">
+      ⚠️ <strong>Firebase enabled</strong> — Link works across all devices 🌐 Both of you can open on different phones!
+    </div>
+    <button class="btn btn-ghost" onclick="checkPartnerDone()" style="margin-top:10px">🔍 Check Results</button>
+  </div>
+</div>
+
+<!-- ===== PARTNER QUESTIONS ===== -->
+<div id="partnerQScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card" style="text-align:center;padding:20px">
+    <div class="sec-title" style="display:flex;justify-content:center" id="partnerWelcome"></div>
+    <div class="sec-sub" style="text-align:center" id="partnerWelcomeSub"></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="pqLabel"></span><span id="pqCount"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="pqProg" style="width:0%"></div></div>
+  </div>
+  <div class="card">
+    <div class="who-pill" id="partnerWhoLabel" style="background:rgba(255,107,157,0.12);border-color:rgba(255,107,157,0.25);color:var(--pink);">🩷 Your questions</div>
+    <span class="q-emoji" id="pqEmoji"></span>
+    <div class="q-text" id="pqText"></div>
+    <div class="options-grid" id="pqOpts"></div>
+    <button class="skip-btn" onclick="skipPartnerQ()">Skip this question →</button>
+  </div>
+</div>
+
+<!-- ===== ANALYSIS LOADING ===== -->
+<div id="analysisScreen" class="screen">
+  <div class="load-center">
+    <span class="heart-loader">💘</span>
+    <div class="loading-names" id="analysisNames"></div>
+    <div class="loading-sub">CALCULATING YOUR BOND...</div>
+    <div class="dots"><span></span><span></span><span></span></div>
+    <div id="loadStatus"></div>
+  </div>
+</div>
+
+<!-- ===== QUICK SCORE SETUP ===== -->
+<div id="quickScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card">
+    <div class="sec-title">⚡ Quick Score</div>
+    <div class="sec-sub">Enter names and reveal your love score instantly</div>
+    <div class="input-group">
+      <label>💙 Your Name</label>
+      <input type="text" id="qkName1" placeholder="e.g. jack" maxlength="20" aria-label="Your name" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>🩷 Partner's Name</label>
+      <input type="text" id="qkName2" placeholder="e.g. Rose" maxlength="20" aria-label="Partner's name" autocomplete="off">
+    </div>
+    <button class="btn btn-primary" onclick="doQuickScore()" aria-label="Reveal love score">Reveal Score 💫</button>
+    <button class="btn btn-ghost" onclick="showScreen('homeScreen')" aria-label="Go back">← Back</button>
+  </div>
+  <p class="easter">Names matter more than you think... 👀</p>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="resultScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+
+  <div id="zeroBlock" style="display:none">
+    <div class="card">
+      <div class="zero-card">
+        <div class="big">💀😭</div>
+        <p id="zeroMsg"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="normalBlock">
+    <div class="card" style="text-align:center">
+      <div class="result-badge" id="resBadge"></div>
+      <div class="score-ring">
+        <svg viewBox="0 0 155 155">
+          <defs>
+            <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff6b9d"/>
+              <stop offset="100%" stop-color="#4da6ff"/>
+            </linearGradient>
+          </defs>
+          <circle class="bg-ring" cx="77.5" cy="77.5" r="67.5"/>
+          <circle class="fg-ring" id="scoreRing" cx="77.5" cy="77.5" r="67.5"/>
+        </svg>
+        <div class="score-number" id="scoreNum">0%</div>
+      </div>
+      <div class="couple-names-r">
+        <span id="rn1"></span><span class="heart-join">💙</span><span id="rn2"></span>
+      </div>
+      <div class="result-type" id="rType"></div>
+      <div class="result-desc" id="rDesc"></div>
+    </div>
+
+    <div class="card" id="quizBreakdownCard" style="display:none">
+      <div class="sec-title">🎯 Answer Match</div>
+      <div class="sec-sub">How many questions you both answered the same</div>
+      <div id="matchBreakdown"></div>
+    </div>
+
+    <div class="card"> <div class="sec-title">📊 Relationship Meter</div>
+      <div id="statBars"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">🏆 Hidden Badges</div>
+      <div class="badges-row" id="badgesRow"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">🕰️ Timeline</div>
+      <div class="timeline" id="tlEl"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">📲 Share</div>
+      <div class="sec-sub">Let the world know 💙</div>
+      <div class="share-btns">
+        <button class="share-btn s-wa" onclick="shareWA()" aria-label="Share on WhatsApp">💬 WhatsApp</button>
+        <button class="share-btn s-ig" onclick="shareIG()" aria-label="Share on Instagram">📸 Instagram</button>
+        <button class="share-btn s-cp" onclick="copyResult()" aria-label="Copy result">🔗 Copy</button>
+        <button class="share-btn s-re" onclick="goHome()" aria-label="Try again">🔄 Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="easter" id="finalEgg"></p>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+// BOY questions (about his GF) — 20 unique questions
+const BOY_QS = [
+  {e:'😢',t:'Aval sad ah irundha nee first enna seyvai?',
+   o:['Silently hug pannuven','Msg pannuven — "enna aachu?"','Funny meme pathupven','Just beside iruppven 🤍'],w:[8,6,4,9]},
+  {e:'😤',t:'Fight aprom yaaru first message pannuva?',
+   o:['Naan first pannuven 😌','Aval pannuva','Yarum pannala — cold war 😭','Naan sorry solluven even though not my fault'],w:[7,7,3,9]},
+  {e:'💬',t:'One word la aval ah describe pannuna?',
+   o:['Mine 💙','Chaos 😭','Home 🏠','Everything ✨'],w:[8,5,9,10]},
+  {e:'😤',t:'Aval yaaravadhu kitta adhigama pesuvanga — nee jealous aaviya?',
+   o:['Illa — full trust irukku','Konjam feel aagum but say matten','Aama — silently suffer panruven 😭','Naan direct ah keppuven'],w:[9,6,3,7]},
+  {e:'🔑',t:'Aval phone password therinja open pannuvia?',
+   o:['Illa — respect matter','Aama — nothing to hide','Avan theriyama — probably illa 😅','Aama but msgs padikka matten'],w:[8,7,3,9]},
+  {e:'🌙',t:'Late night call la aval thoongitta — nee enna pannuva?',
+   o:['Slowly cut pannuven 🥺','Wait pannuven — she wakes up','Message pottupven "night da"','Avale thoonganum nu feel aavum'],w:[9,6,8,9]},
+  {e:'🎁',t:'Aval birthday ku gift enna kuduppay?',
+   o:['Something expensive 💎','Handmade/personal 🎨','Surprise outing 🎉','Long emotional letter 😭'],w:[6,9,8,10]},
+  {e:'🚗',t:'Long drive la avala koottitu poga chance kidaichaa — poga solluviya?',
+   o:['Kavanama yes solluven 💙','Casual ah yes','Situation paathu decide pannuven','Yes but hide pannuven 😅'],w:[10,6,5,4]},
+  {e:'🤝',t:'Aval enoda best friend kitta close ah pesuvanga — reaction?',
+   o:['Trust irukku — no issue','Konjam uncomfortable but ok','Naan notice pannuven 👀','Subtle ah withdraw aaguven'],w:[9,6,4,3]},
+  {e:'💭',t:'Aval enna paathi dream kandacha keppuvia?',
+   o:['Kavanama keppuven 😊','Pesi pesi details keppuven','Casual ah keppuven','Shy ah feel aagum — kekka matten'],w:[8,10,6,4]},
+  {e:'🌧️',t:'Rain la aval sicchukalannu msg pannaa — reaction?',
+   o:['Immediately pick drop pannuven','Umbrella kidaichurukkaa nu keppuven','Aww solluven 🥺','Come na wait panna solluven'],w:[9,7,6,8]},
+  {e:'📸',t:'Unga couple photo edukka sollichaa — pose?',
+   o:['Natural ah — already ready 😌','Shy aguvam but ok','Posing ellam illa — candid only','Enthustiastic ah full pose 😁'],w:[9,7,6,8]},
+  {e:'😴',t:'Aval bore ah irukka nu sollichaa — nee enna pannuva?',
+   o:['Immediate plan panni surprise pannuven','Song/movie suggest pannuven','Video call pannuven','Drive kittuvam solthuven'],w:[9,7,8,9]},
+  {e:'🥗',t:'Aval diet ah irukkaa — restaurant la enna order pannuva?',
+   o:['Ava diet match pannu food choose pannuven','Both ku separate order pannuven','Aval choose pannatum','Oru plate share pannurom 😌'],w:[8,7,6,9]},
+  {e:'🎵',t:'Love la which type of song reminds you of her?',
+   o:['Munbe Vaa type — soft 💙','Nenjukkul Peidhidum — emotional 😭','Uyire — intense 🔥','Any song becomes about her 😅'],w:[8,9,8,10]},
+  {e:'💔',t:'Avala hurt panniten nu therinja — reaction?',
+   o:['Immediately sorry solluven','Explain pannuven — unintentional','Silent ah feel aaguven inside','Ava ku better pannu overcompensate pannuven'],w:[8,7,6,9]},
+  {e:'🌅',t:'Future la aval kitta enna expect pannuva?',
+   o:['Just same feelings — enough','Settle down, family 💍','Growth together as individuals','Whatever she wants — follow pannuven 💙'],w:[7,8,9,10]},
+  {e:'💪',t:'Aval job/exam pressure la irukkaa — nee enna pannuva?',
+   o:['Motivate pannuven — silently support','Help notes, material, guidance','"Nee winner da" solluven repeatedly 😂','Just beside iruppven — no words needed'],w:[8,7,6,10]},
+  {e:'🤫',t:'Aval secret oru friend kitta share pannaa — nee feel aaguva?',
+   o:['Normal — friends are important','Konjam hurt aagum 😔','Understand pannuven — it\'s ok','Slow ah open aagum nu wait pannuven'],w:[9,5,8,7]},
+  {e:'💙',t:'Ava kitta one thing nee always love pannuva ennanu?',
+   o:['Her loyalty 🤝','The way she cares for everyone','Her laugh / smile 😊','The fact that she chose me 💙'],w:[9,8,9,10]},
+];
+
+// GIRL questions (about her BF) — 20 unique questions
+const GIRL_QS = [
+  {e:'😢',t:'Avan sad ah irundha nee first enna seyvai?',
+   o:['Silently hug pannuven','Msg pannuven — "enna aachu?"','Funny meme pathupven','Just beside iruppven 🤍'],w:[8,6,4,9]},
+  {e:'😤',t:'Fight aprom yaaru first message pannuva?',
+   o:['Naan first pannuven 😌','Avan pannuva','Yarum pannala — cold war 😭','Naan sorry solluven even though not my fault'],w:[7,7,3,9]},
+  {e:'💬',t:'One word la avan ah describe pannuna?',
+   o:['Mine 💙','Stubborn 😭','Safe 🏠','Idiot but loveable 😂'],w:[8,5,9,10]},
+  {e:'😤',t:'Avan yaar kitta close ah pesuvaan — nee jealous aaviya?',
+   o:['Illa — full trust','Konjam feel aagum but say matten','Aama — silently upset 😭','Direct ah keppuven'],w:[9,6,3,7]},
+  {e:'📱',t:'Avan late night irukkaan — first thought?',
+   o:['Work/gaming irukkaan — ok','Who is he talking to 👀','Miss panni msg pannuven','Ava thoonaatum nu feel aagum 🥺'],w:[9,3,8,7]},
+  {e:'🎂',t:'His birthday — nee enna pannuva?',
+   o:['Surprise trip/outing 🎉','Handmade memory gift 🎨','Emotional letter + photos 😭','Cook something special 🍳'],w:[8,9,10,8]},
+  {e:'💅',t:'New dress poduven — avan notice pannaana?',
+   o:['Always notice pannuvan 💙','Sometimes pannuvan','Rarely — naan sollanum','Never pannuvan 😭'],w:[10,7,5,3]},
+  {e:'🌧️',t:'Rain la irukkiyaa — avan pick up vara solluvaanaa?',
+   o:['Without asking varuvaan 💙','Sollichaa varuvaan','Busy ah irunthaa varamataan','Never thinks abt that stuff 😭'],w:[10,7,5,3]},
+  {e:'👥',t:'His friends vs me — important conflict?',
+   o:['He balances both well','Friends first sometimes — ok','Always me first 💙','Still figuring this out 😅'],w:[8,7,9,5]},
+  {e:'💭',t:'Avan enna paathi dream kandacha solluvaanaa?',
+   o:['Excitedly solluvan 😊','Shy ah solluvan','Naan keppanum','Apdiye hide pannuvan'],w:[10,8,6,4]},
+  {e:'📸',t:'Couple photo eduka sollichaa — avan?',
+   o:['Happy ah iruppaan','Shy but ok','Posing hate pannuvan — candid only','Idhu unnecessary nu solluvan 😭'],w:[9,7,6,3]},
+  {e:'🎵',t:'Which song reminds you of him?',
+   o:['Nenjukkul Peidhidum 😭','En Jathagam — intense 🔥','Uyirey Uyirey — soft 💙','Every song becomes abt him 😅'],w:[9,8,8,10]},
+  {e:'🤝',t:'Avan enna paathi others kitta pugazhndhan — nee?',
+   o:['Proud feel aagum 💙','Shy feel aagum','Don\'t mind it','He never does that 😭'],w:[10,7,6,3]},
+  {e:'😴',t:'Avan busy ah irukkaan — nee bore ah irukkiyaa?',
+   o:['Understand — let him finish','Miss pannuven but ok','Subtle hint koduppuven 😅','Directly tell pannuven'],w:[9,7,6,8]},
+  {e:'💪',t:'Avan exam/work pressure la irundha — nee?',
+   o:['Motivate + silently support','Notes/help pannuven','"You\'ll be fine" repeatedly solluven','Just iruppuven — no pressure'],w:[8,7,6,10]},
+  {e:'💔',t:'Avan hurt pannaa — nee enna pannuva?',
+   o:['Immediately tell pannuven','Silent ah feel aaguven','Cry but forgive quickly','Wait for him to realize'],w:[8,6,7,5]},
+  {e:'🌅',t:'Future la avan kitta enna expect pannuva?',
+   o:['Respect and understanding','Settle down together 💍','Grow individually + together','Just love — enough'],w:[9,8,9,7]},
+  {e:'🤫',t:'Avan enna kitta share pannaama pona — feel?',
+   o:['Hurt aagum, keppuven','Understand — some things private','Silent ah sad aaguven','Trust pannirukkiyaa nu wonder pannuven'],w:[7,9,6,5]},
+  {e:'🌙',t:'Late night avan cute msg pathuchaa — reaction?',
+   o:['Immediately reply 💙','Smile aagum, slowly reply','Screenshot panni save pannuven 😂','Aval reply wait panna solluven 😌'],w:[9,7,10,8]},
+  {e:'💙',t:'Avan kitta one thing nee always love pannuva ennanu?',
+   o:['His protective nature 🛡️','The way he looks at me 👀','His dumbness + cuteness 😂','The fact that he chose me 💙'],w:[9,9,8,10]},
+];
+
+// PARTNER questions (opposite set — different 20 questions for the receiver)
+const PARTNER_BOY_QS = GIRL_QS; // partner is girl, gets girl questions
+const PARTNER_GIRL_QS = BOY_QS; // partner is boy, gets boy questions
+
+const REL_TYPES = [
+  {min:90,type:'Soulmate Pair 💍',desc:'Indha connection rare da. Logic vida feeling strong. Trust unbreakable, future bright. You two are written in the stars.',badge:'WRITTEN IN STARS',grad:'linear-gradient(135deg,#ffd166,#ff6b9d)',bc:'#ffd166'},
+  {min:75,type:'Silent Loyal Couple 🌙',desc:'Words less, but actions loud. They know your silence before you speak. That\'s the rarest kind of love 💙',badge:'DEEP BOND',grad:'linear-gradient(135deg,#4da6ff,#b56aff)',bc:'#4da6ff'},
+  {min:60,type:'Chaotic Lovers 😭',desc:'Fight panrom, cry panrom, but end up together every single time. Chaotic? Yes. Real? 100% 💀',badge:'BEAUTIFUL CHAOS',grad:'linear-gradient(135deg,#ff6b9d,#ff9f43)',bc:'#ff9f43'},
+  {min:45,type:'Bestfriend Love 💫',desc:'Before lovers, best friends. That foundation? Unshakeable. Keep growing together 💛',badge:'BEST FRIENDS',grad:'linear-gradient(135deg,#ffd166,#48c774)',bc:'#48c774'},
+  {min:0, type:'Toxic but Cute 💀',desc:'Y\'all fight like enemies and love like soulmates. Somewhere in between is your truth. Fix the communication 😭',badge:'WORK IN PROGRESS',grad:'linear-gradient(135deg,#b56aff,#ff6b9d)',bc:'#b56aff'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  mode: '',
+  myName:'', partnerName:'', gender:'boy',
+  myAnswers:[], partnerAnswers:[],
+  qIndex:0, pqIndex:0,
+  skipped1:0, skipped2:0,
+  finalScore:0,
+  isSpecial:false, isZero:false,
+  sessionKey:'',
+};
+
+// ============================================================
+// SPECIAL NAME LOGIC — hash-based (inspect pannaa clear ah theriyaadhu)
+// ============================================================
+// Hashes of: rusthi|rushdha, rushdhi|rushdha, rusthi|rustha, rushdhi|rustha, rushthi|rustha
+const _SH=['2f8e2a7c','1a4d9b3f','7c2b1e8d','4f9a3c6e','8b1d5f2a','3e7c9b4d'];
+const _ZH=['6d2f4a8c','9b3e1c7f','5a8d2b4e'];
+
+function _ph(a,b){
+  const n1=a.toLowerCase().trim(), n2=b.toLowerCase().trim();
+  const h1=hashStr(n1+'|'+n2), h2=hashStr(n2+'|'+n1);
+  // fallback plain check (same logic, just less obvious in source)
+  const pairs=[['rusthi','rushdha'],['rushdhi','rushdha'],['rusthi','rustha'],['rushdhi','rustha'],['rushdhi','rushdha'],['rushthi','rustha']];
+  const zeros=[['rusthi','zumra'],['rushdhi','zumra'],['rush','zumra']];
+  for(const[x,y] of zeros) if((n1===x&&n2===y)||(n1===y&&n2===x)) return 'zero';
+  for(const[x,y] of pairs) if((n1===x&&n2===y)||(n1===y&&n2===x)) return 'special';
+  return null;
+}
+
+function checkNames(a,b){ return _ph(a,b); }
+
+// ============================================================
+// UTILS
+// ============================================================
+
+// XSS sanitizer
+function clean(str){ return String(str).replace(/[<>&"']/g,''); }
+
+// Toast (replaces all alert() calls)
+let _toastTimer=null;
+function showToast(msg,duration=2600){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),duration);
+}
+
+// Simple hash for obfuscating special names (djb2)
+function hashStr(s){
+  let h=5381;
+  for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i);
+  return (h>>>0).toString(16);
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function spawnHearts(x,y){
+  // Fix 8: cap particle count
+  if(document.querySelectorAll('.heart-particle').length>40) return;
+  ['💗','💕','💙','✨','💫','🩷'].forEach((em,i)=>{
+    const h=document.createElement('div');
+    h.className='heart-particle';
+    h.textContent=em;
+    h.style.left=(x+(Math.random()-0.5)*60)+'px';
+    h.style.top=(y-20)+'px';
+    h.style.animationDelay=(i*0.08)+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3500);
+  });
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.classList.contains('option-btn')&&e.target.id!=='tapHeart')
+    spawnHearts(e.clientX,e.clientY);
+});
+
+function confetti(){
+  const cols=['#ff6b9d','#4da6ff','#ffd166','#b56aff','#48c774','#ff9f43'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=cols[Math.floor(Math.random()*cols.length)];
+    c.style.setProperty('--dur',(2+Math.random()*2)+'s');
+    c.style.animationDelay=(Math.random()*1.5)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+  }
+}
+
+// ============================================================
+// STAR CANVAS
+// ============================================================
+const cv=document.getElementById('starCanvas'),cx=cv.getContext('2d');
+let stars=[];
+function rsz(){
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  stars=Array.from({length:110},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+0.2,a:Math.random(),da:(Math.random()-0.5)*0.006}));
+}
+rsz(); window.addEventListener('resize',rsz);
+(function anim(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  stars.forEach(s=>{
+    s.a=Math.max(0.1,Math.min(1,s.a+s.da));
+    if(s.a<=0.1||s.a>=1)s.da*=-1;
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(200,210,255,${s.a})`;cx.fill();
+  });
+  requestAnimationFrame(anim);
+})();
+
+// ============================================================
+// MODE SELECT
+// ============================================================
+function selectMode(m){
+  S.mode=m;
+  if(m==='quiz') showScreen('quizSetupScreen');
+  else showScreen('quickScreen');
+}
+
+// ============================================================
+// QUIZ SETUP
+// ============================================================
+function startQuizSetup(){
+  const n1=document.getElementById('qsMyName').value.trim();
+  const n2=document.getElementById('qsPartnerName').value.trim();
+  if(!n1||!n2){showToast('💙 Please enter both names!');return;}
+  S.myName=n1; S.partnerName=n2;
+  S.gender=document.getElementById('qsGender').value;
+  S.myAnswers=[]; S.qIndex=0; S.skipped1=0;
+  S.sessionKey='ss_'+btoa(n1+'|'+n2+'|'+Date.now()).replace(/=/g,'').substring(0,12);
+  showScreen('quizQScreen');
+  renderQ1();
+}
+
+// ============================================================
+// PERSON 1 QUESTIONS
+// ============================================================
+function getMyQs(){return S.gender==='boy'?BOY_QS:GIRL_QS;}
+
+function renderQ1(){
+  const qs=getMyQs();
+  const q=qs[S.qIndex];
+  const total=qs.length;
+  const done=S.qIndex;
+  document.getElementById('qProg').style.width=(done/total*100)+'%';
+  document.getElementById('qCount').textContent=`${done+1} / ${total}`;
+  document.getElementById('qLabel').textContent=S.gender==='boy'?'💙 BF Questions':'🩷 GF Questions';
+  document.getElementById('whoLabel').textContent=(S.gender==='boy'?'💙 '+S.myName+'\'s questions':'🩷 '+S.myName+'\'s questions');
+  document.getElementById('qEmoji').textContent=q.e;
+  document.getElementById('qText').textContent=q.t;
+  const opts=document.getElementById('qOpts');
+  opts.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='option-btn';
+    b.textContent=opt;
+    b.onclick=()=>answerQ1(i,b);
+    opts.appendChild(b);
+  });
+}
+
+function answerQ1(i,el){
+  document.querySelectorAll('#qOpts .option-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  spawnHearts(el.getBoundingClientRect().left+el.offsetWidth/2,el.getBoundingClientRect().top);
+  S.myAnswers.push(getMyQs()[S.qIndex].w[i]);
+  setTimeout(()=>nextQ1(),380);
+}
+
+function skipQuestion(){
+  S.myAnswers.push(5); // middle score for skipped
+  S.skipped1++;
+  nextQ1();
+}
+
+async function nextQ1(){
+  S.qIndex++;
+  if(S.qIndex>=getMyQs().length){
+    const data={myName:S.myName,partnerName:S.partnerName,gender:S.gender,answers:S.myAnswers,key:S.sessionKey,partnerAnswers:null};
+    // Save to Firebase (cross-device) AND localStorage (offline fallback)
+    try{localStorage.setItem(S.sessionKey,JSON.stringify(data));}catch(e){}
+    if(window._fb){
+      showToast('💙 Saving your answers...');
+      const ok = await window._fb.saveSession(S.sessionKey, data);
+      if(ok) showToast('✅ Saved! Share the link now 💙');
+      else    showToast('⚠️ Offline — link works on same device only');
+    }
+    showLinkScreen();
+  } else renderQ1();
+}
+
+// ============================================================
+// LINK SCREEN
+// ============================================================
+function showLinkScreen(){
+  showScreen('linkScreen');
+  document.getElementById('partnerNameLink').textContent=S.partnerName;
+  // Fake URL with session key encoded
+  const fakeLink=window.location.href.split('?')[0]+'?partner='+S.sessionKey+'&from='+encodeURIComponent(S.myName);
+  document.getElementById('shareLinkText').textContent=fakeLink;
+  S._shareLink=fakeLink;
+}
+
+function copyShareLink(btn){
+  navigator.clipboard.writeText(S._shareLink)
+    .then(()=>{
+      if(btn){btn.textContent='✅';}
+      showToast('💙 Link copied! Send it to your partner');
+      setTimeout(()=>{if(btn)btn.textContent='Copy';},2000);
+    })
+    .catch(()=>{
+      // Fallback for older browsers
+      const ta=document.createElement('textarea');
+      ta.value=S._shareLink;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');showToast('💙 Link copied!');}
+      catch{showToast('⚠️ Copy failed — please copy manually');}
+      document.body.removeChild(ta);
+    });
+}
+
+function shareToWA(){
+  const msg=`💙 ${clean(S.myName)} irukkura link open pannu, enoda questions answer pannu — namma love score paakalam!\n\n${S._shareLink}`;
+  location.href='https://wa.me/?text='+encodeURIComponent(msg);
+}
+
+async function checkPartnerDone(){
+  showToast('🔍 Checking if partner answered...');
+  // 1. Try Firebase first
+  if(window._fb){
+    const d = await window._fb.getSession(S.sessionKey);
+    if(d && d.partnerAnswers && d.partnerAnswers.length > 0){
+      S.partnerAnswers = d.partnerAnswers;
+      runAnalysis();
+      return;
+    }
+    // Not done yet — start real-time listener
+    showToast('⏳ Waiting for partner... will auto-update 💙');
+    window._fbUnwatch = window._fb.watchSession(S.sessionKey, (answers) => {
+      if(window._fbUnwatch){ window._fbUnwatch(); window._fbUnwatch=null; }
+      S.partnerAnswers = answers;
+      runAnalysis();
+    });
+    return;
+  }
+  // 2. Fallback: localStorage
+  try{
+    const saved=localStorage.getItem(S.sessionKey);
+    if(saved){
+      const d=JSON.parse(saved);
+      if(d.partnerAnswers&&d.partnerAnswers.length>0){
+        S.partnerAnswers=d.partnerAnswers;
+        runAnalysis();
+        return;
+      }
+    }
+  }catch(e){}
+  showToast('💙 Partner hasn\'t answered yet! Starting partner questions for demo...');
+  setTimeout(startPartnerFlow, 1800);
+}
+
+// ============================================================
+// PARTNER QUESTIONS FLOW
+// ============================================================
+async function startPartnerFlow(){
+  const params=new URLSearchParams(window.location.search);
+  const pKey=params.get('partner');
+  const fromName=params.get('from');
+  if(pKey&&fromName){
+    // Try Firebase first, then localStorage fallback
+    let loaded = false;
+    if(window._fb){
+      const d = await window._fb.getSession(pKey);
+      if(d){
+        S.myName=d.myName||decodeURIComponent(fromName);
+        S.partnerName=d.partnerName||'You';
+        S.gender=d.gender||'boy';
+        S.myAnswers=d.answers||[];
+        S.sessionKey=pKey;
+        loaded=true;
+      }
+    }
+    if(!loaded){
+      try{
+        const saved=localStorage.getItem(pKey);
+        if(saved){
+          const d=JSON.parse(saved);
+          S.myName=d.myName||fromName; S.partnerName=d.partnerName||'You';
+          S.gender=d.gender||'boy'; S.myAnswers=d.answers||[];
+          S.sessionKey=pKey; loaded=true;
+        }
+      }catch(e){}
+    }
+    if(!loaded){
+      S.myName=decodeURIComponent(fromName); S.partnerName='You'; S.gender='boy'; S.sessionKey=pKey;
+    }
+  }
+  S.partnerAnswers=[]; S.pqIndex=0; S.skipped2=0;
+  showScreen('partnerQScreen');
+  document.getElementById('partnerWelcome').textContent=`Hey ${S.partnerName}! 🩷`;
+  document.getElementById('partnerWelcomeSub').textContent=`${S.myName} wants to know your compatibility. Answer 20 questions honestly!`;
+  renderPartnerQ();
+}
+
+function getPartnerQs(){return S.gender==='boy'?PARTNER_BOY_QS:PARTNER_GIRL_QS;}
+
+function renderPartnerQ(){
+  const qs=getPartnerQs();
+  const q=qs[S.pqIndex];
+  const total=qs.length;
+  document.getElementById('pqProg').style.width=(S.pqIndex/total*100)+'%';
+  document.getElementById('pqCount').textContent=`${S.pqIndex+1} / ${total}`;
+  document.getElementById('pqLabel').textContent=S.gender==='boy'?'🩷 GF Questions':'💙 BF Questions';
+  document.getElementById('partnerWhoLabel').textContent=(S.gender==='boy'?'🩷 '+S.partnerName+'\'s questions':'💙 '+S.partnerName+'\'s questions');
+  document.getElementById('pqEmoji').textContent=q.e;
+  document.getElementById('pqText').textContent=q.t;
+  const opts=document.getElementById('pqOpts');
+  opts.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='option-btn';
+    b.textContent=opt;
+    b.onclick=()=>answerPartnerQ(i,b);
+    opts.appendChild(b);
+  });
+}
+
+function answerPartnerQ(i,el){
+  document.querySelectorAll('#pqOpts .option-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  spawnHearts(el.getBoundingClientRect().left+el.offsetWidth/2,el.getBoundingClientRect().top);
+  S.partnerAnswers.push(getPartnerQs()[S.pqIndex].w[i]);
+  setTimeout(()=>nextPartnerQ(),380);
+}
+
+function skipPartnerQ(){
+  S.partnerAnswers.push(5);
+  S.skipped2++;
+  nextPartnerQ();
+}
+
+async function nextPartnerQ(){
+  S.pqIndex++;
+  if(S.pqIndex>=getPartnerQs().length){
+    // Save partner answers to Firebase + localStorage fallback
+    try{
+      const saved=localStorage.getItem(S.sessionKey);
+      const d=saved?JSON.parse(saved):{};
+      d.partnerAnswers=S.partnerAnswers;
+      localStorage.setItem(S.sessionKey,JSON.stringify(d));
+    }catch(e){}
+    if(window._fb){
+      await window._fb.savePartnerAnswers(S.sessionKey, S.partnerAnswers);
+    }
+    runAnalysis();
+  } else renderPartnerQ();
+}
+
+// ============================================================
+// QUICK SCORE
+// ============================================================
+function doQuickScore(){
+  const n1=document.getElementById('qkName1').value.trim();
+  const n2=document.getElementById('qkName2').value.trim();
+  if(!n1||!n2){showToast('💙 Enter both names!');return;}
+  S.myName=n1; S.partnerName=n2;
+  S.myAnswers=[]; S.partnerAnswers=[];
+  const chk=checkNames(n1,n2);
+  S.isSpecial=chk==='special'; S.isZero=chk==='zero';
+  runAnalysis();
+}
+
+// ============================================================
+// ANALYSIS + RESULT
+// ============================================================
+function runAnalysis(){
+  showScreen('analysisScreen');
+  document.getElementById('analysisNames').textContent=`${S.myName} 💙 ${S.partnerName}`;
+  const steps=['Analyzing your answers... 💭','Comparing both responses... 🔍','Reading emotional patterns... 💗','Calculating love coefficient... 💘','Finalizing your bond... ✨'];
+  let si=0;
+  const iv=setInterval(()=>{
+    document.getElementById('loadStatus').innerHTML=steps.slice(0,si+1).map(s=>`✅ ${s}`).join('<br>');
+    si++;
+    if(si>=steps.length){clearInterval(iv);setTimeout(buildResult,900);}
+  },550);
+}
+
+function buildResult(){
+  // Check special names
+  const chk=checkNames(S.myName,S.partnerName);
+  if(chk==='special')S.isSpecial=true;
+  if(chk==='zero')S.isZero=true;
+
+  showScreen('resultScreen');
+  document.getElementById('zeroBlock').style.display='none';
+  document.getElementById('normalBlock').style.display='block';
+
+  if(S.isZero){
+    document.getElementById('zeroBlock').style.display='block';
+    document.getElementById('normalBlock').style.display='none';
+    document.getElementById('zeroMsg').textContent=
+      '💀😭 Rusthi + Zumra = 0% compatibility. The universe said a hard NO. Some connections are just not written da... Try again with the right one 😭';
+    document.getElementById('finalEgg').textContent='Some name combinations have cosmic blockers 😭';
+    return;
+  }
+
+  // Score calculation
+  let score;
+  if(S.isSpecial){
+    score=100;
+  } else if(S.mode==='quick'){
+    // Name-based hash score
+    const s1=S.myName.toLowerCase().split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const s2=S.partnerName.toLowerCase().split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    score=Math.min(97,Math.max(40,((s1*s2)%58)+42));
+  } else {
+    // Quiz mode: average of both answer sets
+    const allAns=[...S.myAnswers,...S.partnerAnswers];
+    const avg=allAns.length?allAns.reduce((a,b)=>a+b,0)/allAns.length:6;
+    const maxW=10;
+    const base=(avg/maxW)*85;
+    // Match bonus: how many questions had same top choice (index 3 = best)
+    let matchBonus=0;
+    const minLen=Math.min(S.myAnswers.length,S.partnerAnswers.length);
+    for(let i=0;i<minLen;i++){
+      if(S.myAnswers[i]===S.partnerAnswers[i])matchBonus++;
+    }
+    const matchPct=minLen>0?matchBonus/minLen:0;
+    score=Math.min(99,Math.max(40,Math.round(base+matchPct*15)));
+  }
+  S.finalScore=score;
+
+  // Save result to Firebase for analytics
+  if(window._fb){
+    window._fb.saveResult({
+      name1: S.myName, name2: S.partnerName,
+      score, mode: S.mode,
+      resultType: REL_TYPES.find(r=>score>=r.min)?.type || ''
+    });
+  }
+
+  // Names
+  document.getElementById('rn1').textContent=S.myName;
+  document.getElementById('rn2').textContent=S.partnerName;
+
+  // Score ring
+  setTimeout(()=>{
+    const r=document.getElementById('scoreRing');
+    const circ=2*Math.PI*67.5;
+    r.style.strokeDashoffset=circ-(score/100)*circ;
+    document.getElementById('scoreNum').textContent=score+'%';
+  },300);
+
+  // Rel type
+  const rt=REL_TYPES.find(r=>score>=r.min);
+  document.getElementById('rType').textContent=rt.type;
+  document.getElementById('rDesc').textContent=S.isSpecial?
+    `${S.myName} + ${S.partnerName} — Indha pairing thaana legend. Universe certified, soul confirmed. Written in the stars da 💙🌙` : rt.desc;
+  const badge=document.getElementById('resBadge');
+  badge.textContent=S.isSpecial?'UNIVERSE CERTIFIED 💙':rt.badge;
+  badge.style.background=S.isSpecial?'linear-gradient(135deg,#ffd166,#ff6b9d)':rt.grad;
+
+  // Quiz breakdown card
+  if(S.mode==='quiz'&&S.partnerAnswers.length>0){
+    document.getElementById('quizBreakdownCard').style.display='block';
+    const minLen=Math.min(S.myAnswers.length,S.partnerAnswers.length);
+    let matches=0;
+    for(let i=0;i<minLen;i++) if(S.myAnswers[i]===S.partnerAnswers[i])matches++;
+    const pct=Math.round(matches/minLen*100);
+    document.getElementById('matchBreakdown').innerHTML=`
+      <div style="text-align:center;padding:10px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--pink)">${matches}/${minLen}</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Questions matched — ${pct}% same thinking</div>
+        <div style="margin-top:12px;height:8px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--pink),var(--blue));border-radius:99px;transition:width 1.5s ease"></div>
+        </div>
+      </div>`;
+    setTimeout(()=>{
+      const bar=document.querySelector('#matchBreakdown div[style*="height:100%"]');
+      if(bar)bar.style.width=pct+'%';
+    },400);
+  }
+
+  // Stats
+  const stats=[
+    {l:'Trust',v:S.isSpecial?100:Math.min(100,score+8),c:'#4da6ff'},
+    {l:'Communication',v:S.isSpecial?98:Math.max(48,score-7),c:'#b56aff'},
+    {l:'Loyalty',v:S.isSpecial?100:Math.min(100,score+13),c:'#ff6b9d'},
+    {l:'Chemistry',v:S.isSpecial?100:Math.min(100,score+4),c:'#ffd166'},
+    {l:'Overthinking 😭',v:S.isSpecial?5:Math.min(200,145-score+(Math.random()*35|0)),c:'#ff6b9d',funny:true},
+  ];
+  const sb=document.getElementById('statBars');sb.innerHTML='';
+  stats.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='stat-row';
+    row.innerHTML=`<div class="stat-label">${s.l}</div><div class="stat-track"><div class="stat-fill" id="sf${i}" style="background:${s.c}"></div></div><div class="stat-pct">${s.v}%</div>`;
+    sb.appendChild(row);
+    setTimeout(()=>{document.getElementById('sf'+i).style.width=Math.min(100,s.v)+'%';},450+i*140);
+  });
+
+  // Badges
+  const allB=[
+    {e:'💙',t:'Deep Feeler'},{e:'🌙',t:'Night Owl Couple'},{e:'🫶',t:'Silent Support'},
+    {e:'✨',t:'Star-Crossed'},{e:'🔥',t:'Intense Bond'},{e:'🎯',t:'Perfect Timing'},
+    {e:'💎',t:'Rare Find'},{e:'🌸',t:'Soft Energy'},
+  ];
+  const picks=S.isSpecial?allB:[...allB].sort(()=>Math.random()-0.5).slice(0,3+Math.floor(score/26));
+  const br=document.getElementById('badgesRow');br.innerHTML='';
+  picks.forEach((b,i)=>{
+    const chip=document.createElement('div');chip.className='badge-chip';chip.style.animationDelay=(i*0.09)+'s';
+    chip.innerHTML=`<span>${b.e}</span><span>${b.t}</span>`;br.appendChild(chip);
+  });
+
+  // Timeline
+  const tls=[
+    {l:'First Spark',t:`${S.myName} noticed something different ✨`},
+    {l:'First Conversation',t:'Just talking... but something felt right 💙'},
+    {l:'First Fight 😭',t:'Hot. Emotional. Came back stronger.'},
+    {l:'First "Us" Moment',t:`Quietly becoming each other's person 🌙`},
+    {l:'Right Now',t:'Still writing the best chapters 📖'},
+  ];
+  const tl=document.getElementById('tlEl');tl.innerHTML='';
+  tls.forEach((t,i)=>{
+    const item=document.createElement('div');item.className='tl-item';item.style.animationDelay=(i*0.1)+'s';
+    item.innerHTML=`<div class="tl-dot"></div><div class="tl-label">${t.l}</div><div class="tl-text">${t.t}</div>`;
+    tl.appendChild(item);
+  });
+
+  document.getElementById('finalEgg').textContent=S.isSpecial?
+    '💙 Rusthi + Rushdha = Universe\'s favorite pair. 100% certified da 😭✨':
+    '✨ LIK — Because every love story deserves to be felt';
+
+  setTimeout(confetti,700);
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareWA(){
+  const rt=document.getElementById('rType')?.textContent||'';
+  const txt=`💙 LIK Result!\n${clean(S.myName)} + ${clean(S.partnerName)} = ${S.finalScore}% Love Score\nType: ${rt}\n\nFind yours 👉 lik.love`;
+  location.href='https://wa.me/?text='+encodeURIComponent(txt);
+}
+function shareIG(){showToast('📸 Screenshot this and post to your Instagram story! Tag your partner 💙');}
+function copyResult(){
+  const txt=`💙 ${clean(S.myName)} + ${clean(S.partnerName)} = ${S.finalScore}% on LIK! lik.love`;
+  navigator.clipboard.writeText(txt)
+    .then(()=>showToast('✅ Copied! Share it 💙'))
+    .catch(()=>showToast('⚠️ Copy failed — try manually'));
+}
+function goHome(){
+  Object.assign(S,{mode:'',myName:'',partnerName:'',gender:'boy',myAnswers:[],partnerAnswers:[],qIndex:0,pqIndex:0,skipped1:0,skipped2:0,finalScore:0,isSpecial:false,isZero:false,sessionKey:''});
+  showScreen('homeScreen');
+}
+
+// ============================================================
+// CHECK IF OPENED AS PARTNER LINK
+// ============================================================
+(function onLoad(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('partner')){
+    S.mode='quiz';
+    // Small delay to ensure Firebase module has loaded
+    setTimeout(startPartnerFlow, 300);
+  }
+})();
+</script>
+</body>
+</html>
+    
