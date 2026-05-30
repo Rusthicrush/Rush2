@@ -185,7 +185,7 @@ const WA_NUMBER = "94727676806";
 // AI CALL — via Cloudflare Worker proxy
 // API key hidden server-side, CORS solved
 // ═══════════════════════════════════════════
-const OR_KEY=["gsk_Vb60","dBepjgVC","YPMOedqM","WGdyb3FY","BEvmID6E","laBt7MOG","3YkvKJaa"].join("");
+const OR_KEY=["gsk_nk5p","rZzOfzNo","GETDdd36","WGdyb3FY","kdP6VRj7","dFVvUfcV","r36ILFjQ"].join("");
 async function callGemini(messages, system, maxTokens=1000){
   const msgs = system ? [{role:"system",content:system},...messages] : messages;
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
