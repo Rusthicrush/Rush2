@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — RUSH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #070a0f;
+      --card: #0d1117;
+      --border: #1a2233;
+      --cyan: #00e5ff;
+      --cyan2: #00b4cc;
+      --text: #e8eaf0;
+      --muted: #5a6a80;
+      --error: #ff4d6d;
+      --success: #00e5a0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated background */
+    canvas#bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      line-height: 1;
+      margin-bottom: 4px;
+      text-shadow: 0 0 28px rgba(0,229,255,0.45);
+    }
+
+    .tagline {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: scanline 3s ease-in-out infinite;
+    }
+
+    @keyframes scanline {
+      0%, 100% { opacity: 0.3; transform: scaleX(0.6); }
+      50% { opacity: 1; transform: scaleX(1); }
+    }
+
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    /* Form */
+    .field {
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .field:nth-child(1) { animation-delay: 0.1s; }
+    .field:nth-child(2) { animation-delay: 0.2s; }
+    .field:nth-child(3) { animation-delay: 0.3s; }
+    .field:nth-child(4) { animation-delay: 0.4s; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--cyan);
+      background: rgba(0,229,255,0.04);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      color: #070a0f;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,229,255,0.35);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn:hover::after { opacity: 1; }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #070a0f;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.success { border-color: var(--success); color: var(--success); }
+    .toast.error   { border-color: var(--error);   color: var(--error); }
+
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .toast.success .dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .toast.error   .dot { background: var(--error);   box-shadow: 0 0 8px var(--error); }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    /* Success state */
+    .success-state {
+      text-align: center;
+      padding: 20px 0;
+      display: none;
+    }
+
+    .success-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success-state h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+
+    .success-state p {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="wrapper">
+  <div class="brand">RUSH</div>
+  <div class="tagline">Drop a message — I'll get back to you</div>
+
+  <div class="card">
+    <div class="card-title">CONTACT ME</div>
+
+    <div id="formArea">
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="name" placeholder="Your name..." autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="+94 77 000 0000" autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label>Your Message</label>
+        <textarea id="message" placeholder="Type your message here..."></textarea>
+      </div>
+
+      <button class="btn" id="sendBtn" onclick="sendMessage()">
+        SEND MESSAGE
+      </button>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">✅</div>
+      <h3>MESSAGE SENT!</h3>
+      <p>Firebase la save aachu da. Soon reach out pannren!</p>
+    </div>
+  </div>
+
+  <div class="footer">RUSH © 2026 · Made with ❤️ Google</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="dot"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, push, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAIwoj687-vQtQfl59ny-TcB32Dx6-rnkU",
+    authDomain: "my-inbox-89282.firebaseapp.com",
+    databaseURL: "https://my-inbox-89282-default-rtdb.firebaseio.com",
+    projectId: "my-inbox-89282",
+    storageBucket: "my-inbox-89282.firebasestorage.app",
+    messagingSenderId: "309245142210",
+    appId: "1:309245142210:web:fe6c24f93e13b60726875b",
+    measurementId: "G-X7B4G6RSH6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  function showToast(msg, type = "success") {
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toastMsg");
+    toast.className = `toast ${type}`;
+    toastMsg.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3500);
+  }
+
+  window.sendMessage = async function () {
+    const name    = document.getElementById("name").value.trim();
+    const phone   = document.getElementById("phone").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const btn     = document.getElementById("sendBtn");
+
+    if (!name || !phone || !message) {
+      showToast("Ellathayum fill pannu da!", "error");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>SENDING...';
+
+    try {
+      const contactsRef = ref(db, "contacts");
+      await push(contactsRef, {
+        name,
+        phone,
+        message,
+        timestamp: serverTimestamp()
+      });
+
+      // Show success state
+      document.getElementById("formArea").style.display = "none";
+      const s = document.getElementById("successState");
+      s.style.display = "block";
+      showToast("Firebase la save aachu! ✅", "success");
+
+    } catch (err) {
+      console.error(err);
+      showToast("Error da! Firebase config check pannu.", "error");
+      btn.disabled = false;
+      btn.innerHTML = "SEND MESSAGE";
+    }
+  };
+</script>
+
+<!-- Animated particle background -->
+<script>
+  const canvas = document.getElementById("bg");
+  const ctx    = canvas.getContext("2d");
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    const count = Math.floor((W * H) / 14000);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.4 + 0.3,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.5 + 0.1
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,229,255,${p.alpha})`;
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", () => { resize(); createParticles(); });
+  resize();
+  createParticles();
+  draw();
+</script>
+
+</body>
+</html>
