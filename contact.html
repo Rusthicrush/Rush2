@@ -330,8 +330,8 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getFirestore, collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
   const firebaseConfig = {
@@ -346,7 +346,7 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
+  const db  = getFirestore(app);
 
   function showToast(msg, type = "success") {
     const toast = document.getElementById("toast");
@@ -372,8 +372,8 @@
     btn.innerHTML = '<span class="spinner"></span>SENDING...';
 
     try {
-      const contactsRef = ref(db, "contacts");
-      await push(contactsRef, {
+      const contactsRef = collection(db, "contacts");
+      await addDoc(contactsRef, {
         name,
         phone,
         message,
