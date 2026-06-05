@@ -677,7 +677,7 @@ Style:
     input.focus();
   };
 
-  window.sendChip = (chip) => sendMessage(chip.textContent.trim());
+  window.sendChip = (chip) => { const t = chip.textContent.trim(); sendMessage(t + " (respond in English)"); };
 </script>
 </body>
 </html>
