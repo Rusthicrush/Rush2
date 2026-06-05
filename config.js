@@ -1,0 +1,3 @@
+const CONFIG = {
+  GROQ_API_KEY: "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"
+};
