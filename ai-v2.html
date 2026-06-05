@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoElec AI v2 — RUSH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #04070f;
+      --bg2:     #080d1a;
+      --card:    #0b1020;
+      --card2:   #0e1428;
+      --border:  #1a2540;
+      --cyan:    #00e5ff;
+      --cyan2:   #00b4cc;
+      --amber:   #ffb800;
+      --green:   #00e5a0;
+      --red:     #ff4d6d;
+      --purple:  #a855f7;
+      --text:    #e8eaf0;
+      --muted:   #4a5a70;
+      --muted2:  #8a9ab0;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 260px 1fr 280px;
+      grid-template-areas:
+        "header header header"
+        "sidebar chat history";
+    }
+
+    canvas#bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
+
+    /* ── HEADER ── */
+    header {
+      grid-area: header;
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(4,7,15,0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .h-left { display: flex; align-items: center; gap: 14px; }
+
+    .back-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted2);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    .logo { display: flex; flex-direction: column; }
+    .logo-main {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(0,229,255,0.5);
+    }
+    .logo-sub { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+
+    .version-badge {
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(0,229,255,0.1));
+      border: 1px solid rgba(168,85,247,0.4);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--purple);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .h-right { display: flex; align-items: center; gap: 10px; }
+
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,229,160,0.25);
+      background: rgba(0,229,160,0.06);
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--green);
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .stat-chip {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: 0.65rem;
+      color: var(--muted2);
+    }
+    .stat-chip span { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+
+    /* ── SIDEBAR ── */
+    aside.sidebar {
+      grid-area: sidebar;
+      position: relative;
+      z-index: 10;
+      background: rgba(8,13,26,0.95);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-section { padding: 14px 14px 8px; }
+    .sidebar-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    /* Vehicle selector */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .veh-btn {
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted2);
+      font-size: 0.72rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .veh-btn .veh-icon { font-size: 1.3rem; }
+    .veh-btn:hover, .veh-btn.active {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0,229,255,0.06);
+    }
+
+    /* Quick chips */
+    .chips-list { display: flex; flex-direction: column; gap: 5px; }
+    .chip {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted2);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .chip:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,229,255,0.05); }
+
+    .sidebar-divider { height: 1px; background: var(--border); margin: 4px 14px; }
+
+    /* Stats panel */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .stat-card {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      color: var(--cyan);
+      line-height: 1;
+    }
+    .stat-lbl { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+    /* New chat btn */
+    .new-chat-btn {
+      margin: 10px 14px 14px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,229,255,0.3);
+      background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(0,180,204,0.04));
+      color: var(--cyan);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .new-chat-btn:hover { background: rgba(0,229,255,0.14); }
+
+    /* ── MAIN CHAT ── */
+    main.chat-area {
+      grid-area: chat;
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .chat-wrap::-webkit-scrollbar { width: 3px; }
+    .chat-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Welcome */
+    .welcome-card {
+      background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(168,85,247,0.04));
+      border: 1px solid rgba(0,229,255,0.15);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      animation: fadeUp 0.5s ease both;
+    }
+    .welcome-icon { font-size: 3rem; margin-bottom: 10px; }
+    .welcome-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+    .welcome-v { color: var(--purple); font-size: 0.9rem; }
+    .welcome-card p { font-size: 0.8rem; color: var(--muted2); line-height: 1.6; margin-top: 8px; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Messages */
+    .msg { display: flex; gap: 10px; animation: fadeUp 0.3s ease both; max-width: 100%; }
+    .msg.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
+    }
+    .avatar.ai { background: linear-gradient(135deg,rgba(0,229,255,0.15),rgba(0,180,204,0.08)); border: 1px solid rgba(0,229,255,0.25); }
+    .avatar.uav { background: linear-gradient(135deg,rgba(255,184,0,0.15),rgba(255,184,0,0.05)); border: 1px solid rgba(255,184,0,0.2); }
+
+    .bubble {
+      max-width: calc(100% - 44px);
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      line-height: 1.65;
+    }
+    .msg.ai .bubble { background: var(--card); border: 1px solid var(--border); border-top-left-radius: 3px; }
+    .msg.user .bubble { background: linear-gradient(135deg,rgba(0,229,255,0.11),rgba(0,180,204,0.05)); border: 1px solid rgba(0,229,255,0.18); border-top-right-radius: 3px; }
+
+    .bubble strong { color: var(--cyan); }
+    .bubble .step {
+      display: flex; gap: 8px; margin: 5px 0;
+      padding: 7px 10px;
+      background: rgba(0,229,255,0.04);
+      border-left: 2px solid var(--cyan);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.82rem;
+    }
+    .bubble .step-num { color: var(--cyan); font-family: 'JetBrains Mono',monospace; font-size: 0.73rem; flex-shrink: 0; }
+    .bubble .warn {
+      display: flex; align-items: flex-start; gap: 7px; margin: 7px 0;
+      padding: 7px 10px;
+      background: rgba(255,184,0,0.06);
+      border-left: 2px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.81rem; color: #d4aa60;
+    }
+    .bubble .tag {
+      display: inline-block; padding: 1px 7px; border-radius: 6px;
+      background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.2);
+      font-size: 0.7rem; color: var(--cyan);
+      font-family: 'JetBrains Mono',monospace; margin: 1px;
+    }
+
+    /* Image preview in bubble */
+    .img-preview {
+      max-width: 200px; max-height: 150px;
+      border-radius: 8px; border: 1px solid var(--border);
+      margin-bottom: 6px; display: block;
+    }
+
+    .msg-time { font-size: 0.6rem; color: var(--muted); margin-top: 3px; padding: 0 3px; }
+    .msg.user .msg-time { text-align: right; }
+
+    /* Typing */
+    .typing-bubble {
+      display: flex; align-items: center; gap: 5px;
+      padding: 12px 16px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; border-top-left-radius: 3px;
+      width: fit-content;
+    }
+    .typing-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--muted2);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2){animation-delay:0.2s}
+    .typing-dot:nth-child(3){animation-delay:0.4s}
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-5px);opacity:1} }
+
+    /* ── INPUT BAR ── */
+    .input-bar {
+      position: relative; z-index: 10;
+      padding: 10px 14px;
+      background: rgba(4,7,15,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Image preview strip */
+    .img-strip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0 8px;
+    }
+    .img-strip.visible { display: flex; }
+    .img-thumb {
+      width: 48px; height: 48px; border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--cyan);
+    }
+    .img-remove {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--red); border: none;
+      color: #fff; font-size: 0.7rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      margin-left: -18px; margin-top: -28px;
+      align-self: flex-start;
+    }
+
+    .input-row { display: flex; gap: 8px; align-items: flex-end; }
+
+    .img-upload-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted2); font-size: 1.1rem;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .img-upload-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    .input-wrap { flex: 1; }
+    textarea#userInput {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      outline: none; resize: none;
+      max-height: 100px; min-height: 40px;
+      line-height: 1.5;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      scrollbar-width: none;
+    }
+    textarea#userInput::-webkit-scrollbar { display: none; }
+    textarea#userInput:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,229,255,0.07); }
+    textarea#userInput::placeholder { color: var(--muted); }
+
+    .send-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      color: #04070f; font-size: 1rem;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .send-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,229,255,0.35); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── HISTORY PANEL ── */
+    aside.history-panel {
+      grid-area: history;
+      position: relative; z-index: 10;
+      background: rgba(8,13,26,0.95);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .clear-btn {
+      font-size: 0.62rem; color: var(--red);
+      background: none; border: none; cursor: pointer;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      opacity: 0.7; transition: opacity 0.2s;
+    }
+    .clear-btn:hover { opacity: 1; }
+
+    .history-list {
+      flex: 1; overflow-y: auto; padding: 10px;
+      display: flex; flex-direction: column; gap: 6px;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .history-list::-webkit-scrollbar { width: 3px; }
+    .history-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .history-empty {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%;
+      color: var(--muted); font-size: 0.72rem; text-align: center; gap: 8px;
+    }
+    .history-empty .empty-icon { font-size: 2rem; opacity: 0.4; }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      animation: fadeUp 0.3s ease both;
+    }
+    .history-item:hover { border-color: var(--cyan); background: rgba(0,229,255,0.04); }
+
+    .hi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .hi-vehicle {
+      font-size: 0.62rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--cyan);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .hi-time { font-size: 0.6rem; color: var(--muted); font-family: 'JetBrains Mono',monospace; }
+    .hi-query { font-size: 0.75rem; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+    .hi-preview { font-size: 0.68rem; color: var(--muted2); line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .hi-img-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 1px 6px; border-radius: 4px;
+      background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.25);
+      font-size: 0.6rem; color: var(--purple); margin-top: 4px;
+    }
+
+    .delete-hi {
+      background: none; border: none; color: var(--muted);
+      font-size: 0.75rem; cursor: pointer; padding: 2px 4px;
+      border-radius: 4px; transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .delete-hi:hover { color: var(--red); }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-areas:
+          "header"
+          "sidebar"
+          "chat"
+          "history";
+      }
+      aside.sidebar { max-height: 180px; border-right: none; border-bottom: 1px solid var(--border); overflow-x: auto; }
+      .vehicle-grid { grid-template-columns: repeat(4, 1fr); }
+      .chips-list { flex-direction: row; }
+      .stats-grid { display: none; }
+      aside.history-panel { max-height: 200px; border-left: none; border-top: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- HEADER -->
+<header>
+  <div class="h-left">
+    <a href="index.html" class="back-btn">←</a>
+    <div class="logo">
+      <div class="logo-main">AUTOELEC AI</div>
+      <div class="logo-sub">RUSH · Electrical Expert</div>
+    </div>
+    <div class="version-badge">v2.0</div>
+  </div>
+  <div class="h-right">
+    <div class="stat-chip">🔍 Diagnoses: <span id="headerCount">0</span></div>
+    <div class="status-pill"><div class="status-dot"></div>Gemini Online</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Vehicle Type</div>
+    <div class="vehicle-grid">
+      <button class="veh-btn active" onclick="selectVehicle(this,'Car')"><span class="veh-icon">🚗</span>Car</button>
+      <button class="veh-btn" onclick="selectVehicle(this,'Bike')"><span class="veh-icon">🏍️</span>Bike</button>
+      <button class="veh-btn" onclick="selectVehicle(this,'Truck')"><span class="veh-icon">🚛</span>Truck</button>
+      <button class="veh-btn" onclick="selectVehicle(this,'Bus')"><span class="veh-icon">🚌</span>Bus</button>
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Quick Diagnose</div>
+    <div class="chips-list">
+      <div class="chip" onclick="sendChip(this)">🔋 Battery dead</div>
+      <div class="chip" onclick="sendChip(this)">💡 Lights not working</div>
+      <div class="chip" onclick="sendChip(this)">⚡ Alternator check</div>
+      <div class="chip" onclick="sendChip(this)">🔌 Short circuit</div>
+      <div class="chip" onclick="sendChip(this)">🔧 Starter motor issue</div>
+      <div class="chip" onclick="sendChip(this)">🛞 Fuse blown</div>
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Session Stats</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="statMsgs">0</div>
+        <div class="stat-lbl">Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statDiag">0</div>
+        <div class="stat-lbl">Diagnoses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statImgs">0</div>
+        <div class="stat-lbl">Images</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statVeh">🚗</div>
+        <div class="stat-lbl">Vehicle</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="new-chat-btn" onclick="newChat()">＋ New Diagnosis</button>
+</aside>
+
+<!-- MAIN CHAT -->
+<main class="chat-area">
+  <div class="chat-wrap" id="chatWrap">
+    <div class="welcome-card">
+      <div class="welcome-icon">⚡</div>
+      <h2>AUTOELEC AI <span class="welcome-v">v2</span></h2>
+      <p>Advanced vehicle electrical diagnosis system.<br/>
+      Image upload support · Diagnosis history · Multi-vehicle expert.<br/>
+      உங்கள் vehicle electrical problem-ஐ solve பண்ண ready!</p>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-bar">
+    <div class="img-strip" id="imgStrip">
+      <img id="imgThumb" class="img-thumb" src="" alt=""/>
+      <button class="img-remove" onclick="removeImage()">✕</button>
+      <span style="font-size:0.7rem;color:var(--muted2);">Image ready to analyze</span>
+    </div>
+    <div class="input-row">
+      <button class="img-upload-btn" onclick="document.getElementById('fileInput').click()" title="Upload wiring photo">📷</button>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
+      <div class="input-wrap">
+        <textarea id="userInput" placeholder="Describe your electrical problem or upload a wiring photo..." rows="1"></textarea>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</main>
+
+<!-- HISTORY PANEL -->
+<aside class="history-panel">
+  <div class="panel-header">
+    <div class="panel-title">📋 Diagnosis History</div>
+    <button class="clear-btn" onclick="clearHistory()">Clear All</button>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="history-empty" id="historyEmpty">
+      <div class="empty-icon">📋</div>
+      <div>No diagnoses yet.<br/>Start a conversation!</div>
+    </div>
+  </div>
+</aside>
+
+<!-- PARTICLE BG -->
+<script>
+  const canvas = document.getElementById("bg");
+  const ctx = canvas.getContext("2d");
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function initParticles() {
+    particles = [];
+    const n = Math.floor((W * H) / 18000);
+    for (let i = 0; i < n; i++) particles.push({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.1+0.3,
+      vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2,
+      a: Math.random()*0.4+0.1,
+      c: Math.random()>0.65 ? '255,184,0' : Math.random()>0.5 ? '168,85,247' : '0,229,255'
+    });
+  }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    for (const p of particles) {
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.c},${p.a})`; ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener("resize",()=>{resize();initParticles();});
+  resize(); initParticles(); draw();
+</script>
+
+<!-- MAIN LOGIC -->
+<script type="module">
+  const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+  const GEMINI_MODEL   = "gemini-2.0-flash";
+
+  const SYSTEM_PROMPT = `You are AutoElec AI v2 — an advanced expert auto electrical engineer assistant built into the RUSH platform. You specialize in vehicle electrical systems for Cars, Bikes, Trucks, and Buses.
+
+Your expertise covers:
+- Fault diagnosis & troubleshooting (battery, alternator, starter, fuses, relays, wiring harness)
+- Wiring diagram analysis & circuit explanations
+- Visual inspection of uploaded wiring photos (identify burnt wires, loose connections, corroded terminals)
+- Electrical parts identification & tool recommendations
+- Step-by-step repair guidance with safety precautions
+- Both English and Tamil language support
+
+Response style:
+- Be practical, clear, and specific
+- Use numbered steps for procedures
+- Highlight warnings with ⚠️
+- Use **bold** for important terms/parts
+- Keep responses concise but complete
+- If user writes in Tamil, respond in Tamil
+- If user writes in English, respond in English
+- If an image is provided, analyze it first before answering
+- Always mention the vehicle type context in your diagnosis
+- Start responses directly — no unnecessary preamble`;
+
+  const chatWrap   = document.getElementById("chatWrap");
+  const sendBtn    = document.getElementById("sendBtn");
+  const input      = document.getElementById("userInput");
+  const histList   = document.getElementById("historyList");
+  const histEmpty  = document.getElementById("historyEmpty");
+
+  let conversationHistory = [];
+  let selectedVehicle = "Car";
+  let currentImageB64 = null;
+  let currentImageMime = null;
+  let diagnosisCount = 0;
+  let imageCount = 0;
+  let msgCount = 0;
+  let diagnosisHistory = JSON.parse(localStorage.getItem("autoelec_history") || "[]");
+
+  // Init history
+  renderHistory();
+  updateStats();
+
+  // Textarea auto-resize
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 100) + "px";
+  });
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  // Vehicle select
+  window.selectVehicle = function(btn, v) {
+    document.querySelectorAll(".veh-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedVehicle = v;
+    const icons = {Car:"🚗",Bike:"🏍️",Truck:"🚛",Bus:"🚌"};
+    document.getElementById("statVeh").textContent = icons[v];
+  };
+
+  // Image upload
+  window.handleImageUpload = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      currentImageB64 = dataUrl.split(",")[1];
+      currentImageMime = file.type;
+      document.getElementById("imgThumb").src = dataUrl;
+      document.getElementById("imgStrip").classList.add("visible");
+      imageCount++;
+      updateStats();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeImage = function() {
+    currentImageB64 = null;
+    currentImageMime = null;
+    document.getElementById("imgStrip").classList.remove("visible");
+    document.getElementById("fileInput").value = "";
+  };
+
+  // Time helper
+  function getTime() {
+    return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  // Append message
+  function appendMsg(role, htmlContent, imgSrc) {
+    const isUser = role === "user";
+    const div = document.createElement("div");
+    div.className = `msg ${isUser ? "user" : "ai"}`;
+    const imgHtml = imgSrc ? `<img src="${imgSrc}" class="img-preview"/>` : "";
+    div.innerHTML = `
+      <div class="avatar ${isUser ? "uav" : "ai"}">${isUser ? "👤" : "⚡"}</div>
+      <div>
+        <div class="bubble">${imgHtml}${htmlContent}</div>
+        <div class="msg-time">${getTime()}</div>
+      </div>`;
+    chatWrap.appendChild(div);
+    chatWrap.scrollTop = chatWrap.scrollHeight;
+    return div;
+  }
+
+  function showTyping() {
+    const div = document.createElement("div");
+    div.className = "msg ai"; div.id = "typingMsg";
+    div.innerHTML = `<div class="avatar ai">⚡</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+    chatWrap.appendChild(div);
+    chatWrap.scrollTop = chatWrap.scrollHeight;
+  }
+  function removeTyping() { const t = document.getElementById("typingMsg"); if(t) t.remove(); }
+
+  function formatResponse(text) {
+    text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    text = text.replace(/^(\d+)\.\s(.+)$/gm, (_,n,c) =>
+      `<div class="step"><span class="step-num">${n}.</span><span>${c}</span></div>`);
+    text = text.replace(/^(⚠️.*|Warning:.*|Caution:.*)$/gm, s =>
+      `<div class="warn">⚠️ <span>${s.replace(/^⚠️\s*/,"")}</span></div>`);
+    text = text.replace(/`([^`]+)`/g, '<span class="tag">$1</span>');
+    text = text.replace(/\n/g, "<br/>");
+    return text;
+  }
+
+  // Save to history
+  function saveToHistory(query, reply, hasImage) {
+    const item = {
+      id: Date.now(),
+      vehicle: selectedVehicle,
+      query: query.substring(0, 80),
+      preview: reply.replace(/<[^>]+>/g, "").substring(0, 120),
+      time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+      date: new Date().toLocaleDateString(),
+      hasImage
+    };
+    diagnosisHistory.unshift(item);
+    if (diagnosisHistory.length > 50) diagnosisHistory.pop();
+    localStorage.setItem("autoelec_history", JSON.stringify(diagnosisHistory));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    if (diagnosisHistory.length === 0) {
+      histEmpty.style.display = "flex";
+      document.querySelectorAll(".history-item").forEach(e => e.remove());
+      return;
+    }
+    histEmpty.style.display = "none";
+    histList.innerHTML = "";
+    diagnosisHistory.forEach(item => {
+      const vehIcons = {Car:"🚗",Bike:"🏍️",Truck:"🚛",Bus:"🚌"};
+      const div = document.createElement("div");
+      div.className = "history-item";
+      div.innerHTML = `
+        <div class="hi-top">
+          <div class="hi-vehicle">${vehIcons[item.vehicle]||"🚗"} ${item.vehicle}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="hi-time">${item.time}</div>
+            <button class="delete-hi" onclick="deleteHistory(${item.id},event)">✕</button>
+          </div>
+        </div>
+        <div class="hi-query">${item.query}</div>
+        <div class="hi-preview">${item.preview}</div>
+        ${item.hasImage ? '<div class="hi-img-badge">📷 Image analyzed</div>' : ""}`;
+      div.onclick = () => loadHistory(item);
+      histList.appendChild(div);
+    });
+  }
+
+  window.deleteHistory = function(id, e) {
+    e.stopPropagation();
+    diagnosisHistory = diagnosisHistory.filter(i => i.id !== id);
+    localStorage.setItem("autoelec_history", JSON.stringify(diagnosisHistory));
+    renderHistory();
+  };
+
+  window.clearHistory = function() {
+    if (!confirm("Clear all diagnosis history?")) return;
+    diagnosisHistory = [];
+    localStorage.setItem("autoelec_history", JSON.stringify([]));
+    renderHistory();
+  };
+
+  window.loadHistory = function(item) {
+    input.value = item.query;
+    input.focus();
+  };
+
+  function updateStats() {
+    document.getElementById("statMsgs").textContent = msgCount;
+    document.getElementById("statDiag").textContent = diagnosisCount;
+    document.getElementById("statImgs").textContent = imageCount;
+    document.getElementById("headerCount").textContent = diagnosisCount;
+  }
+
+  // Gemini API call
+  async function callGemini(userMessage) {
+    const userParts = [];
+
+    if (currentImageB64) {
+      userParts.push({ inline_data: { mime_type: currentImageMime, data: currentImageB64 } });
+    }
+
+    userParts.push({ text: `[Vehicle: ${selectedVehicle}] ${userMessage}` });
+
+    conversationHistory.push({ role: "user", parts: userParts });
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: conversationHistory,
+          generationConfig: { maxOutputTokens: 1000 }
+        })
+      }
+    );
+
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, response error. Try again!";
+    conversationHistory.push({ role: "model", parts: [{ text: reply }] });
+    return reply;
+  }
+
+  // Send message
+  window.sendMessage = async function(text) {
+    const msg = (text || input.value).trim();
+    if (!msg && !currentImageB64) return;
+
+    const displayMsg = msg || "Please analyze this wiring image.";
+    const imgSrc = currentImageB64 ? `data:${currentImageMime};base64,${currentImageB64}` : null;
+    const hasImg = !!currentImageB64;
+
+    appendMsg("user", displayMsg.replace(/</g,"&lt;").replace(/>/g,"&gt;"), imgSrc);
+    input.value = ""; input.style.height = "auto";
+    sendBtn.disabled = true;
+    msgCount++;
+
+    const imgB64Backup = currentImageB64;
+    removeImage();
+    showTyping();
+
+    try {
+      const reply = await callGemini(msg || "Please analyze this wiring/electrical image and identify any issues.");
+      removeTyping();
+      const formatted = formatResponse(reply);
+      appendMsg("ai", formatted);
+      diagnosisCount++;
+      updateStats();
+      saveToHistory(displayMsg, formatted, hasImg);
+    } catch (err) {
+      removeTyping();
+      appendMsg("ai", "⚠️ Connection error. Please check your API key and try again.");
+      console.error(err);
+    }
+    sendBtn.disabled = false;
+    input.focus();
+  };
+
+  window.sendChip = function(chip) {
+    sendMessage(chip.textContent.trim());
+  };
+
+  window.newChat = function() {
+    conversationHistory = [];
+    chatWrap.innerHTML = `<div class="welcome-card">
+      <div class="welcome-icon">⚡</div>
+      <h2>AUTOELEC AI <span class="welcome-v">v2</span></h2>
+      <p>New diagnosis session started.<br/>Select vehicle type and describe your problem!</p>
+    </div>`;
+    msgCount = 0; diagnosisCount = 0; imageCount = 0;
+    updateStats();
+  };
+</script>
+
+</body>
+</html>
