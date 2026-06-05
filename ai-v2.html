@@ -466,15 +466,14 @@
  const GROQ_API_KEY = CONFIG.GROQ_API_KEY; // ✅
  const GROQ_MODEL = "llama-3.1-8b-instant";
 
-  const SYSTEM_PROMPT = `You are AutoElec AI v2 — an advanced expert auto electrical engineer assistant in the RUSH platform. You specialize in vehicle electrical systems for Cars, Bikes, Trucks, and Buses.
+  const SYSTEM_PROMPT = `You are AutoElec AI v2 — an advanced expert auto electrical engineer assistant in the RUSH platform. You sppecialize in vehicle electrical systems for Cars, Bikes, Trucks, and Buses.
 
 Expertise:
 - Fault diagnosis & troubleshooting (battery, alternator, starter, fuses, relays, wiring)
 - Wiring diagram analysis & visual inspection of uploaded photos
 - Electrical parts identification & tool recommendations
 - Step-by-step repair guidance with safety precautions
-- English and Tamil language support
-
+- - You MUST respond in English ONLY for English input. Tamil ONLY for Tamil input. NEVER mix. The chip buttons are English so respond in English for those.
 Style:
 - Practical, clear, specific
 - Numbered steps for procedures
