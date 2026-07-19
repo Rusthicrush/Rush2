@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>BATTERY — Basics to Pro | RUSH Auto Electrical</title>
+<style>
+  :root{
+    --bg:#070b12;
+    --bg2:#0c1420;
+    --panel:#0f1a28;
+    --panel2:#0a1420;
+    --line:#1c2c40;
+    --cyan:#22d3ee;
+    --blue:#3b82f6;
+    --amber:#ffb020;
+    --red:#ff5c5c;
+    --green:#3ddc97;
+    --text:#dce6f2;
+    --text-dim:#7c93ac;
+    --text-dim2:#546a83;
+    --mono:'JetBrains Mono','Courier New',monospace;
+    --glass-bg:linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015) 60%);
+    --glass-border:rgba(255,255,255,0.12);
+    --glass-shadow:0 12px 34px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(34,211,238,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(59,130,246,0.09), transparent 55%),
+      radial-gradient(ellipse 600px 500px at 50% 60%, rgba(255,176,32,0.045), transparent 60%),
+      radial-gradient(ellipse 500px 400px at 10% 90%, rgba(61,220,151,0.04), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  ::selection{background:rgba(34,211,238,0.25);color:#fff;}
+
+  /* ===== TOP BAR ===== */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;
+    background:linear-gradient(180deg, rgba(24,36,54,0.55), rgba(9,14,22,0.55));
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border-bottom:1px solid rgba(255,255,255,0.09);
+    box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:800;color:#00131a;font-size:14px;
+    box-shadow:0 0 18px rgba(34,211,238,0.45);
+    flex-shrink:0;
+  }
+  .brand-text{font-family:var(--mono);font-size:12.5px;letter-spacing:0.14em;color:var(--text-dim);}
+  .brand-text b{color:var(--cyan);}
+  .menu-btn{
+    background:linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+    backdrop-filter:blur(12px) saturate(160%);
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
+    border:1px solid var(--glass-border);color:var(--cyan);
+    width:38px;height:38px;border-radius:11px;font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  /* ===== TOC DRAWER ===== */
+  .toc-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .toc-overlay.open{opacity:1;pointer-events:auto;}
+  .toc-drawer{
+    position:fixed;top:0;right:0;bottom:0;width:82%;max-width:320px;z-index:201;
+    background:linear-gradient(165deg, rgba(26,40,58,0.68), rgba(7,11,18,0.82));
+    backdrop-filter:blur(30px) saturate(180%);
+    -webkit-backdrop-filter:blur(30px) saturate(180%);
+    border-left:1px solid rgba(255,255,255,0.10);
+    transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    padding:20px 16px;overflow-y:auto;
+    box-shadow:-16px 0 40px rgba(0,0,0,0.4);
+  }
+  .toc-drawer.open{transform:translateX(0);}
+  .toc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .toc-header span{font-family:var(--mono);color:var(--cyan);font-size:12px;letter-spacing:.12em;}
+  .toc-close{background:none;border:none;color:var(--text-dim);font-size:22px;line-height:1;}
+  .toc-list{list-style:none;display:flex;flex-direction:column;gap:2px;}
+  .toc-list a{
+    display:flex;gap:10px;align-items:baseline;
+    padding:10px 8px;border-radius:8px;color:var(--text-dim);
+    text-decoration:none;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .toc-list a:active{background:rgba(34,211,238,0.08);}
+  .toc-list a .num{font-family:var(--mono);color:var(--cyan);font-size:11.5px;min-width:20px;}
+
+  /* ===== HERO ===== */
+  .hero{padding:38px 20px 26px;position:relative;overflow:hidden;}
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--amber);
+    text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  }
+  .eyebrow::before{content:'';width:16px;height:1px;background:var(--amber);display:inline-block;}
+  .hero h1{
+    font-size:34px;line-height:1.08;font-weight:800;letter-spacing:-0.02em;
+    background:linear-gradient(180deg,#fff, #a9c4dd 85%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:10px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(90deg,var(--cyan),var(--blue));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{color:var(--text-dim);font-size:14.5px;max-width:46ch;}
+  .hero p b{color:var(--text);font-weight:600;}
+  .crosslink{
+    display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;color:var(--amber);
+    border:1px solid rgba(255,176,32,0.35);border-radius:999px;
+    padding:8px 14px;text-decoration:none;
+    background:linear-gradient(135deg, rgba(255,176,32,0.14), rgba(255,255,255,0.02));
+    backdrop-filter:blur(12px) saturate(160%);
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
+  }
+  .crosslink span{transition:transform .2s;}
+  .crosslink:active span{transform:translateX(3px);}
+
+  /* animated pulse rail — signature element */
+  .rail{
+    margin-top:26px;height:64px;border:1px solid var(--glass-border);border-radius:16px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01) 60%);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    box-shadow:var(--glass-shadow);
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;padding:0 16px;justify-content:space-between;
+  }
+  .rail .term{font-family:var(--mono);font-size:11px;color:var(--text-dim2);text-align:center;}
+  .rail .term b{display:block;font-size:15px;color:var(--cyan);font-weight:700;}
+  .rail .term.pos b{color:var(--amber);}
+  .rail-line{
+    position:absolute;left:56px;right:56px;top:50%;height:2px;
+    background:linear-gradient(90deg,var(--cyan),var(--amber));
+    transform:translateY(-50%);opacity:.35;
+  }
+  .electron{
+    position:absolute;top:50%;width:6px;height:6px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+    transform:translateY(-50%);
+    animation:flow 3.2s linear infinite;
+  }
+  .electron:nth-child(4){animation-delay:-1.1s;}
+  .electron:nth-child(5){animation-delay:-2.2s;}
+  @keyframes flow{
+    0%{left:56px;opacity:0;}
+    8%{opacity:1;}
+    92%{opacity:1;}
+    100%{left:calc(100% - 62px);opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .electron{animation:none;display:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ===== STAT STRIP ===== */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:22px 20px 4px;}
+  .stat{
+    position:relative;overflow:hidden;
+    background:var(--glass-bg);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:14px;
+    box-shadow:var(--glass-shadow);
+    padding:14px 12px;text-align:center;
+  }
+  .stat::before{
+    content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 55%);
+  }
+  .stat > *{position:relative;z-index:1;}
+  .stat .n{font-family:var(--mono);font-size:19px;color:var(--cyan);font-weight:700;}
+  .stat .l{font-size:10.5px;color:var(--text-dim2);margin-top:3px;letter-spacing:.03em;}
+
+  /* ===== SECTIONS ===== */
+  .wrap{padding:0 18px;max-width:720px;margin:0 auto;}
+  section{padding-top:52px;scroll-margin-top:70px;}
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;}
+  .sec-num{
+    font-family:var(--mono);font-size:13px;color:var(--amber);
+    border:1px solid rgba(255,176,32,0.35);border-radius:6px;padding:2px 7px;flex-shrink:0;
+  }
+  .sec-head h2{font-size:20px;font-weight:700;letter-spacing:-0.01em;color:#fff;}
+  .sec-sub{font-size:14px;color:var(--text-dim);margin-bottom:16px;}
+  p.body-text{font-size:14.5px;color:var(--text-dim);margin-bottom:12px;}
+  p.body-text b{color:var(--text);}
+
+  .card{
+    position:relative;overflow:hidden;
+    background:var(--glass-bg);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:16px;
+    box-shadow:var(--glass-shadow);
+    padding:16px;margin-bottom:14px;
+  }
+  .card::before{
+    content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 50%);
+  }
+  .card > *{position:relative;z-index:1;}
+  .card h3{font-size:14.5px;color:var(--cyan);margin-bottom:8px;font-weight:700;}
+  .card h3 .tag{
+    display:inline-block;font-family:var(--mono);font-size:10px;color:var(--bg);
+    background:var(--cyan);border-radius:4px;padding:1px 6px;margin-right:7px;
+  }
+
+  /* table */
+  .tbl-scroll{
+    overflow-x:auto;margin-bottom:14px;border-radius:14px;
+    border:1px solid var(--glass-border);
+    background:linear-gradient(135deg, rgba(255,255,255,0.045), rgba(255,255,255,0.008) 60%);
+    backdrop-filter:blur(14px) saturate(150%);
+    -webkit-backdrop-filter:blur(14px) saturate(150%);
+    box-shadow:var(--glass-shadow);
+  }
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px;}
+  thead th{
+    background:var(--panel2);color:var(--cyan);text-align:left;
+    font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+    padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td:first-child{color:var(--text);font-weight:600;}
+  tbody tr:nth-child(even){background:rgba(255,255,255,0.015);}
+
+  /* formula block */
+  .formula{
+    position:relative;overflow:hidden;
+    font-family:var(--mono);
+    background:linear-gradient(135deg, rgba(34,211,238,0.10), rgba(255,255,255,0.02) 60%);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    border:1px solid var(--glass-border);
+    border-left:3px solid var(--cyan);border-radius:4px 14px 14px 4px;
+    box-shadow:var(--glass-shadow);
+    padding:12px 14px;margin:10px 0;font-size:15px;color:var(--cyan);
+    display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .formula .note{font-family:-apple-system,sans-serif;font-size:11.5px;color:var(--text-dim2);}
+
+  .grid2{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:480px){.grid2{grid-template-columns:1fr 1fr;}}
+
+  .pill-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .pill-list li{
+    display:flex;gap:10px;font-size:13.5px;color:var(--text-dim);
+    padding:9px 12px;border-radius:12px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.008) 60%);
+    backdrop-filter:blur(10px) saturate(150%);
+    -webkit-backdrop-filter:blur(10px) saturate(150%);
+    border:1px solid var(--glass-border);
+  }
+  .pill-list li b{color:var(--text);flex-shrink:0;}
+  .pill-list.danger li{border-left:3px solid var(--red);}
+  .pill-list.ok li{border-left:3px solid var(--green);}
+
+  /* worked example */
+  .example{
+    position:relative;overflow:hidden;
+    background:linear-gradient(160deg, rgba(34,211,238,0.09), rgba(255,255,255,0.02) 55%, transparent);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:16px;
+    box-shadow:var(--glass-shadow);
+    padding:16px;margin-bottom:14px;
+  }
+  .example::before{
+    content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 50%);
+  }
+  .example > *{position:relative;z-index:1;}
+  .example h3{color:#fff;font-size:14.5px;margin-bottom:4px;}
+  .example .scenario{font-size:13px;color:var(--text-dim);margin-bottom:10px;}
+  .steps{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+  .step{
+    display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+    font-family:var(--mono);font-size:12.5px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.008) 60%);
+    backdrop-filter:blur(10px) saturate(150%);
+    -webkit-backdrop-filter:blur(10px) saturate(150%);
+    border:1px solid var(--glass-border);
+    border-radius:10px;padding:8px 10px;color:var(--text-dim);
+  }
+  .step .res{color:var(--cyan);font-weight:700;}
+  .answer{
+    margin-top:10px;font-family:var(--mono);font-size:14px;color:var(--amber);
+    border-top:1px dashed var(--line);padding-top:10px;font-weight:700;
+  }
+
+  /* diagrams */
+  .diagram{
+    position:relative;overflow:hidden;
+    background:var(--glass-bg);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:16px;
+    box-shadow:var(--glass-shadow);
+    padding:16px 10px;margin-bottom:14px;
+  }
+  .diagram::before{
+    content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 50%);
+  }
+  .diagram > *{position:relative;z-index:1;}
+  .diagram svg{width:100%;height:auto;display:block;}
+  .diagram-cap{font-size:11.5px;color:var(--text-dim2);text-align:center;margin-top:8px;font-family:var(--mono);}
+
+  /* fault table row severity */
+  .sev-high{color:var(--red)!important;}
+  .sev-med{color:var(--amber)!important;}
+
+  /* glossary */
+  .gloss{display:flex;flex-direction:column;gap:10px;}
+  .gloss div{padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .gloss dt{font-family:var(--mono);color:var(--cyan);font-size:13.5px;font-weight:700;}
+  .gloss dd{font-size:13px;color:var(--text-dim);margin-top:2px;}
+
+  hr.div{border:none;border-top:1px solid var(--line);margin:44px 0 0;}
+
+  footer{
+    text-align:center;padding:40px 20px 10px;color:var(--text-dim2);font-size:12px;font-family:var(--mono);
+  }
+  footer .fbrand{color:var(--cyan);letter-spacing:.1em;}
+
+  /* back to top */
+  .totop{
+    position:fixed;bottom:18px;right:18px;z-index:90;
+    width:44px;height:44px;border-radius:50%;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 18px rgba(34,211,238,0.35);
+    color:#00131a;font-size:18px;font-weight:900;
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .totop.show{opacity:1;pointer-events:auto;}
+
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">R</div>
+    <div class="brand-text"><b>RUSH</b> // BATTERY GUIDE</div>
+  </div>
+  <button class="menu-btn" id="menuBtn" aria-label="Open contents">☰</button>
+</div>
+
+<div class="toc-overlay" id="tocOverlay"></div>
+<nav class="toc-drawer" id="tocDrawer">
+  <div class="toc-header">
+    <span>CONTENTS</span>
+    <button class="toc-close" id="tocClose" aria-label="Close">✕</button>
+  </div>
+  <ul class="toc-list" id="tocList"></ul>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">RUSH AUTO ELECTRICAL</div>
+  <h1>Battery — <span class="accent">Basics to Pro</span></h1>
+  <p>Complete A-Z guide: theory, electrochemistry, calculations, real-life examples, BMS &amp; diagnosis. <b>Ellame oru place-la</b> — auto electrical, mobile repair, DIY electronics ku practical-a explain pannirukken.</p>
+  <a href="motor-guide.html" class="crosslink">Motor Guide-ku pogonuma? <span>→</span></a>
+
+  <div class="rail">
+    <div class="term"><b>ANODE</b>(−)</div>
+    <div class="rail-line"></div>
+    <div class="electron"></div>
+    <div class="electron"></div>
+    <div class="electron"></div>
+    <div class="electron"></div>
+    <div class="electron"></div>
+    <div class="term pos"><b>CATHODE</b>(+)</div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="n">15</div><div class="l">SECTIONS</div></div>
+  <div class="stat"><div class="n">5</div><div class="l">WORKED EXAMPLES</div></div>
+  <div class="stat"><div class="n">A–Z</div><div class="l">FORMULA SHEET</div></div>
+</div>
+
+<div class="wrap">
+
+<!-- 1 -->
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Battery Basics &amp; Terminology</h2></div>
+  <p class="body-text">Pro level ku poga aprom, basic terms clear-a therinjurukanum. Idhu ellam daily spec sheets-layum, multimeter reading-layum varum words.</p>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Term</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Voltage (V)</td><td>Electrical pressure — electrons-a push panna irukura force</td><td>Car battery = 12V</td></tr>
+        <tr><td>Current (A)</td><td>Electron flow rate (per second)</td><td>Starter motor draws 100–200A</td></tr>
+        <tr><td>Capacity (Ah/mAh)</td><td>Ethana current-a ethana neram kudukum nu measure</td><td>100Ah = 5A for 20 hours</td></tr>
+        <tr><td>Energy (Wh)</td><td>Total energy stored = Voltage × Capacity</td><td>12V × 100Ah = 1200Wh</td></tr>
+        <tr><td>C-rate</td><td>Charge/discharge speed relative to capacity</td><td>1C on 10Ah = 10A</td></tr>
+        <tr><td>Internal Resistance</td><td>Battery-kulla irukura resistance, heat produce pannum</td><td>Low = better performance</td></tr>
+        <tr><td>Cycle Life</td><td>Ethana full charge-discharge cycles thangum</td><td>Li-ion: 500–1000 cycles</td></tr>
+        <tr><td>SoC</td><td>Ippo ethana % charge irukku</td><td>50% SoC = half charged</td></tr>
+        <tr><td>DoD</td><td>Ethana % use pannirukom</td><td>80% DoD = 20% mattum matham</td></tr>
+        <tr><td>Self-Discharge</td><td>Use pannama vecha, thaana charge kammi aagurathu</td><td>Li-ion: ~2–3%/month</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="formula">V = I × R<span class="note">Ohm's Law — ellathukkum base</span></div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Electrochemistry — Eppadi Work Aaguthu</h2></div>
+  <p class="body-text">Battery oru <b>chemical energy storage device</b>. Ulla irukura chemicals reaction aagum bothu, electrons free aaguthu. Andha electrons oru electrode-la irundhu (Anode) veliya wire vazhiya poyi, matha electrode-ku (Cathode) pogum. Indha electron flow-a thaan electric current nu solrom.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="30" width="300" height="100" rx="8" fill="#0f1a28" stroke="#1c2c40"/>
+      <rect x="30" y="45" width="14" height="70" fill="#22d3ee" opacity=".85"/>
+      <rect x="276" y="45" width="14" height="70" fill="#ffb020" opacity=".85"/>
+      <text x="37" y="128" fill="#7c93ac" font-size="9" text-anchor="middle" font-family="monospace">ANODE −</text>
+      <text x="283" y="128" fill="#7c93ac" font-size="9" text-anchor="middle" font-family="monospace">CATHODE +</text>
+      <text x="160" y="18" fill="#dce6f2" font-size="10" text-anchor="middle" font-family="monospace">e− electron flow (through wire)</text>
+      <path d="M44 15 H276" stroke="#ff5c5c" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <circle cx="160" cy="15" r="7" fill="#ffb020"/>
+      <text x="160" y="18" fill="#0a1420" font-size="7" text-anchor="middle" font-family="monospace">LOAD</text>
+      <line x1="60" y1="70" x2="270" y2="70" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="60" y1="90" x2="270" y2="90" stroke="#3b82f6" stroke-width="1"/>
+      <text x="160" y="65" fill="#3b82f6" font-size="8" text-anchor="middle" font-family="monospace">electrolyte (ions →)</text>
+      <defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ff5c5c"/></marker></defs>
+    </svg>
+    <div class="diagram-cap">DISCHARGE: chemical energy → electrical energy</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">3 PARTS</span>Battery Anatomy</h3>
+    <ul class="pill-list">
+      <li><b>Anode (−)</b> Negative terminal. Oxidation reaction nadakkura place, electrons idhula irundhu velila varum.</li>
+      <li><b>Cathode (+)</b> Positive terminal. Reduction reaction nadakkura place, electrons idhuku vandhu serum.</li>
+      <li><b>Electrolyte</b> Ions-a oru electrode-la irundhu vera electrode-ku move panna help pannum, aana electrons-a direct-a pass panna vidathu.</li>
+    </ul>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Discharging</h3>
+      <p class="body-text" style="margin:0;">Battery current-a velila kuduthu, device-a run pannurathu. <b>Chemical → Electrical.</b></p>
+    </div>
+    <div class="card">
+      <h3>Charging</h3>
+      <p class="body-text" style="margin:0;">Velila irundhu current push panni, reaction-a reverse pannurathu. <b>Electrical → Chemical.</b> (Rechargeable types ku mattum.)</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Types of Batteries</h2></div>
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="card"><h3>Primary</h3><p class="body-text" style="margin:0;">Once use pannitta, throw pannanum. Recharge panna mudiyathu. <i>AA Alkaline, Zinc-Carbon, button cells.</i></p></div>
+    <div class="card"><h3>Secondary</h3><p class="body-text" style="margin:0;">Rechargeable. Chemical reaction reverse panna mudiyum. <i>Lead-acid, Li-ion, NiMH.</i></p></div>
+  </div>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Type</th><th>Category</th><th>Nominal V</th><th>Common Use</th></tr></thead>
+      <tbody>
+        <tr><td>Zinc-Carbon</td><td>Primary</td><td>1.5V</td><td>Cheap torches, remotes</td></tr>
+        <tr><td>Alkaline</td><td>Primary</td><td>1.5V</td><td>Clocks, remotes, toys</td></tr>
+        <tr><td>Lead-Acid</td><td>Secondary</td><td>2.1V/cell (12V pack)</td><td>Cars, bikes, UPS, inverters</td></tr>
+        <tr><td>NiCd</td><td>Secondary</td><td>1.2V</td><td>Old power tools (rare now)</td></tr>
+        <tr><td>NiMH</td><td>Secondary</td><td>1.2V</td><td>Rechargeable AA, hybrid cars</td></tr>
+        <tr><td>Li-ion</td><td>Secondary</td><td>3.6–3.7V</td><td>Phones, laptops, e-bikes</td></tr>
+        <tr><td>LiPo</td><td>Secondary</td><td>3.7V</td><td>Drones, RC vehicles</td></tr>
+        <tr><td>LiFePO4</td><td>Secondary</td><td>3.2V</td><td>Solar storage, EVs (safer)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+      <line x1="6" y1="8" x2="6" y2="105" stroke="#1c2c40"/>
+      <line x1="6" y1="105" x2="314" y2="105" stroke="#1c2c40"/>
+      <g font-family="monospace" font-size="8" text-anchor="middle" fill="#7c93ac">
+        <rect x="14" y="70" width="24" height="35" fill="#546a83"/><text x="26" y="119">Zinc-C</text><text x="26" y="65" fill="#dce6f2">1.5V</text>
+        <rect x="46" y="70" width="24" height="35" fill="#546a83"/><text x="58" y="119">Alkal.</text><text x="58" y="65" fill="#dce6f2">1.5V</text>
+        <rect x="78" y="56" width="24" height="49" fill="#22d3ee"/><text x="90" y="119">Lead-A</text><text x="90" y="51" fill="#22d3ee">2.1V</text>
+        <rect x="110" y="77" width="24" height="28" fill="#546a83"/><text x="122" y="119">NiCd</text><text x="122" y="72" fill="#dce6f2">1.2V</text>
+        <rect x="142" y="77" width="24" height="28" fill="#546a83"/><text x="154" y="119">NiMH</text><text x="154" y="72" fill="#dce6f2">1.2V</text>
+        <rect x="174" y="27" width="24" height="78" fill="#ffb020"/><text x="186" y="119">Li-ion</text><text x="186" y="22" fill="#ffb020">3.7V</text>
+        <rect x="206" y="27" width="24" height="78" fill="#ffb020"/><text x="218" y="119">LiPo</text><text x="218" y="22" fill="#ffb020">3.7V</text>
+        <rect x="238" y="40" width="24" height="65" fill="#3ddc97"/><text x="250" y="119">LiFePO4</text><text x="250" y="35" fill="#3ddc97">3.2V</text>
+      </g>
+    </svg>
+    <div class="diagram-cap">Nominal voltage per cell — quick visual comparison across chemistries</div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Battery Chemistries — Deep Dive</h2></div>
+
+  <div class="card">
+    <h3><span class="tag">4.1</span>Lead-Acid (Car / Bike Battery)</h3>
+    <p class="body-text">Daily work pannura car/bike battery Lead-Acid thaan. 6 cells irukum, ovvoru cell ~2.1V. Series-la connect panna 6 × 2.1 = <b>12.6V</b> (approx "12V").</p>
+    <ul class="pill-list">
+      <li><b>Anode</b> Lead (Pb)</li>
+      <li><b>Cathode</b> Lead Dioxide (PbO₂)</li>
+      <li><b>Electrolyte</b> Dilute Sulfuric Acid (H₂SO₄ + Water)</li>
+    </ul>
+    <p class="body-text" style="margin-top:10px;">Discharge aagum bothu, rendu plates um <b>Lead Sulfate (PbSO4)</b> aaga maarum, electrolyte acid concentration kammi aagum — adhanala discharged battery specific gravity kammi irukum (hydrometer vechi check pannalam).</p>
+    <div class="diagram">
+      <svg viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="10" width="308" height="60" rx="6" fill="#0a1420" stroke="#1c2c40"/>
+        <g font-family="monospace" font-size="8" fill="#7c93ac" text-anchor="middle">
+          <g><rect x="16" y="18" width="42" height="44" rx="3" fill="#0f1a28" stroke="#22d3ee"/><rect x="24" y="24" width="6" height="32" fill="#334155"/><rect x="34" y="24" width="6" height="32" fill="#a05a2c"/><rect x="44" y="24" width="6" height="32" fill="#334155"/><text x="37" y="70" fill="#22d3ee">2.1V</text></g>
+          <g transform="translate(60,0)"><rect x="16" y="18" width="42" height="44" rx="3" fill="#0f1a28" stroke="#22d3ee"/><rect x="24" y="24" width="6" height="32" fill="#334155"/><rect x="34" y="24" width="6" height="32" fill="#a05a2c"/><rect x="44" y="24" width="6" height="32" fill="#334155"/><text x="37" y="70" fill="#22d3ee">2.1V</text></g>
+          <g transform="translate(120,0)"><rect x="16" y="18" width="42" height="44" rx="3" fill="#0f1a28" stroke="#22d3ee"/><rect x="24" y="24" width="6" height="32" fill="#334155"/><rect x="34" y="24" width="6" height="32" fill="#a05a2c"/><rect x="44" y="24" width="6" height="32" fill="#334155"/><text x="37" y="70" fill="#22d3ee">2.1V</text></g>
+          <g transform="translate(180,0)"><rect x="16" y="18" width="42" height="44" rx="3" fill="#0f1a28" stroke="#22d3ee"/><rect x="24" y="24" width="6" height="32" fill="#334155"/><rect x="34" y="24" width="6" height="32" fill="#a05a2c"/><rect x="44" y="24" width="6" height="32" fill="#334155"/><text x="37" y="70" fill="#22d3ee">2.1V</text></g>
+          <g transform="translate(240,0)"><rect x="16" y="18" width="42" height="44" rx="3" fill="#0f1a28" stroke="#22d3ee"/><rect x="24" y="24" width="6" height="32" fill="#334155"/><rect x="34" y="24" width="6" height="32" fill="#a05a2c"/><rect x="44" y="24" width="6" height="32" fill="#334155"/><text x="37" y="70" fill="#22d3ee">2.1V</text></g>
+        </g>
+      </svg>
+      <div class="diagram-cap">12V pack — 6 cells in series (illustrative, 5 shown)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4.2</span>NiCd / NiMH</h3>
+    <p class="body-text" style="margin:0;">Old-time rechargeable AA batteries. NiCd-la cadmium toxic-a irukurathala, ippo NiMH thaan popular. Memory effect problem konjo irukku — full discharge pannama repeated partial charge pannina capacity kammi aana feeling varum (Li-ion ku illa).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4.3</span>Lithium-Ion (Li-ion) — Phone / Laptop</h3>
+    <p class="body-text">Lead-acid ah vida light weight, adhe energy-a small size-la store pannalam.</p>
+    <ul class="pill-list">
+      <li><b>Anode</b> Graphite (Carbon) layer</li>
+      <li><b>Cathode</b> Lithium Metal Oxide (LiCoO₂ / LiFePO4 type)</li>
+      <li><b>Separator</b> Porous plastic film, short-circuit varamal thadukkum</li>
+      <li><b>Electrolyte</b> Lithium salt solution</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4.4</span>LiFePO4 (Lithium Iron Phosphate)</h3>
+    <p class="body-text" style="margin:0;">Li-ion oda safer version. Voltage konjo kammi (3.2V/cell), aana thermal runaway risk romba kammi, cycle life romba adhigam (2000–5000 cycles). Solar banks, EV, e-bike heavy-duty ku best choice.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Charging Method — CC-CV</h2></div>
+  <p class="body-text">Li-ion battery-a correct-a charge panna <b>CC-CV (Constant Current – Constant Voltage)</b> method use pannuvanga.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+      <line x1="30" y1="10" x2="30" y2="115" stroke="#1c2c40"/>
+      <line x1="30" y1="115" x2="305" y2="115" stroke="#1c2c40"/>
+      <path d="M30,100 L170,30 L305,30" fill="none" stroke="#22d3ee" stroke-width="2"/>
+      <path d="M30,35 L170,35 Q 260,40 305,105" fill="none" stroke="#ffb020" stroke-width="2"/>
+      <line x1="170" y1="15" x2="170" y2="115" stroke="#3b3f4a" stroke-dasharray="3,3"/>
+      <text x="70" y="25" fill="#22d3ee" font-size="9" font-family="monospace">STAGE 1 (CC)</text>
+      <text x="220" y="52" fill="#ffb020" font-size="9" font-family="monospace">STAGE 2 (CV)</text>
+      <text x="18" y="10" fill="#7c93ac" font-size="8" font-family="monospace" text-anchor="end">4.2V</text>
+      <text x="18" y="102" fill="#7c93ac" font-size="8" font-family="monospace" text-anchor="end">3.0V</text>
+      <text x="160" y="130" fill="#546a83" font-size="8" font-family="monospace" text-anchor="middle">time / % charge →</text>
+    </svg>
+    <div class="diagram-cap">CC-CV curve — cyan: voltage rises · amber: current tapers</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h3>Stage 1 — CC</h3><p class="body-text" style="margin:0;">Fixed current (e.g. 1A) kudukum, voltage slowly rise aagum 3.0V → 4.2V varaikkum.</p></div>
+    <div class="card"><h3>Stage 2 — CV</h3><p class="body-text" style="margin:0;">Voltage 4.2V-la fix pannitu, current gradually taper aagum, full aana automatic cut aagum.</p></div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <h3>Lead-Acid — Different Method</h3>
+    <p class="body-text" style="margin:0;">Bulk Charge (high current) → Absorption Charge (constant ~14.4V) → Float Charge (trickle, ~13.2–13.8V, full-a irundha maintain pannurathukku).</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Series vs Parallel Connections</h2></div>
+  <p class="body-text">Battery packs (power bank, e-bike, inverter bank) design pannurathukku key concept idhu.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">
+      <text x="70" y="12" fill="#dce6f2" font-size="9" font-family="monospace" text-anchor="middle">SERIES</text>
+      <rect x="35" y="20" width="14" height="40" fill="#22d3ee"/>
+      <rect x="65" y="20" width="14" height="40" fill="#22d3ee"/>
+      <rect x="95" y="20" width="14" height="40" fill="#22d3ee"/>
+      <line x1="20" y1="40" x2="35" y2="40" stroke="#ffb020"/>
+      <line x1="49" y1="40" x2="65" y2="40" stroke="#ffb020"/>
+      <line x1="79" y1="40" x2="95" y2="40" stroke="#ffb020"/>
+      <line x1="109" y1="40" x2="124" y2="40" stroke="#ffb020"/>
+      <text x="72" y="80" fill="#ffb020" font-size="9" font-family="monospace" text-anchor="middle">V adds up</text>
+      <text x="72" y="94" fill="#546a83" font-size="8" font-family="monospace" text-anchor="middle">Ah stays same</text>
+
+      <line x1="160" y1="0" x2="160" y2="110" stroke="#1c2c40"/>
+
+      <text x="250" y="12" fill="#dce6f2" font-size="9" font-family="monospace" text-anchor="middle">PARALLEL</text>
+      <rect x="228" y="20" width="14" height="30" fill="#3b82f6"/>
+      <rect x="258" y="20" width="14" height="30" fill="#3b82f6"/>
+      <rect x="288" y="20" width="14" height="30" fill="#3b82f6"/>
+      <line x1="212" y1="35" x2="302" y2="35" stroke="#ffb020"/>
+      <line x1="212" y1="55" x2="302" y2="55" stroke="#ffb020"/>
+      <text x="258" y="80" fill="#ffb020" font-size="9" font-family="monospace" text-anchor="middle">Ah adds up</text>
+      <text x="258" y="94" fill="#546a83" font-size="8" font-family="monospace" text-anchor="middle">V stays same</text>
+    </svg>
+  </div>
+
+  <div class="formula">Vtotal = V1+V2+V3...<span class="note">Series — capacity same as single cell</span></div>
+  <div class="formula">Ahtotal = Ah1+Ah2+Ah3...<span class="note">Parallel — voltage same as single cell</span></div>
+
+  <div class="card">
+    <ul class="pill-list danger">
+      <li><b>⚠</b> Series/Parallel connect pannurappo same voltage, same capacity, same age/health cells thaan use pannanum. Mismatch cells connect pannina weak cell over-stress aagi damage aagum, fire risk-um varum.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">6.3</span>Mixed Series-Parallel</h3>
+    <p class="body-text" style="margin:0;">E-bike, laptop, power tool packs-la rendu combination um use pannuvanga — "NSxMP" notation. Example: <b>4S4P</b> = 4 cells series (voltage ×4), andha string 4 groups parallel (capacity ×4).</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Core Formulas &amp; Calculations</h2></div>
+  <div class="formula">V = I × R<span class="note">Ohm's Law</span></div>
+  <div class="formula">P = V × I<span class="note">Watts = Volts × Amps</span></div>
+  <div class="formula">Ah = I × t<span class="note">Amp-hours = Current × Time(hrs)</span></div>
+  <div class="formula">Wh = V × Ah<span class="note">Watt-hours = Voltage × Amp-hours</span></div>
+  <div class="formula">I = C-rate × Ah<span class="note">1C on 10Ah = 10A</span></div>
+  <div class="formula">t = Ah / I(load)<span class="note">Backup time (hrs)</span></div>
+  <div class="formula">t = Ah / I(charge)<span class="note">Charging time, approx</span></div>
+  <div class="formula">Vtotal = n × Vcell<span class="note">n = cells in series</span></div>
+  <div class="formula">Ahtotal = n × Ahcell<span class="note">n = cells in parallel</span></div>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Real-Life Worked Examples</h2></div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+      <line x1="70" y1="8" x2="70" y2="105" stroke="#1c2c40"/>
+      <line x1="70" y1="105" x2="310" y2="105" stroke="#1c2c40"/>
+      <g font-family="monospace" font-size="9">
+        <rect x="90" y="83" width="46" height="22" fill="#22d3ee"/>
+        <text x="113" y="119" fill="#7c93ac" text-anchor="middle">Car</text>
+        <text x="113" y="78" fill="#22d3ee" text-anchor="middle">7.5h</text>
+
+        <rect x="150" y="27" width="46" height="78" fill="#3b82f6"/>
+        <text x="173" y="119" fill="#7c93ac" text-anchor="middle">Inverter</text>
+        <text x="173" y="22" fill="#3b82f6" text-anchor="middle">10.2h</text>
+
+        <rect x="210" y="99" width="46" height="6" fill="#ffb020"/>
+        <text x="233" y="119" fill="#7c93ac" text-anchor="middle">E-Bike*</text>
+        <text x="233" y="94" fill="#ffb020" text-anchor="middle">~1h</text>
+
+        <rect x="270" y="80" width="30" height="25" fill="#3ddc97"/>
+        <text x="285" y="119" fill="#7c93ac" text-anchor="middle">Solar</text>
+        <text x="285" y="75" fill="#3ddc97" text-anchor="middle">5h/night</text>
+      </g>
+      <text x="20" y="55" fill="#546a83" font-size="8" font-family="monospace">runtime</text>
+    </svg>
+    <div class="diagram-cap">Backup/runtime comparison across the 4 sizing examples below (*e-bike shown per-charge, not directly comparable scale)</div>
+  </div>
+
+  <div class="example">
+    <h3>1. Car Battery Accessory Load</h3>
+    <p class="scenario">Fog lamps (5A) + stereo (3A), engine off. Battery: 60Ah.</p>
+    <div class="steps">
+      <div class="step"><span>Total current = 5A + 3A</span><span class="res">8A</span></div>
+      <div class="step"><span>Backup time = 60Ah / 8A</span><span class="res">7.5 hrs</span></div>
+    </div>
+    <div class="answer">≈ 7.5 hours theoretical (real-la konjo kammi, age/temp factor)</div>
+  </div>
+
+  <div class="example">
+    <h3>2. Inverter Battery Backup Time</h3>
+    <p class="scenario">150W load, 150Ah/12V battery, inverter efficiency 85%.</p>
+    <div class="steps">
+      <div class="step"><span>Load current = 150W / 12V</span><span class="res">12.5A</span></div>
+      <div class="step"><span>Adjusted = 12.5 / 0.85</span><span class="res">14.7A</span></div>
+      <div class="step"><span>Backup = 150Ah / 14.7A</span><span class="res">~10.2 hrs</span></div>
+    </div>
+    <div class="answer">≈ 10.2 hours backup</div>
+  </div>
+
+  <div class="example">
+    <h3>3. E-Bike Pack Sizing (4S4P)</h3>
+    <p class="scenario">18650 cells, 3.7V / 2500mAh each, need 14.8V system.</p>
+    <div class="steps">
+      <div class="step"><span>Series count = 14.8V / 3.7V</span><span class="res">4 (4S)</span></div>
+      <div class="step"><span>Total voltage = 4 × 3.7V</span><span class="res">14.8V</span></div>
+      <div class="step"><span>Total capacity = 4 × 2500mAh</span><span class="res">10,000mAh</span></div>
+      <div class="step"><span>Total energy = 14.8V × 10Ah</span><span class="res">148Wh</span></div>
+    </div>
+    <div class="answer">4S4P → 14.8V, 10Ah, 148Wh</div>
+  </div>
+
+  <div class="example">
+    <h3>4. Solar Battery Bank Sizing (Village Setup)</h3>
+    <p class="scenario">2 LEDs (10W each) + 1 fan (40W) = 60W, 5 hrs/night, 12V system.</p>
+    <div class="steps">
+      <div class="step"><span>Daily energy = 60W × 5hrs</span><span class="res">300Wh</span></div>
+      <div class="step"><span>Required Ah = 300Wh / 12V</span><span class="res">25Ah</span></div>
+      <div class="step"><span>+30% safety margin</span><span class="res">~32.5Ah</span></div>
+    </div>
+    <div class="answer">Minimum 35Ah battery vechi design pannalam</div>
+  </div>
+
+  <div class="example">
+    <h3>5. Phone Battery Charging Time</h3>
+    <p class="scenario">4000mAh phone, 2A charger (CC phase mattum, simple calc ku).</p>
+    <div class="steps">
+      <div class="step"><span>Time = 4.0Ah / 2A</span><span class="res">2 hrs</span></div>
+    </div>
+    <div class="answer">CC phase 2 hrs; real-la CV phase add aagi 2.5–3 hrs aagum</div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>State of Charge (SoC) Estimation</h2></div>
+  <p class="body-text">Battery voltage vechi (load illama, resting voltage) approximate-a SoC therinjukalam.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="monospace" font-size="8" fill="#7c93ac" text-anchor="middle">
+        <g transform="translate(4,0)">
+          <rect x="0" y="15" width="30" height="50" rx="4" fill="#0a1420" stroke="#3ddc97"/>
+          <rect x="11" y="10" width="8" height="6" fill="#3ddc97"/>
+          <rect x="3" y="18" width="24" height="44" fill="#3ddc97" opacity=".85"/>
+          <text x="15" y="78">100%</text><text x="15" y="88" fill="#3ddc97">12.6V</text>
+        </g>
+        <g transform="translate(68,0)">
+          <rect x="0" y="15" width="30" height="50" rx="4" fill="#0a1420" stroke="#22d3ee"/>
+          <rect x="11" y="10" width="8" height="6" fill="#22d3ee"/>
+          <rect x="3" y="29" width="24" height="33" fill="#22d3ee" opacity=".85"/>
+          <text x="15" y="78">75%</text><text x="15" y="88" fill="#22d3ee">12.4V</text>
+        </g>
+        <g transform="translate(132,0)">
+          <rect x="0" y="15" width="30" height="50" rx="4" fill="#0a1420" stroke="#3b82f6"/>
+          <rect x="11" y="10" width="8" height="6" fill="#3b82f6"/>
+          <rect x="3" y="40" width="24" height="22" fill="#3b82f6" opacity=".85"/>
+          <text x="15" y="78">50%</text><text x="15" y="88" fill="#3b82f6">12.2V</text>
+        </g>
+        <g transform="translate(196,0)">
+          <rect x="0" y="15" width="30" height="50" rx="4" fill="#0a1420" stroke="#ffb020"/>
+          <rect x="11" y="10" width="8" height="6" fill="#ffb020"/>
+          <rect x="3" y="51" width="24" height="11" fill="#ffb020" opacity=".85"/>
+          <text x="15" y="78">25%</text><text x="15" y="88" fill="#ffb020">12.0V</text>
+        </g>
+        <g transform="translate(260,0)">
+          <rect x="0" y="15" width="30" height="50" rx="4" fill="#0a1420" stroke="#ff5c5c"/>
+          <rect x="11" y="10" width="8" height="6" fill="#ff5c5c"/>
+          <text x="15" y="78">0%</text><text x="15" y="88" fill="#ff5c5c">11.8V</text>
+        </g>
+      </g>
+    </svg>
+    <div class="diagram-cap">Lead-acid resting voltage → SoC level (visual reference)</div>
+  </div>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>SoC %</th><th>Lead-Acid (12V)</th><th>Li-ion (per cell)</th></tr></thead>
+      <tbody>
+        <tr><td>100%</td><td>12.6V</td><td>4.2V</td></tr>
+        <tr><td>75%</td><td>12.4V</td><td>3.9V</td></tr>
+        <tr><td>50%</td><td>12.2V</td><td>3.7V</td></tr>
+        <tr><td>25%</td><td>12.0V</td><td>3.5V</td></tr>
+        <tr><td>0%</td><td>11.8V</td><td>3.0V (cutoff)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <p class="body-text" style="margin:0;"><b>Note:</b> Idhu resting voltage (30 min – 1hr use pannama kazhichu measure pannanum). Load irukkumbothu voltage drop aagum (internal resistance kaaranama), adhukku correct SoC kidaikadhu.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Advanced: Peukert's Law</h2></div>
+  <p class="body-text">Lead-acid battery-la oru interesting effect irukku — <b>high current-la fast-a discharge pannina, effective capacity kammi aagidum</b> (rated Ah full-a kidaikadhu). Starter motor mathiri high current draw application-ku battery sizing pannum bothu idhu consider pannanum.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+      <line x1="34" y1="10" x2="34" y2="105" stroke="#1c2c40"/>
+      <line x1="34" y1="105" x2="305" y2="105" stroke="#1c2c40"/>
+      <polyline points="40,20 55,42 75,58 110,72 160,84 220,92 295,98" fill="none" stroke="#ff5c5c" stroke-width="2"/>
+      <circle cx="40" cy="20" r="2.5" fill="#ff5c5c"/><circle cx="75" cy="58" r="2.5" fill="#ff5c5c"/>
+      <circle cx="160" cy="84" r="2.5" fill="#ff5c5c"/><circle cx="295" cy="98" r="2.5" fill="#ff5c5c"/>
+      <text x="40" y="14" fill="#7c93ac" font-size="8" font-family="monospace">120Ah</text>
+      <text x="295" y="114" fill="#7c93ac" font-size="8" font-family="monospace" text-anchor="end">55Ah</text>
+      <text x="160" y="122" fill="#546a83" font-size="8" font-family="monospace" text-anchor="middle">discharge current →</text>
+    </svg>
+    <div class="diagram-cap">Peukert effect: higher current draw = less usable capacity</div>
+  </div>
+
+  <p class="body-text">Adhanala thaan battery Ah rating-a solrappo "20-hour rate" nu specify pannuvanga (e.g. 100Ah @ 20hr rate = 5A for 20 hours). Fast discharge (starter motor, 100A+) la andha same battery 100Ah kudukadhu — <b>55–60Ah mattum thaan real-a kidaikum.</b></p>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Battery Management System (BMS)</h2></div>
+  <p class="body-text">Li-ion battery packs-la (phone, e-bike, power bank) BMS oru circuit board irukum, idhu battery-a protect pannum. Illa na, over-charge aana fire risk, over-discharge aana permanent damage.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="10" width="90" height="70" rx="8" fill="#0f1a28" stroke="#22d3ee"/>
+      <text x="49" y="24" fill="#22d3ee" font-size="8" text-anchor="middle" font-family="monospace">CELLS</text>
+      <rect x="14" y="30" width="70" height="10" rx="2" fill="#122236"/><rect x="14" y="44" width="70" height="10" rx="2" fill="#122236"/>
+      <rect x="14" y="58" width="70" height="10" rx="2" fill="#122236"/>
+      <line x1="94" y1="45" x2="118" y2="45" stroke="#ffb020" marker-end="url(#a2)"/>
+      <rect x="118" y="6" width="94" height="78" rx="8" fill="#141018" stroke="#ffb020"/>
+      <text x="165" y="20" fill="#ffb020" font-size="8" text-anchor="middle" font-family="monospace">BMS</text>
+      <text x="165" y="34" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">over-charge / discharge</text>
+      <text x="165" y="45" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">short-circuit protect</text>
+      <text x="165" y="56" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">cell balancing</text>
+      <text x="165" y="67" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">temp monitoring</text>
+      <line x1="212" y1="45" x2="236" y2="45" stroke="#ffb020" marker-end="url(#a2)"/>
+      <rect x="236" y="10" width="80" height="70" rx="8" fill="#0f1a28" stroke="#3ddc97"/>
+      <text x="276" y="24" fill="#3ddc97" font-size="8" text-anchor="middle" font-family="monospace">OUTPUT</text>
+      <text x="276" y="48" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">Device / Motor</text>
+      <text x="276" y="60" fill="#7c93ac" font-size="6.5" text-anchor="middle" font-family="monospace">Charger</text>
+      <defs><marker id="a2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffb020"/></marker></defs>
+    </svg>
+    <div class="diagram-cap">BMS sits between the pack and the output — protects both directions</div>
+  </div>
+
+  <ul class="pill-list">
+    <li><b>Over-charge</b> 4.2V mela pogama fixed cut pannum</li>
+    <li><b>Over-discharge</b> 3.0V kku keela pogama cut pannum</li>
+    <li><b>Over-current/short</b> sudden high current-a cut pannum</li>
+    <li><b>Cell balancing</b> series cells ellame same voltage-la irukka balance pannum</li>
+    <li><b>Temp monitoring</b> over-heat aana charge/discharge stop pannum</li>
+  </ul>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Common Faults, Diagnosis &amp; Testing</h2></div>
+  <p class="sec-sub">Auto electrical work ku romba useful section.</p>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Fault</th><th>Cause</th><th>Fix / Prevention</th></tr></thead>
+      <tbody>
+        <tr><td>Sulfation</td><td>Long time discharged state-la vachirundha</td><td>Desulfator charger, avoid deep discharge</td></tr>
+        <tr><td>Terminal corrosion</td><td>Acid fumes + moisture</td><td>Baking soda + water clean, grease apply</td></tr>
+        <tr><td class="sev-high">Swelling (Li-ion)</td><td>Over-charge, heat damage, internal short</td><td>Replace immediately, don't puncture</td></tr>
+        <tr><td class="sev-high">Thermal runaway</td><td>Internal short + heat chain reaction</td><td>Never charge damaged/swollen cells</td></tr>
+        <tr><td>Capacity loss</td><td>Age, cycle count, heat exposure</td><td>Normal aging — replace after cycle life</td></tr>
+        <tr><td>Won't hold charge</td><td>Internal short, dead cell in pack</td><td>Load test / cell replacement</td></tr>
+        <tr><td class="sev-med">Slow crank (car)</td><td>Weak battery or bad connection</td><td>Load test, check terminals/cables</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">12.1</span>Testing Methods</h3>
+    <ul class="pill-list ok">
+      <li><b>Multimeter</b> Resting voltage check, quick SoC idea kidaikum.</li>
+      <li><b>Load test</b> Known load kudukkumbothu voltage evlo drop aaguthu paakanum. Healthy battery-la drop kammi.</li>
+      <li><b>Hydrometer</b> (Lead-acid) Specific gravity check — full ~1.265, discharged ~1.120.</li>
+      <li><b>Capacity test</b> Full charge → known current-la discharge → real capacity theriyum.</li>
+      <li><b>Internal resistance meter</b> Battery health quick-a check panna (pro tools).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 13 -->
+<section id="s13">
+  <div class="sec-head"><span class="sec-num">13</span><h2>Battery Safety</h2></div>
+  <ul class="pill-list danger">
+    <li><b>⚠</b> Battery-a short-circuit pannatheenga — sudden high current, spark, fire risk irukku.</li>
+    <li><b>⚠</b> Li-ion battery-a puncture/crush pannatheenga — thermal runaway aagi fire varum.</li>
+    <li><b>⚠</b> Lead-acid charge pannumbothu hydrogen gas produce aagum — ventilated area-la, spark/flame illama vechi charge pannunga.</li>
+    <li><b>⚠</b> Different chemistry/age/brand batteries-a series/parallel-la kalakathaenga.</li>
+    <li><b>⚠</b> Swollen/damaged Li-ion cells-a charge pannatheenga, immediate-a safe-a dispose pannunga.</li>
+    <li><b>⚠</b> Terminals short aagama, insulated tools use pannunga.</li>
+    <li><b>⚠</b> Extreme heat (sunlight, exhaust near) la battery vaikatheenga — life kammi, safety risk adhigam.</li>
+  </ul>
+</section>
+
+<!-- 14 -->
+<section id="s14">
+  <div class="sec-head"><span class="sec-num">14</span><h2>Future of Batteries</h2></div>
+  <div class="grid2">
+    <div class="card"><h3>Solid-State</h3><p class="body-text" style="margin:0;">Solid electrolyte, safer (no leak/fire risk), higher energy density — innum expensive, mass production varala.</p></div>
+    <div class="card"><h3>Sodium-ion</h3><p class="body-text" style="margin:0;">Lithium-ku alternative, cheap raw material, aana energy density konjo kammi.</p></div>
+    <div class="card"><h3>Silicon Anode</h3><p class="body-text" style="margin:0;">Graphite-ku badhila silicon use panni capacity adhigama increase panna try pannuranga.</p></div>
+    <div class="card"><h3>Faster Charging</h3><p class="body-text" style="margin:0;">Graphene-based, silicon-carbon hybrid anodes — 10-15 min full charge target.</p></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section id="s15">
+  <div class="sec-head"><span class="sec-num">15</span><h2>Quick Reference &amp; Glossary</h2></div>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Formula</th><th>Gives</th></tr></thead>
+      <tbody>
+        <tr><td>V = I × R</td><td>Voltage (Ohm's Law)</td></tr>
+        <tr><td>P = V × I</td><td>Power in Watts</td></tr>
+        <tr><td>Ah = I × t</td><td>Capacity in Amp-hours</td></tr>
+        <tr><td>Wh = V × Ah</td><td>Energy in Watt-hours</td></tr>
+        <tr><td>I = C × Ah</td><td>Current at given C-rate</td></tr>
+        <tr><td>t = Ah / I</td><td>Runtime hours under load</td></tr>
+        <tr><td>Vseries = n × Vcell</td><td>Total voltage, n in series</td></tr>
+        <tr><td>Ahparallel = n × Ahcell</td><td>Total capacity, n in parallel</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <dl class="gloss">
+    <div><dt>Anode</dt><dd>Negative electrode, oxidation nadakkum place</dd></div>
+    <div><dt>Cathode</dt><dd>Positive electrode, reduction nadakkum place</dd></div>
+    <div><dt>Electrolyte</dt><dd>Ions move panna help pannura chemical medium</dd></div>
+    <div><dt>C-rate</dt><dd>Charge/discharge speed, capacity-oda relative-a</dd></div>
+    <div><dt>SoC</dt><dd>State of Charge — ippo ethana % charge irukku</dd></div>
+    <div><dt>DoD</dt><dd>Depth of Discharge — ethana % use pannirukom</dd></div>
+    <div><dt>BMS</dt><dd>Battery Management System — protection circuit</dd></div>
+    <div><dt>Sulfation</dt><dd>Lead-acid-la crystals form aagi capacity kammi aagurathu</dd></div>
+    <div><dt>Thermal Runaway</dt><dd>Uncontrolled heat chain reaction, fire risk</dd></div>
+    <div><dt>Peukert Effect</dt><dd>High current discharge-la effective capacity kammi aagurathu</dd></div>
+  </dl>
+</section>
+</div>
+
+<hr class="div">
+
+<footer>
+  Made for Rushdhi — <span class="fbrand">RUSH AUTO ELECTRICAL</span><br>
+  Battery Basics to Pro · A-Z Guide
+</footer>
+
+<button class="totop" id="totop" aria-label="Back to top">↑</button>
+
+<script>
+  // Build TOC from sections
+  const sections = [
+    ['s1','Battery Basics & Terminology'],
+    ['s2','Electrochemistry'],
+    ['s3','Types of Batteries'],
+    ['s4','Chemistries Deep-Dive'],
+    ['s5','Charging — CC-CV'],
+    ['s6','Series vs Parallel'],
+    ['s7','Core Formulas'],
+    ['s8','Worked Examples'],
+    ['s9','State of Charge (SoC)'],
+    ['s10',"Peukert's Law"],
+    ['s11','Battery Management (BMS)'],
+    ['s12','Faults, Diagnosis & Testing'],
+    ['s13','Battery Safety'],
+    ['s14','Future of Batteries'],
+    ['s15','Quick Reference & Glossary'],
+  ];
+  const tocList = document.getElementById('tocList');
+  sections.forEach((s,i)=>{
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#'+s[0];
+    a.innerHTML = '<span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+s[1]+'</span>';
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+
+  const drawer = document.getElementById('tocDrawer');
+  const overlay = document.getElementById('tocOverlay');
+  function openToc(){ drawer.classList.add('open'); overlay.classList.add('open'); }
+  function closeToc(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
+  document.getElementById('menuBtn').addEventListener('click', openToc);
+  document.getElementById('tocClose').addEventListener('click', closeToc);
+  overlay.addEventListener('click', closeToc);
+  tocList.addEventListener('click', (e)=>{ if(e.target.closest('a')) closeToc(); });
+
+  // Back to top
+  const totop = document.getElementById('totop');
+  window.addEventListener('scroll', ()=>{
+    totop.classList.toggle('show', window.scrollY > 500);
+  });
+  totop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+</script>
+
+</body>
+</html>
