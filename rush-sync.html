@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rush Sync — Your Connection. Your Control.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060a12;
+    --bg-2:#0a1220;
+    --panel: rgba(16,24,38,0.55);
+    --panel-solid:#0e1626;
+    --line: rgba(120,180,255,0.14);
+    --cyan:#2be5ff;
+    --blue:#4f7dff;
+    --green:#25d366;
+    --pink:#ff5470;
+    --text:#eaf3ff;
+    --muted:#7d8bab;
+    --muted-2:#4d5a78;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(43,229,255,0.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(79,125,255,0.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;}
+
+  ::selection{background:rgba(43,229,255,0.25);}
+
+  /* ---------- layout shells ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+
+  header.nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(6,10,18,0.72);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px; max-width:1180px; margin:0 auto;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:0.06em;
+    font-size:0.95rem; text-decoration:none;
+  }
+  .brand .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 10px 2px rgba(43,229,255,0.7);
+  }
+  .navlinks{display:flex; gap:28px; font-size:0.85rem; color:var(--muted);}
+  .navlinks a{text-decoration:none; transition:color .2s;}
+  .navlinks a:hover{color:var(--cyan);}
+  @media (max-width:720px){ .navlinks{display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:88px 0 60px;
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
+  }
+  @media (max-width:920px){ .hero{grid-template-columns:1fr; padding:56px 0 40px;} }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace; font-size:0.72rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--cyan);
+    border:1px solid rgba(43,229,255,0.3); border-radius:999px;
+    padding:6px 14px; margin-bottom:22px;
+    background:rgba(43,229,255,0.06);
+  }
+  .eyebrow .pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 8px 2px rgba(37,211,102,0.8);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  h1{
+    font-family:'Orbitron', sans-serif; font-weight:900;
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    line-height:1.08; letter-spacing:0.01em;
+    margin-bottom:20px;
+  }
+  h1 span{
+    background:linear-gradient(100deg, var(--cyan), var(--blue) 70%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .lede{
+    color:var(--muted); font-size:1.05rem; max-width:46ch; margin-bottom:32px;
+  }
+
+  .cta-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:36px;}
+  .btn{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:0.92rem;
+    padding:13px 24px; border-radius:10px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    border:1px solid transparent;
+  }
+  .btn-primary{
+    background:linear-gradient(100deg, var(--cyan), var(--blue));
+    color:#04101c;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 30px -8px rgba(43,229,255,0.55); }
+  .btn-ghost{
+    border-color:var(--line); color:var(--text); background:rgba(255,255,255,0.02);
+  }
+  .btn-ghost:hover{ border-color:rgba(43,229,255,0.5); transform:translateY(-2px); }
+
+  .stat-row{display:flex; gap:32px; flex-wrap:wrap;}
+  .stat b{
+    font-family:'JetBrains Mono',monospace; font-size:1.3rem; color:var(--cyan); display:block;
+  }
+  .stat span{font-size:0.76rem; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.08em;}
+
+  /* ---------- signature: animated phone chat mockup ---------- */
+  .phone-stage{ display:flex; justify-content:center; }
+  .phone{
+    width:308px; max-width:100%;
+    border-radius:34px;
+    background:linear-gradient(180deg, #0d1524, #070c16);
+    border:1px solid var(--line);
+    box-shadow:0 30px 80px -30px rgba(43,229,255,0.35), 0 0 0 1px rgba(255,255,255,0.02) inset;
+    padding:14px;
+    position:relative;
+  }
+  .phone::before{
+    content:''; position:absolute; top:26px; left:50%; transform:translateX(-50%);
+    width:56px; height:5px; border-radius:4px; background:rgba(255,255,255,0.08);
+  }
+  .phone-head{
+    display:flex; align-items:center; gap:10px;
+    padding:20px 8px 14px; border-bottom:1px solid var(--line);
+  }
+  .phone-avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg, var(--cyan), var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:0.72rem; color:#04101c;
+  }
+  .phone-head .who b{display:block; font-size:0.85rem;}
+  .phone-head .who span{font-size:0.7rem; color:var(--green);}
+
+  .chat-screen{
+    height:340px; padding:16px 8px; display:flex; flex-direction:column; gap:10px;
+    overflow:hidden;
+  }
+  .bubble{
+    max-width:78%; padding:9px 13px; border-radius:14px; font-size:0.86rem;
+    opacity:0; transform:translateY(6px);
+    animation:rise .45s ease forwards;
+  }
+  .bubble.in{
+    align-self:flex-start; background:#152036; border-bottom-left-radius:4px; color:var(--text);
+  }
+  .bubble.out{
+    align-self:flex-end; background:linear-gradient(100deg, rgba(37,211,102,0.9), rgba(37,211,102,0.75));
+    color:#04180c; border-bottom-right-radius:4px; font-weight:500;
+  }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+
+  .typing{
+    align-self:flex-end; display:flex; gap:4px; padding:9px 13px;
+    background:rgba(37,211,102,0.18); border-radius:14px; border-bottom-right-radius:4px;
+    width:fit-content; opacity:0; animation:rise .3s ease forwards;
+  }
+  .typing i{
+    width:5px;height:5px;border-radius:50%;background:var(--green);
+    animation:blink 1s infinite;
+  }
+  .typing i:nth-child(2){animation-delay:.15s;}
+  .typing i:nth-child(3){animation-delay:.3s;}
+  @keyframes blink{ 0%,80%,100%{opacity:0.25;} 40%{opacity:1;} }
+
+  .phone-input{
+    margin-top:auto; display:flex; align-items:center; gap:8px;
+    border-top:1px solid var(--line); padding-top:12px; padding:12px 8px 4px;
+  }
+  .phone-input .field{
+    flex:1; height:32px; border-radius:16px; background:#0e1626;
+    border:1px solid var(--line); color:var(--muted-2); font-size:0.72rem;
+    display:flex; align-items:center; padding:0 12px; font-family:'JetBrains Mono',monospace;
+  }
+  .phone-input .send{
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(135deg, var(--cyan), var(--blue));
+    display:flex;align-items:center;justify-content:center; flex-shrink:0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .bubble, .typing, .eyebrow .pulse{ animation:none !important; opacity:1 !important; transform:none !important; }
+  }
+
+  /* ---------- section shell ---------- */
+  section{padding:76px 0;}
+  .section-head{max-width:56ch; margin-bottom:44px;}
+  .kicker{
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--blue); margin-bottom:10px; display:block;
+  }
+  h2{
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.5rem,3vw,2.1rem);
+    margin-bottom:12px;
+  }
+  .section-head p{color:var(--muted);}
+
+  /* ---------- features ---------- */
+  .feature-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:18px;
+  }
+  @media (max-width:920px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .feature-grid{grid-template-columns:1fr;} }
+
+  .fcard{
+    background:var(--panel); border:1px solid var(--line); border-radius:16px;
+    padding:24px 20px; backdrop-filter:blur(10px);
+    transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .fcard:hover{ transform:translateY(-4px); border-color:rgba(43,229,255,0.35); box-shadow:0 20px 40px -20px rgba(43,229,255,0.25); }
+  .ficon{
+    width:40px;height:40px;border-radius:11px; display:flex;align-items:center;justify-content:center;
+    background:rgba(43,229,255,0.1); margin-bottom:16px; font-size:1.1rem;
+  }
+  .fcard h3{font-size:1rem; margin-bottom:8px; font-weight:600;}
+  .fcard p{font-size:0.85rem; color:var(--muted);}
+
+  /* ---------- terminal / commands ---------- */
+  .terminal{
+    background:var(--panel-solid); border:1px solid var(--line); border-radius:18px;
+    overflow:hidden;
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:14px 18px; border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--muted-2);
+  }
+  .term-bar .lights{display:flex; gap:6px;}
+  .term-bar .lights i{width:10px;height:10px;border-radius:50%;}
+  .l1{background:#ff5f57;} .l2{background:#febc2e;} .l3{background:#28c840;}
+
+  .term-body{padding:26px 22px; font-family:'JetBrains Mono',monospace; font-size:0.86rem;}
+  .term-line{margin-bottom:16px;}
+  .term-line .cmd{color:var(--cyan);}
+  .term-line .cmd::before{content:'> '; color:var(--muted-2);}
+  .term-line .resp{color:var(--muted); margin-top:6px; padding-left:18px; display:block;}
+
+  /* ---------- setup steps ---------- */
+  .steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:18px;
+    counter-reset:step;
+  }
+  @media (max-width:920px){ .steps{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .steps{grid-template-columns:1fr;} }
+  .step{
+    background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 20px;
+    counter-increment:step; position:relative;
+  }
+  .step::before{
+    content:counter(step);
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.6rem;
+    color:transparent; -webkit-text-stroke:1.5px rgba(43,229,255,0.5);
+    display:block; margin-bottom:12px;
+  }
+  .step h4{font-size:0.92rem; margin-bottom:8px; font-weight:600;}
+  .step code{
+    display:block; font-family:'JetBrains Mono',monospace; font-size:0.76rem;
+    background:#0a1220; border:1px solid var(--line); border-radius:8px;
+    padding:8px 10px; color:var(--green); overflow-x:auto; white-space:nowrap;
+  }
+  .step p{font-size:0.82rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line); padding:44px 0 60px;
+    text-align:center;
+  }
+  footer .tag{
+    font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:0.04em; font-size:1rem;
+    margin-bottom:8px;
+    background:linear-gradient(100deg, var(--cyan), var(--blue));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  footer p{color:var(--muted-2); font-size:0.82rem;}
+  footer .madeby{margin-top:18px; font-size:0.76rem; color:var(--muted-2);}
+  footer .madeby a{color:var(--cyan); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand"><span class="dot"></span> RUSH SYNC</a>
+    <nav class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#commands">Commands</a>
+      <a href="#setup">Setup</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><span class="pulse"></span> Running live on Termux</div>
+      <h1>Your WhatsApp,<br><span>on autopilot.</span></h1>
+      <p class="lede">Rush Sync is a self-hosted WhatsApp assistant that replies, saves what gets deleted, backs up statuses, and pulls songs — all from a phone, no server rent, no cloud.</p>
+      <div class="cta-row">
+        <a href="https://drive.google.com/file/d/1xy0LQ72QfsMduJgv6mxlnL3shlkBAXy6/view?usp=drivesdk" class="btn btn-primary" target="_blank" rel="noopener">⬇ Download Rush Sync</a>
+        <a href="#commands" class="btn btn-ghost">See it in action</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>90+</b><span>reply keywords</span></div>
+        <div class="stat"><b>0</b><span>monthly cost</span></div>
+        <div class="stat"><b>100%</b><span>on-device</span></div>
+      </div>
+    </div>
+
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="phone-head">
+          <div class="phone-avatar">RS</div>
+          <div class="who"><b>Rush Sync</b><span>● online</span></div>
+        </div>
+        <div class="chat-screen" id="chatScreen"></div>
+        <div class="phone-input">
+          <div class="field">Type a message…</div>
+          <div class="send">↑</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="section-head">
+      <span class="kicker">What it does</span>
+      <h2>Four jobs, running quietly in the background</h2>
+      <p>No dashboard to babysit. It watches your chats and acts the moment something happens.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="fcard">
+        <div class="ficon">💬</div>
+        <h3>Auto‑reply</h3>
+        <p>Recognizes 90+ everyday keywords and shorthand — Tanglish included — and replies instantly, even offline chats.</p>
+      </div>
+      <div class="fcard">
+        <div class="ficon">🗑️</div>
+        <h3>Anti‑delete</h3>
+        <p>Captures the message, sender's name, and photo the instant it arrives — so a "deleted for everyone" never actually is.</p>
+      </div>
+      <div class="fcard">
+        <div class="ficon">📥</div>
+        <h3>Status saver</h3>
+        <p>Auto‑views contacts' statuses and forwards a copy — text, photo, or video — straight to your own chat.</p>
+      </div>
+      <div class="fcard">
+        <div class="ficon">🎵</div>
+        <h3>Media tools</h3>
+        <p><code>.yt</code> pulls audio from a song name or link. <code>.img</code> finds a picture on request. Right in the chat.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="commands">
+    <div class="section-head">
+      <span class="kicker">Talk to it directly</span>
+      <h2>Every command is just a message</h2>
+      <p>No app, no menu to dig through — type what you want.</p>
+    </div>
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="lights"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+        rush-sync — whatsapp session
+      </div>
+      <div class="term-body">
+        <div class="term-line"><span class="cmd">.menu</span><span class="resp">→ shows the full feature list, with the Rush Sync banner</span></div>
+        <div class="term-line"><span class="cmd">.yt calm lofi beats</span><span class="resp">→ downloads and sends back the audio as an mp3</span></div>
+        <div class="term-line"><span class="cmd">.img sunset over the sea</span><span class="resp">→ finds and sends a matching image</span></div>
+        <div class="term-line"><span class="cmd">vaa</span><span class="resp">→ "Varen 😄" — one of 90+ built‑in casual replies</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <div class="section-head">
+      <span class="kicker">Setup</span>
+      <h2>From zip to linked device</h2>
+      <p>Runs entirely inside Termux. No PC, no Android Studio, no server.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h4>Install Termux tools</h4>
+        <code>pkg install -y yt-dlp ffmpeg</code>
+        <p>Node.js installs itself on first run.</p>
+      </div>
+      <div class="step">
+        <h4>Unzip the project</h4>
+        <code>unzip rushsync-final.zip</code>
+        <p>Extracts into a <code style="display:inline;padding:2px 6px;">rushsync/</code> folder. Don't have the zip yet? <a href="https://drive.google.com/file/d/1xy0LQ72QfsMduJgv6mxlnL3shlkBAXy6/view?usp=drivesdk" target="_blank" rel="noopener" style="color:var(--cyan);">Download it here</a>.</p>
+      </div>
+      <div class="step">
+        <h4>Start it up</h4>
+        <code>cd rushsync && bash start.sh</code>
+        <p>First run installs dependencies automatically.</p>
+      </div>
+      <div class="step">
+        <h4>Link your number</h4>
+        <code>WhatsApp → Linked Devices</code>
+        <p>Enter the pairing code shown in the terminal.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="tag">"Your Connection. Your Control."</div>
+  <p>Rush Sync · built and run from a single phone in Termux</p>
+  <div class="madeby">💙 Powered by Rush Environment — part of the <a href="https://rusthicrush.github.io/Rush2" target="_blank" rel="noopener">Rush2</a> platform</div>
+</footer>
+
+<script>
+  // signature element: looping animated chat that mirrors the bot's real auto-reply behavior
+  const convo = [
+    { side:'in',  text:'vaa' },
+    { side:'out', text:'Varen 😄' },
+    { side:'in',  text:'semma' },
+    { side:'out', text:'Thanks 😁' },
+    { side:'in',  text:'.menu' },
+    { side:'out', text:'📋 Rush Sync menu sent' },
+  ];
+
+  const screen = document.getElementById('chatScreen');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clearScreen(){ screen.innerHTML = ''; }
+
+  function addBubble(side, text){
+    const b = document.createElement('div');
+    b.className = 'bubble ' + side;
+    b.textContent = text;
+    screen.appendChild(b);
+    screen.scrollTop = screen.scrollHeight;
+  }
+
+  function addTyping(){
+    const t = document.createElement('div');
+    t.className = 'typing';
+    t.innerHTML = '<i></i><i></i><i></i>';
+    screen.appendChild(t);
+    return t;
+  }
+
+  async function playLoop(){
+    if (reduceMotion){
+      convo.forEach(m => addBubble(m.side, m.text));
+      return;
+    }
+    clearScreen();
+    for (const msg of convo){
+      if (msg.side === 'out'){
+        const typing = addTyping();
+        await new Promise(r => setTimeout(r, 650));
+        typing.remove();
+      }
+      addBubble(msg.side, msg.text);
+      await new Promise(r => setTimeout(r, msg.side === 'in' ? 500 : 900));
+    }
+    await new Promise(r => setTimeout(r, 1800));
+    playLoop();
+  }
+
+  playLoop();
+</script>
+
+</body>
+</html>
