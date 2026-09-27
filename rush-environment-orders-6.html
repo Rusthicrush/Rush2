@@ -1,3 +1,100 @@
+<!-- ============================================================
+  RUSH INTRO SCREEN — paste this whole block right after <body>
+  in your index.html (before your existing menu/content HTML).
+  It overlays the screen, shows RUSH with a glow animation,
+  then fades out and reveals your existing page underneath.
+  Works no matter what your existing markup is.
+============================================================ -->
+
+<div id="rush-intro-overlay">
+  <div class="rush-intro-logo">RUSH</div>
+  <div class="rush-intro-sub">ENVIRONMENT</div>
+  <div class="rush-intro-bar"><div class="rush-intro-bar-fill"></div></div>
+</div>
+
+<style>
+  #rush-intro-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #05070d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+  }
+  #rush-intro-overlay.rush-hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .rush-intro-logo {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(48px, 12vw, 100px);
+    font-weight: 900;
+    letter-spacing: 10px;
+    color: #00eaff;
+    text-shadow:
+      0 0 10px #00eaff,
+      0 0 30px #00eaff,
+      0 0 60px #0077ff;
+    animation: rush-pulse 1.6s ease-in-out infinite;
+  }
+  .rush-intro-sub {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(12px, 3vw, 18px);
+    letter-spacing: 8px;
+    color: #6fd8ff;
+    opacity: 0.75;
+  }
+  .rush-intro-bar {
+    width: 180px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .rush-intro-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00eaff, #0077ff);
+    box-shadow: 0 0 8px #00eaff;
+    animation: rush-fill 1.8s ease forwards;
+  }
+  @keyframes rush-pulse {
+    0%, 100% { text-shadow: 0 0 10px #00eaff, 0 0 30px #00eaff, 0 0 60px #0077ff; }
+    50% { text-shadow: 0 0 20px #00eaff, 0 0 50px #00eaff, 0 0 90px #0077ff; }
+  }
+  @keyframes rush-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+</style>
+
+<script>
+  (function () {
+    var MIN_DISPLAY_MS = 1800; // how long RUSH stays on screen
+    var start = Date.now();
+    function hideIntro() {
+      var overlay = document.getElementById('rush-intro-overlay');
+      if (!overlay) return;
+      var elapsed = Date.now() - start;
+      var wait = Math.max(0, MIN_DISPLAY_MS - elapsed);
+      setTimeout(function () {
+        overlay.classList.add('rush-hide');
+        setTimeout(function () { overlay.remove(); }, 800);
+      }, wait);
+    }
+    if (document.readyState === 'complete') {
+      hideIntro();
+    } else {
+      window.addEventListener('load', hideIntro);
+    }
+  })();
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
