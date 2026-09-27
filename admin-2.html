@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Rush Environment</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --paper-2:#FFF8E7;
+    --text-on-paper:#241C05;
+    --muted-on-paper:#7A6B3F;
+    --accent:#C9A227;
+    --accent-dim:#A8841D;
+    --accent-tint:#FFF7DE;
+    --gold:#D4AF37;
+    --gold-2:#F1D989;
+    --gold-dim:#9C7A1B;
+    --blue:#D4AF37;
+    --blue-dim:#A8841D;
+    --star:#D4AF37;
+    --line-on-paper:rgba(154,120,20,0.16);
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --shadow-1: 0 1px 2px rgba(15,23,42,0.06), 0 6px 18px -8px rgba(15,23,42,0.10);
+    --shadow-2: 0 6px 14px rgba(15,23,42,0.08), 0 24px 44px -18px rgba(15,23,42,0.20);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:linear-gradient(160deg, #FFFDF6 0%, #FFF9E9 45%, #FFF3CE 100%);
+    color:var(--text-on-paper);
+    font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 16px 60px;
+    position:relative; overflow-x:hidden;
+  }
+  .bg-blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .bg-blobs span{ position:absolute; border-radius:50%; filter:blur(90px); }
+  .bg-blobs span:nth-child(1){ width:420px; height:420px; background:var(--gold); opacity:.35; top:-140px; left:-120px; }
+  .bg-blobs span:nth-child(2){ width:380px; height:380px; background:var(--gold-2); opacity:.40; top:15%; right:-140px; }
+  .bg-blobs span:nth-child(3){ width:340px; height:340px; background:#FFFFFF; opacity:.55; bottom:-120px; left:15%; }
+  .bg-blobs span:nth-child(4){ width:260px; height:260px; background:var(--accent); opacity:.22; bottom:10%; right:15%; }
+  .top-brand, .admin-panel, .admin-note{ position:relative; z-index:1; }
+  h1,h2,h3,h4{ font-family:'Poppins', sans-serif; margin:0; letter-spacing:-0.01em; font-weight:700; }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .top-brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; font-family:'Poppins',sans-serif; margin-bottom:28px; }
+  .top-brand .mark{
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(150deg, var(--gold), var(--gold-dim));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px;
+    position:relative; overflow:hidden; box-shadow:0 2px 8px rgba(212,175,55,0.45), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .top-brand .mark::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 60%);
+  }
+  .top-brand .dot{ color:var(--accent); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 28px; border-radius:10px; font-weight:600; font-size:14.5px;
+    letter-spacing:0.01em; border:1px solid transparent;
+    transition: box-shadow .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+    white-space:nowrap;
+  }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow: var(--shadow-1); }
+  .btn-primary:hover{ background:var(--accent-dim); box-shadow: var(--shadow-2); transform:translateY(-1px); }
+  .btn-ghost{ background:transparent; border-color:var(--line-on-paper); color:var(--text-on-paper); }
+  .btn-ghost:hover{ border-color:var(--text-on-paper); }
+  .btn-sm{ padding:10px 18px; font-size:13.5px; }
+  .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; margin-bottom:7px; color:var(--muted-on-paper); }
+  .field input{
+    width:100%; padding:12px 14px; border-radius:9px; border:1px solid rgba(15,23,42,0.12);
+    background:rgba(255,255,255,0.5); backdrop-filter: blur(6px);
+    font-family:inherit; font-size:14.5px; color:var(--text-on-paper); transition: border-color .2s, background .2s;
+  }
+  .field input:focus{ outline:none; border-color:var(--accent); background:rgba(255,255,255,0.75); }
+
+  .admin-panel{
+    position:relative; background:rgba(255,255,255,0.55); border-radius:var(--radius-l);
+    width:100%; max-width:760px; padding:36px 32px;
+    border:1px solid rgba(255,255,255,0.6);
+    backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-2);
+  }
+  .admin-login h3{ font-size:20px; margin-bottom:6px; }
+  .admin-login > p{ font-size:14px; color:var(--muted-on-paper); margin-bottom:22px; }
+  .admin-error{ display:none; font-size:13px; color:#D9534F; margin:-6px 0 14px; }
+  .admin-error.show{ display:block; }
+
+  .admin-dashboard{ display:none; }
+  .admin-dashboard.open{ display:block; }
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; gap:12px; flex-wrap:wrap; }
+  .admin-tabs{
+    display:flex; gap:8px; background:rgba(255,255,255,0.35); padding:4px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.5); backdrop-filter: blur(8px);
+  }
+  .admin-tab{
+    background:none; border:none; padding:9px 18px; border-radius:8px;
+    font-size:13.5px; font-weight:600; color:var(--muted-on-paper);
+  }
+  .admin-tab.active{ background:rgba(255,255,255,0.85); color:var(--text-on-paper); box-shadow:var(--shadow-1); }
+
+  .admin-empty{ display:none; text-align:center; padding:30px; color:var(--muted-on-paper); font-size:14px; }
+  .admin-empty.show{ display:block; }
+  .admin-list{ display:flex; flex-direction:column; gap:14px; }
+
+  .admin-settings-block{ padding:4px 2px; }
+  .admin-settings-block h4{ font-size:15.5px; margin-bottom:6px; }
+  .admin-settings-note{ font-size:13px; color:var(--muted-on-paper); margin-bottom:18px; }
+  .admin-color-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:16px; }
+  .admin-color-field{ display:flex; flex-direction:column; gap:8px; }
+  .admin-color-field label{ font-size:12.5px; font-weight:600; color:var(--muted-on-paper); }
+  .admin-color-field input[type="color"]{
+    width:100%; height:42px; border-radius:8px; border:1px solid var(--line-on-paper);
+    padding:2px; background:var(--paper); cursor:pointer;
+  }
+  .admin-settings-actions{ display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; }
+  .admin-settings-saved{ display:none; margin-top:14px; font-size:13px; font-weight:600; color:#16A34A; }
+  .admin-settings-saved.show{ display:block; }
+
+  .admin-note{
+    max-width:760px; width:100%; font-size:12.5px; color:var(--muted-on-paper);
+    margin-top:18px; text-align:center;
+  }
+
+  .admin-card{
+    border:1px solid rgba(15,23,42,0.08); border-radius:var(--radius-m); padding:18px 20px;
+    background:rgba(255,255,255,0.4); backdrop-filter: blur(6px);
+  }
+  .admin-card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px; }
+  .admin-card-top h4{ font-size:15.5px; }
+  .admin-card-sub{ font-size:12.5px; color:var(--muted-on-paper); margin-top:2px; }
+  .admin-card p.detail{ font-size:13.5px; color:var(--text-on-paper); line-height:1.55; margin-bottom:12px; }
+  .status-badge{
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+    padding:4px 10px; border-radius:999px; white-space:nowrap;
+  }
+  .status-badge.pending{ background:#FEF3C7; color:#92400E; }
+  .status-badge.confirmed{ background:#DCFCE7; color:#166534; }
+  .status-badge.denied{ background:#FEE2E2; color:#991B1B; }
+
+  .admin-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .admin-actions button{
+    font-size:12.5px; font-weight:600; padding:7px 14px; border-radius:7px;
+    border:1px solid var(--line-on-paper); background:var(--paper-2); color:var(--text-on-paper);
+  }
+  .admin-actions button.is-active{ border-color:transparent; color:#fff; }
+  .admin-actions button[data-status="confirmed"].is-active{ background:#16A34A; }
+  .admin-actions button[data-status="pending"].is-active{ background:#D97706; }
+  .admin-actions button[data-status="denied"].is-active{ background:#DC2626; }
+  .admin-actions button[data-approve="true"].is-active{ background:#16A34A; }
+  .admin-actions button[data-approve="false"].is-active{ background:#DC2626; }
+  .admin-stars{ display:flex; gap:2px; margin-bottom:8px; }
+  .admin-stars svg{ width:13px; height:13px; fill:var(--star); }
+
+  .admin-actions button.chat-btn{
+    background:#25D366; color:#fff; border-color:transparent; display:inline-flex; align-items:center; gap:6px;
+  }
+  .admin-actions button.chat-btn:hover{ background:#1FBB58; }
+  .chat-btn .unread-dot{
+    display:none; width:8px; height:8px; border-radius:50%; background:#fff; box-shadow:0 0 0 2px #25D366;
+  }
+  .chat-btn.has-unread .unread-dot{ display:inline-block; }
+
+  /* ---------- WhatsApp-style order chat (admin side) ---------- */
+  .wa-overlay{
+    display:none; position:fixed; inset:0; z-index:2000; background:rgba(20,14,2,0.45);
+    align-items:center; justify-content:center; padding:16px;
+  }
+  .wa-overlay.open{ display:flex; }
+  .wa-modal{
+    width:100%; max-width:420px; height:min(640px, 88vh); background:#fff; border-radius:16px;
+    overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 60px rgba(0,0,0,0.35);
+  }
+  .wa-modal-header{
+    background:#075E54; color:#fff; padding:14px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0;
+  }
+  .wa-modal-header .wa-avatar{
+    width:38px; height:38px; border-radius:50%; background:var(--gold); color:#fff; font-weight:700;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .wa-modal-header .wa-who{ flex:1; min-width:0; }
+  .wa-modal-header .wa-who h4{ font-size:15px; color:#fff; margin-bottom:2px; }
+  .wa-modal-header .wa-who span{ font-size:12px; color:rgba(255,255,255,0.75); }
+  .wa-modal-header .wa-close{ background:none; border:none; color:#fff; font-size:22px; line-height:1; padding:4px 6px; }
+  .wa-messages{
+    flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:6px;
+    background:#ECE5DD url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" fill="%23ECE5DD"/></svg>');
+  }
+  .wa-bubble{ max-width:78%; padding:7px 10px 8px; border-radius:9px; font-size:13.5px; line-height:1.42; position:relative; word-wrap:break-word; }
+  .wa-bubble.admin{ align-self:flex-end; background:#DCF8C6; border-bottom-right-radius:2px; }
+  .wa-bubble.user{ align-self:flex-start; background:#fff; border-bottom-left-radius:2px; box-shadow:0 1px 1px rgba(0,0,0,0.08); }
+  .wa-bubble time{ display:block; font-size:10px; color:#00000073; margin-top:3px; text-align:right; }
+  .wa-empty-chat{ text-align:center; color:#5b6b62; font-size:12.5px; margin:auto; }
+  .wa-input-row{ display:flex; gap:8px; padding:10px; background:#F0F0F0; flex-shrink:0; }
+  .wa-input-row input{
+    flex:1; border-radius:22px; border:1px solid #ddd; padding:10px 16px; font-size:13.5px;
+    font-family:inherit; outline:none;
+  }
+  .wa-input-row input:focus{ border-color:#25D366; }
+  .wa-input-row button{
+    width:40px; height:40px; border-radius:50%; background:#075E54; color:#fff; border:none;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .wa-input-row button:disabled{ opacity:.5; }
+
+  @media (max-width:640px){
+    .admin-panel{ padding:26px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+<a href="index.html" class="top-brand"><span class="mark">R</span>Rush Environment<span class="dot">.</span> Admin</a>
+
+<div class="admin-panel">
+  <div class="admin-login" id="adminLogin">
+    <h3>Admin Login</h3>
+    <p>Sign in with your admin username and password to manage orders, reviews, and theme.</p>
+    <div class="field">
+      <label for="admin-username">Username</label>
+      <input id="admin-username" type="text" placeholder="Username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="admin-password">Password</label>
+      <input id="admin-password" type="password" placeholder="Password" autocomplete="current-password">
+    </div>
+    <div class="admin-error" id="adminLoginError">Invalid username or password.</div>
+    <button type="button" class="btn btn-primary" id="adminLoginBtn" style="width:100%;">Sign In</button>
+  </div>
+
+  <div class="admin-dashboard" id="adminDashboard">
+    <div class="admin-header">
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab active" data-tab="orders">Orders</button>
+        <button type="button" class="admin-tab" data-tab="reviews">Reviews</button>
+        <button type="button" class="admin-tab" data-tab="settings">Settings</button>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="adminLogoutBtn">Log Out</button>
+    </div>
+
+    <div class="admin-tab-panel" id="adminOrdersPanel">
+      <div class="admin-empty" id="ordersEmpty">No project requests yet.</div>
+      <div class="admin-list" id="ordersList"></div>
+    </div>
+
+    <div class="admin-tab-panel" id="adminReviewsPanel" style="display:none;">
+      <div class="admin-empty" id="reviewsAdminEmpty">No reviews yet.</div>
+      <div class="admin-list" id="reviewsAdminList"></div>
+    </div>
+
+    <div class="admin-tab-panel" id="adminSettingsPanel" style="display:none;">
+      <div class="admin-settings-block">
+        <h4>Theme Colors</h4>
+        <p class="admin-settings-note">Maathi paakalam live-a, but idhu inga (admin.html) matum preview aagum. "Save" pannina antha browser-la save aagum, and index.html open panna andha saved color automatic-a apply aagum.</p>
+        <div class="admin-color-grid">
+          <div class="admin-color-field">
+            <label for="set-accent">Accent (Orange)</label>
+            <input type="color" id="set-accent" data-var="--accent">
+          </div>
+          <div class="admin-color-field">
+            <label for="set-blue">Blue</label>
+            <input type="color" id="set-blue" data-var="--blue">
+          </div>
+          <div class="admin-color-field">
+            <label for="set-paper">Page Background (Paper)</label>
+            <input type="color" id="set-paper" data-var="--paper">
+          </div>
+          <div class="admin-color-field">
+            <label for="set-paper2">Alt Background (Paper-2)</label>
+            <input type="color" id="set-paper2" data-var="--paper-2">
+          </div>
+          <div class="admin-color-field">
+            <label for="set-star">Star Rating Color</label>
+            <input type="color" id="set-star" data-var="--star">
+          </div>
+        </div>
+        <div class="admin-settings-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="settingsSaveBtn">Save Theme</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="settingsResetBtn">Reset to Default</button>
+        </div>
+        <div class="admin-settings-saved" id="settingsSavedMsg">Theme saved.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="admin-note">Idhu unga admin page. Site visitors-ku idhu link pannala — direct-a admin.html URL vachi dhaan varanum.</p>
+
+<div class="wa-overlay" id="waOverlay">
+  <div class="wa-modal">
+    <div class="wa-modal-header">
+      <div class="wa-avatar" id="waAvatar">?</div>
+      <div class="wa-who">
+        <h4 id="waCustomerName">Customer</h4>
+        <span id="waOrderStatus">pending</span>
+      </div>
+      <button type="button" class="wa-close" id="waCloseBtn">&times;</button>
+    </div>
+    <div class="wa-messages" id="waMessages">
+      <div class="wa-empty-chat" id="waEmptyChat">No messages yet. Say hi 👋</div>
+    </div>
+    <div class="wa-input-row">
+      <input type="text" id="waInput" placeholder="Type a reply...">
+      <button type="button" id="waSendBtn" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= FIREBASE ================= -->
+<!--
+  Idhu index.html-la irukka ANDHA SAME firebaseConfig-a inga-um paste pannunga
+  (rendu file-um same Firebase project-a point pannanum).
+  Anonymous sign-in enable pannunga: Firebase Console → Authentication → Sign-in method → Anonymous.
+-->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyCI9GZa1NIcjTSbaV5mxW9aa6rdEd9W-MU",
+    authDomain: "personal-web-c01d1.firebaseapp.com",
+    projectId: "personal-web-c01d1",
+    storageBucket: "personal-web-c01d1.firebasestorage.app",
+    messagingSenderId: "849443579808",
+    appId: "1:849443579808:web:6041d6b5f621c0e45fa6c5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+  var auth = firebase.auth();
+</script>
+
+<script>
+(function(){
+  var starIconPath = '<svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg>';
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  var adminLogin = document.getElementById('adminLogin');
+  var adminDashboard = document.getElementById('adminDashboard');
+  var adminUsername = document.getElementById('admin-username');
+  var adminPassword = document.getElementById('admin-password');
+  var adminLoginBtn = document.getElementById('adminLoginBtn');
+  var adminLoginError = document.getElementById('adminLoginError');
+  var adminLogoutBtn = document.getElementById('adminLogoutBtn');
+  var adminTabs = document.querySelectorAll('.admin-tab');
+  var adminOrdersPanel = document.getElementById('adminOrdersPanel');
+  var adminReviewsPanel = document.getElementById('adminReviewsPanel');
+  var adminSettingsPanel = document.getElementById('adminSettingsPanel');
+  var ordersList = document.getElementById('ordersList');
+  var ordersEmpty = document.getElementById('ordersEmpty');
+  var reviewsAdminList = document.getElementById('reviewsAdminList');
+  var reviewsAdminEmpty = document.getElementById('reviewsAdminEmpty');
+
+  // Admin credentials (client-side check). Change these to update the login.
+  var ADMIN_USERNAME = 'rush';
+  var ADMIN_PASSWORD = '0929';
+
+  function openAdminDashboard(){
+    adminLogin.style.display = 'none';
+    adminDashboard.classList.add('open');
+    loadOrders();
+    loadReviewsAdmin();
+  }
+
+  adminLoginBtn.addEventListener('click', function(){
+    adminLoginError.classList.remove('show');
+    var uname = adminUsername.value.trim();
+    var pass = adminPassword.value;
+    if(!uname || !pass){ adminLoginError.classList.add('show'); return; }
+    if(uname !== ADMIN_USERNAME || pass !== ADMIN_PASSWORD){
+      adminLoginError.classList.add('show');
+      return;
+    }
+    // Username/password matched — open the dashboard right away.
+    // This works even if Firebase isn't set up yet; Orders/Reviews tabs
+    // will just show "could not load" until Firebase is configured.
+    openAdminDashboard();
+
+    // Best-effort: sign in anonymously so Firestore rules (which require
+    // request.auth != null) let the admin read/write, if Firebase IS set up.
+    if(typeof auth !== 'undefined' && auth && typeof auth.signInAnonymously === 'function'){
+      auth.signInAnonymously().catch(function(err){
+        console.warn('Firebase anonymous sign-in not available (Firebase may not be configured yet):', err);
+      });
+    }
+  });
+
+  adminLogoutBtn.addEventListener('click', function(){
+    if(typeof auth !== 'undefined' && auth && typeof auth.signOut === 'function'){
+      auth.signOut().catch(function(){});
+    }
+    adminLogin.style.display = 'block';
+    adminDashboard.classList.remove('open');
+    adminUsername.value = '';
+    adminPassword.value = '';
+  });
+
+  adminTabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      adminTabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      var target = tab.getAttribute('data-tab');
+      adminOrdersPanel.style.display = target === 'orders' ? 'block' : 'none';
+      adminReviewsPanel.style.display = target === 'reviews' ? 'block' : 'none';
+      adminSettingsPanel.style.display = target === 'settings' ? 'block' : 'none';
+      if(target === 'settings'){ loadThemeIntoInputs(); }
+    });
+  });
+
+  // ---- Theme Customization (colors) ----
+  // Shared with index.html via the same localStorage key, so a color saved
+  // here is picked up automatically by the public site.
+  var THEME_STORAGE_KEY = 'rushEnvThemeSettings';
+  var DEFAULT_THEME = {
+    '--accent': '#F97316',
+    '--blue': '#2F6FEB',
+    '--paper': '#FFFFFF',
+    '--paper-2': '#EAF2FF',
+    '--star': '#F59E0B'
+  };
+  var themeInputs = document.querySelectorAll('.admin-color-field input[type="color"]');
+  var settingsSaveBtn = document.getElementById('settingsSaveBtn');
+  var settingsResetBtn = document.getElementById('settingsResetBtn');
+  var settingsSavedMsg = document.getElementById('settingsSavedMsg');
+
+  function getSavedTheme(){
+    try{
+      var raw = localStorage.getItem(THEME_STORAGE_KEY);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){ return null; }
+  }
+
+  function loadThemeIntoInputs(){
+    var saved = getSavedTheme() || DEFAULT_THEME;
+    themeInputs.forEach(function(input){
+      var varName = input.getAttribute('data-var');
+      input.value = saved[varName] || DEFAULT_THEME[varName];
+    });
+  }
+  loadThemeIntoInputs();
+
+  settingsSaveBtn.addEventListener('click', function(){
+    var theme = {};
+    themeInputs.forEach(function(input){
+      theme[input.getAttribute('data-var')] = input.value;
+    });
+    try{
+      localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
+      settingsSavedMsg.textContent = 'Theme saved. Open index.html to see it live.';
+      settingsSavedMsg.classList.add('show');
+      setTimeout(function(){ settingsSavedMsg.classList.remove('show'); }, 3000);
+    }catch(e){
+      alert('Could not save theme in this browser.');
+    }
+  });
+
+  settingsResetBtn.addEventListener('click', function(){
+    loadThemeIntoInputs();
+    try{ localStorage.removeItem(THEME_STORAGE_KEY); }catch(e){}
+    themeInputs.forEach(function(input){
+      var varName = input.getAttribute('data-var');
+      input.value = DEFAULT_THEME[varName];
+    });
+    settingsSavedMsg.textContent = 'Reset to default.';
+    settingsSavedMsg.classList.add('show');
+    setTimeout(function(){
+      settingsSavedMsg.classList.remove('show');
+      settingsSavedMsg.textContent = 'Theme saved.';
+    }, 2500);
+  });
+
+  function loadOrders(){
+    ordersList.innerHTML = '';
+    ordersEmpty.classList.remove('show');
+    db.collection('projectRequests').orderBy('submittedAt','desc').get()
+      .then(function(snapshot){
+        if(snapshot.empty){ ordersEmpty.classList.add('show'); return; }
+        snapshot.forEach(function(doc){
+          var o = doc.data();
+          var status = o.status || 'pending';
+          var card = document.createElement('div');
+          card.className = 'admin-card';
+          card.innerHTML =
+            '<div class="admin-card-top">' +
+              '<div><h4>' + escapeHtml(o.name || 'Unknown') + ' — ' + escapeHtml(o.business || '') + '</h4>' +
+              '<div class="admin-card-sub">' + escapeHtml(o.email || '') + ' · ' + escapeHtml(o.phone || '') + '</div></div>' +
+              '<span class="status-badge ' + status + '">' + status + '</span>' +
+            '</div>' +
+            '<p class="detail"><strong>' + escapeHtml(o.type || '') + ':</strong> ' + escapeHtml(o.details || '') + '</p>' +
+            '<div class="admin-actions" data-id="' + doc.id + '">' +
+              '<button type="button" data-status="pending" class="' + (status==='pending'?'is-active':'') + '">Pending</button>' +
+              '<button type="button" data-status="confirmed" class="' + (status==='confirmed'?'is-active':'') + '">Confirm</button>' +
+              '<button type="button" data-status="denied" class="' + (status==='denied'?'is-active':'') + '">Deny</button>' +
+              '<button type="button" class="chat-btn" data-chat="' + doc.id + '" data-name="' + escapeHtml(o.name || 'Customer') + '">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.14 2 11.24c0 2.6 1.16 4.94 3.05 6.62L4 22l4.36-1.5c1.13.4 2.36.62 3.64.62 5.52 0 10-4.14 10-9.24S17.52 2 12 2z"/></svg>' +
+                'Message<span class="unread-dot"></span>' +
+              '</button>' +
+            '</div>';
+          ordersList.appendChild(card);
+        });
+        ordersList.querySelectorAll('.admin-actions').forEach(function(actionsEl){
+          var id = actionsEl.getAttribute('data-id');
+          actionsEl.querySelectorAll('button[data-status]').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var newStatus = btn.getAttribute('data-status');
+              db.collection('projectRequests').doc(id).update({ status: newStatus })
+                .then(function(){ loadOrders(); })
+                .catch(function(err){ console.error('Status update failed:', err); alert('Could not update status.'); });
+            });
+          });
+          var chatBtn = actionsEl.querySelector('button[data-chat]');
+          chatBtn.addEventListener('click', function(){
+            openChat(chatBtn.getAttribute('data-chat'), chatBtn.getAttribute('data-name'));
+          });
+        });
+      })
+      .catch(function(err){
+        console.error('Could not load orders:', err);
+        ordersEmpty.textContent = 'Could not load orders. Check Firestore rules / sign-in.';
+        ordersEmpty.classList.add('show');
+      });
+  }
+
+  function loadReviewsAdmin(){
+    reviewsAdminList.innerHTML = '';
+    reviewsAdminEmpty.classList.remove('show');
+    db.collection('reviews').orderBy('submittedAt','desc').get()
+      .then(function(snapshot){
+        if(snapshot.empty){ reviewsAdminEmpty.classList.add('show'); return; }
+        snapshot.forEach(function(doc){
+          var r = doc.data();
+          var approved = !!r.approved;
+          var starsHtml = '';
+          for(var i=0;i<5;i++){ starsHtml += i < (r.rating||0) ? starIconPath : ''; }
+          var card = document.createElement('div');
+          card.className = 'admin-card';
+          card.innerHTML =
+            '<div class="admin-card-top">' +
+              '<div><h4>' + escapeHtml(r.name || 'Unknown') + '</h4>' +
+              '<div class="admin-card-sub">' + escapeHtml(r.role || '') + '</div></div>' +
+              '<span class="status-badge ' + (approved ? 'confirmed' : 'pending') + '">' + (approved ? 'approved' : 'pending') + '</span>' +
+            '</div>' +
+            '<div class="admin-stars">' + starsHtml + '</div>' +
+            '<p class="detail">' + escapeHtml(r.text || '') + '</p>' +
+            '<div class="admin-actions" data-id="' + doc.id + '">' +
+              '<button type="button" data-approve="true" class="' + (approved?'is-active':'') + '">Approve</button>' +
+              '<button type="button" data-approve="false" class="' + (!approved?'is-active':'') + '">Reject</button>' +
+              '<button type="button" data-delete="true">Delete</button>' +
+            '</div>';
+          reviewsAdminList.appendChild(card);
+        });
+        reviewsAdminList.querySelectorAll('.admin-actions').forEach(function(actionsEl){
+          var id = actionsEl.getAttribute('data-id');
+          actionsEl.querySelectorAll('button[data-approve]').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var val = btn.getAttribute('data-approve') === 'true';
+              db.collection('reviews').doc(id).update({ approved: val })
+                .then(function(){ loadReviewsAdmin(); })
+                .catch(function(err){ console.error('Review update failed:', err); alert('Could not update review.'); });
+            });
+          });
+          var delBtn = actionsEl.querySelector('button[data-delete]');
+          delBtn.addEventListener('click', function(){
+            if(!confirm('Delete this review permanently?')) return;
+            db.collection('reviews').doc(id).delete()
+              .then(function(){ loadReviewsAdmin(); })
+              .catch(function(err){ console.error('Review delete failed:', err); alert('Could not delete review.'); });
+          });
+        });
+      })
+      .catch(function(err){
+        console.error('Could not load reviews:', err);
+        reviewsAdminEmpty.textContent = 'Could not load reviews. Check Firestore rules / sign-in.';
+        reviewsAdminEmpty.classList.add('show');
+      });
+  }
+
+  // ---- WhatsApp-style order chat (admin side) ----
+  var waOverlay = document.getElementById('waOverlay');
+  var waCloseBtn = document.getElementById('waCloseBtn');
+  var waAvatar = document.getElementById('waAvatar');
+  var waCustomerName = document.getElementById('waCustomerName');
+  var waOrderStatus = document.getElementById('waOrderStatus');
+  var waMessages = document.getElementById('waMessages');
+  var waEmptyChat = document.getElementById('waEmptyChat');
+  var waInput = document.getElementById('waInput');
+  var waSendBtn = document.getElementById('waSendBtn');
+  var waCurrentOrderId = null;
+  var waUnsubMessages = null;
+  var waUnsubOrder = null;
+
+  function waFormatTime(ts){
+    if(!ts || !ts.toDate) return '';
+    var d = ts.toDate();
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if(h === 0) h = 12;
+    return h + ':' + (m < 10 ? '0'+m : m) + ' ' + ampm;
+  }
+
+  function openChat(orderId, customerName){
+    waCurrentOrderId = orderId;
+    waCustomerName.textContent = customerName || 'Customer';
+    waAvatar.textContent = (customerName || '?').trim().charAt(0).toUpperCase();
+    waOverlay.classList.add('open');
+    waInput.value = '';
+    waInput.focus();
+
+    if(waUnsubOrder) waUnsubOrder();
+    waUnsubOrder = db.collection('projectRequests').doc(orderId).onSnapshot(function(doc){
+      var status = (doc.exists && doc.data().status) || 'pending';
+      waOrderStatus.textContent = 'Order status: ' + status;
+    });
+
+    if(waUnsubMessages) waUnsubMessages();
+    waUnsubMessages = db.collection('projectRequests').doc(orderId).collection('messages')
+      .orderBy('createdAt','asc').onSnapshot(function(snapshot){
+        if(snapshot.empty){
+          waMessages.innerHTML = '';
+          waMessages.appendChild(waEmptyChat);
+          return;
+        }
+        waMessages.innerHTML = '';
+        snapshot.forEach(function(doc){
+          var m = doc.data();
+          var bubble = document.createElement('div');
+          bubble.className = 'wa-bubble ' + (m.sender === 'admin' ? 'admin' : 'user');
+          bubble.innerHTML = escapeHtml(m.text || '') + '<time>' + waFormatTime(m.createdAt) + '</time>';
+          waMessages.appendChild(bubble);
+        });
+        waMessages.scrollTop = waMessages.scrollHeight;
+      }, function(err){
+        console.error('Could not load messages:', err);
+      });
+  }
+
+  function closeChat(){
+    waOverlay.classList.remove('open');
+    if(waUnsubMessages){ waUnsubMessages(); waUnsubMessages = null; }
+    if(waUnsubOrder){ waUnsubOrder(); waUnsubOrder = null; }
+    waCurrentOrderId = null;
+  }
+
+  waCloseBtn.addEventListener('click', closeChat);
+  waOverlay.addEventListener('click', function(e){ if(e.target === waOverlay) closeChat(); });
+
+  function waSend(){
+    var text = waInput.value.trim();
+    if(!text || !waCurrentOrderId) return;
+    waSendBtn.disabled = true;
+    db.collection('projectRequests').doc(waCurrentOrderId).collection('messages').add({
+      sender: 'admin',
+      text: text,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      waInput.value = '';
+      waSendBtn.disabled = false;
+      waInput.focus();
+    }).catch(function(err){
+      console.error('Could not send message:', err);
+      waSendBtn.disabled = false;
+      alert('Could not send message.');
+    });
+  }
+
+  waSendBtn.addEventListener('click', waSend);
+  waInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); waSend(); }
+  });
+})();
+</script>
+
+</body>
+</html>

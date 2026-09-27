@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rush Environment — Web Development Studio | Your Vision. Our Digital Solution.</title>
+<meta name="description" content="Rush Environment designs and builds modern, responsive websites that help businesses build trust, reach more customers, and grow online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#FFFDF6;
+    --ink-2:#FFF3D2;
+    --paper:#FFFFFF;
+    --paper-2:#FFF8E7;
+    --text-on-ink:#241C05;
+    --muted-on-ink:#8A6D22;
+    --text-on-paper:#0F172A;
+    --muted-on-paper:#64748B;
+    --accent:#C9A227;
+    --accent-dim:#A8841D;
+    --accent-tint:#FFF7DE;
+    --blue:#D4AF37;
+    --blue-dim:#A8841D;
+    --star:#D4AF37;
+    --line-on-ink:rgba(154,120,20,0.18);
+    --line-on-paper:rgba(15,23,42,0.09);
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --shadow-1: 0 1px 2px rgba(15,23,42,0.06), 0 6px 18px -8px rgba(15,23,42,0.10);
+    --shadow-2: 0 6px 14px rgba(15,23,42,0.08), 0 24px 44px -18px rgba(15,23,42,0.20);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text-on-paper);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Poppins', sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+    font-weight:700;
+  }
+  p{margin:0;}
+  a{color:inherit; text-decoration:none;}
+  ul{margin:0; padding:0; list-style:none;}
+  button{font-family:inherit; cursor:pointer;}
+
+  ::selection{ background:var(--accent); color:#fff; }
+  :focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em;
+    color:var(--accent-dim);
+    display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;
+  }
+  .eyebrow::before{ content:""; width:22px; height:2px; background:var(--accent); flex-shrink:0; border-radius:2px; }
+  section.dark .eyebrow{ color:var(--blue); }
+  section.dark .eyebrow::before{ background:var(--blue); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 28px; border-radius:10px; font-weight:600; font-size:14.5px;
+    letter-spacing:0.01em; border:1px solid transparent;
+    transition: box-shadow .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+    white-space:nowrap;
+  }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow: var(--shadow-1); }
+  .btn-primary:hover{ background:var(--accent-dim); box-shadow: var(--shadow-2); transform:translateY(-1px); }
+  .btn-ghost{ background:transparent; border-color:var(--line-on-paper); color:var(--text-on-paper); }
+  .btn-ghost:hover{ border-color:var(--text-on-paper); }
+  section.dark .btn-ghost{ border-color:var(--line-on-ink); color:var(--text-on-ink); }
+  section.dark .btn-ghost:hover{ border-color:var(--text-on-ink); }
+  .btn-sm{ padding:10px 18px; font-size:13.5px; }
+  .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; }
+
+  /* ---------- NAVBAR ---------- */
+  header#nav{
+    position:fixed; top:0; left:0; right:0; z-index:1000; padding:16px 0;
+    transition: background .3s var(--ease), backdrop-filter .3s var(--ease), border-color .3s var(--ease), padding .3s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  header#nav.scrolled{
+    background:rgba(255,255,255,0.88);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border-bottom:1px solid var(--line-on-paper);
+    padding:11px 0;
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; max-width:1180px; margin:0 auto; padding:0 24px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; font-family:'Poppins',sans-serif; color:var(--text-on-paper); }
+  .brand-mark{
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(150deg, var(--blue), var(--blue-dim));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px; flex-shrink:0;
+    position:relative; overflow:hidden; box-shadow:0 2px 6px rgba(47,111,235,0.35), inset 0 1px 0 rgba(255,255,255,0.5);
+    backdrop-filter: blur(6px);
+  }
+  .brand-mark::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 60%);
+    pointer-events:none;
+  }
+  .brand-dot{ color:var(--accent); }
+
+  .nav-links{ display:flex; align-items:center; gap:32px; }
+  .nav-links a{ font-size:14.5px; font-weight:500; color:var(--muted-on-paper); position:relative; padding:4px 2px; transition:color .2s; }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; right:0; bottom:-4px; height:2px; background:var(--blue);
+    transform:scaleX(0); transform-origin:left; transition:transform .25s var(--ease); border-radius:2px;
+  }
+  .nav-links a:hover{ color:var(--text-on-paper); }
+  .nav-links a:hover::after{ transform:scaleX(1); }
+
+  .nav-actions{ display:flex; align-items:center; gap:14px; }
+  .hamburger{
+    display:none; width:40px; height:40px; border-radius:9px; border:1px solid var(--line-on-paper);
+    background:var(--paper-2); align-items:center; justify-content:center; flex-direction:column; gap:5px;
+  }
+  .hamburger span{ width:18px; height:2px; background:var(--text-on-paper); border-radius:2px; transition: transform .3s var(--ease), opacity .3s var(--ease); }
+  .hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed; inset:0; z-index:999; background:var(--paper);
+    display:flex; flex-direction:column; padding:100px 28px 40px;
+    transform:translateY(-8px); opacity:0; visibility:hidden;
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+  }
+  .mobile-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .mobile-menu a{ font-size:24px; font-weight:700; font-family:'Poppins',sans-serif; padding:16px 0; border-bottom:1px solid var(--line-on-paper); }
+  .mobile-menu .btn{ margin-top:28px; }
+
+  /* ---------- SECTION BASE ---------- */
+  section{ position:relative; padding:104px 0; }
+  section.tight{ padding:80px 0; }
+  section.dark{ background:var(--ink); color:var(--text-on-ink); }
+  section.dark h2, section.dark h3, section.dark h4{ color:var(--text-on-ink); }
+  section.dark p{ color:var(--muted-on-ink); }
+  section.alt{ background:var(--paper-2); }
+
+  .section-head{ max-width:640px; margin-bottom:52px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-head h2{ font-size: clamp(28px, 4vw, 40px); line-height:1.16; }
+  .section-head p{ margin-top:16px; font-size:16.5px; line-height:1.6; color:var(--muted-on-paper); }
+  section.dark .section-head p{ color:var(--muted-on-ink); }
+
+  .reveal{ opacity:0; transform:translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- HERO ---------- */
+  #home{ background:var(--ink); padding:168px 0 100px; overflow:hidden; }
+  .hero-glow{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  .hero-glow span{ position:absolute; border-radius:50%; filter:blur(80px); }
+  .hero-glow span:nth-child(1){ width:420px; height:420px; background:var(--blue); opacity:.45; top:-140px; left:-100px; }
+  .hero-glow span:nth-child(2){ width:360px; height:360px; background:var(--accent); opacity:.30; top:10%; right:-120px; }
+  .hero-glow span:nth-child(3){ width:320px; height:320px; background:#FFFFFF; opacity:.55; bottom:-120px; left:30%; }
+  .hero-grid{ position:relative; z-index:1; display:grid; grid-template-columns: 1.05fr 0.95fr; gap:50px; align-items:center; }
+  .hero-copy h1{ font-size: clamp(32px, 4.6vw, 50px); line-height:1.12; color:var(--text-on-ink); }
+  .hero-copy h1 .accent-text{ color:var(--accent); }
+  .hero-copy p.lede{ margin:20px 0 0; font-size:17px; line-height:1.6; color:var(--muted-on-ink); max-width:480px; }
+  .hero-actions{ display:flex; gap:14px; margin-top:30px; flex-wrap:wrap; }
+  .rating-pill{
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-radius:999px; padding:9px 16px 9px 10px; margin-top:34px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 6px 18px -8px rgba(0,0,0,0.4);
+  }
+  .rating-pill .stars{ display:flex; gap:2px; }
+  .rating-pill svg{ width:14px; height:14px; fill:var(--star); }
+  .rating-pill span{ font-size:13px; color:var(--muted-on-ink); font-weight:600; }
+  .rating-pill strong{ color:var(--text-on-ink); }
+
+  .hero-visual{
+    position:relative; z-index:1;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border-radius:var(--radius-l);
+    padding:28px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), var(--shadow-2);
+  }
+  .hero-visual .vcard{
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-m);
+    padding:20px; margin-bottom:14px; backdrop-filter: blur(10px);
+  }
+  .hero-visual .vcard:last-child{ margin-bottom:0; }
+  .vcard-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .vcard-top .badge{ background:var(--accent-tint); color:var(--accent-dim); font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .vcard-bar{ height:8px; border-radius:4px; background:var(--line-on-ink); overflow:hidden; margin-top:8px; }
+  .vcard-bar > span{ display:block; height:100%; background:var(--accent); border-radius:4px; }
+  .vcard-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted-on-ink); margin-top:10px; }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .service-card{
+    background:var(--paper-2); border:1px solid var(--line-on-paper); border-radius:var(--radius-m);
+    padding:28px 24px; transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  }
+  .service-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-2); border-color:transparent; }
+  .service-icon{
+    width:44px; height:44px; border-radius:13px;
+    background:linear-gradient(150deg, var(--accent), var(--accent-dim));
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px;
+    position:relative; overflow:hidden;
+    box-shadow:0 6px 16px -6px rgba(249,115,22,0.5), inset 0 1px 0 rgba(255,255,255,0.45);
+  }
+  .service-icon::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0) 60%);
+    pointer-events:none;
+  }
+  .service-icon svg{ width:21px; height:21px; color:#fff; position:relative; z-index:1; }
+  .service-card h3{ font-size:18px; margin-bottom:9px; }
+  .service-card p{ font-size:14.5px; line-height:1.6; color:var(--muted-on-paper); }
+
+  /* ---------- STATS ---------- */
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .stat-card{ text-align:center; padding:10px; }
+  .stat-num{ font-size:32px; font-weight:800; color:var(--accent); font-family:'Poppins',sans-serif; }
+  .stat-label{ font-size:13px; color:var(--muted-on-paper); margin-top:6px; font-weight:600; }
+
+  /* ---------- PROCESS ---------- */
+  .process-track{ position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  .process-track::before{ content:""; position:absolute; top:23px; left:0; right:0; height:1px; background:var(--line-on-ink); }
+  .process-step{ position:relative; }
+  .process-num{
+    font-size:15px; font-weight:800; width:46px; height:46px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(10px) saturate(160%); -webkit-backdrop-filter: blur(10px) saturate(160%);
+    display:flex; align-items:center; justify-content:center; color:var(--accent);
+    position:relative; z-index:1; margin-bottom:20px; font-family:'Poppins',sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  .process-step h3{ font-size:17px; color:var(--text-on-ink); margin-bottom:8px; }
+  .process-step p{ font-size:14px; color:var(--muted-on-ink); line-height:1.6; }
+
+  /* ---------- REVIEWS ---------- */
+  .reviews-empty{
+    display:none; text-align:center; padding:40px 20px;
+    background:var(--paper-2); border:1px dashed var(--line-on-paper); border-radius:var(--radius-m);
+    color:var(--muted-on-paper); font-size:14.5px;
+  }
+  .reviews-empty.show{ display:block; }
+
+  .reviews-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .review-card{
+    background:var(--paper); border:1px solid var(--line-on-paper); border-radius:var(--radius-m);
+    padding:26px 24px; display:flex; flex-direction:column; gap:14px;
+  }
+  .review-stars{ display:flex; gap:3px; }
+  .review-stars svg{ width:15px; height:15px; fill:var(--star); }
+  .review-card p.quote{ font-size:14.5px; line-height:1.65; color:var(--text-on-paper); }
+  .review-who{ display:flex; align-items:center; gap:12px; margin-top:4px; }
+  .review-avatar{
+    width:38px; height:38px; border-radius:50%; background:var(--accent-tint); color:var(--accent-dim);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; font-family:'Poppins',sans-serif; flex-shrink:0;
+  }
+  .review-who .name{ font-size:13.5px; font-weight:700; }
+  .review-who .role{ font-size:12px; color:var(--muted-on-paper); }
+
+  .review-cta{ text-align:center; margin-top:36px; }
+
+  .review-form-wrap{
+    display:none;
+    max-width:560px; margin:36px auto 0;
+    background:var(--paper); border:1px solid var(--line-on-paper); border-radius:var(--radius-l);
+    padding:30px; box-shadow:var(--shadow-1);
+  }
+  .review-form-wrap.open{ display:block; }
+  .review-form-wrap h3{ font-size:19px; margin-bottom:6px; }
+  .review-form-wrap > p{ font-size:14px; color:var(--muted-on-paper); margin-bottom:20px; }
+  .star-picker{ display:flex; gap:6px; margin-bottom:18px; }
+  .star-picker button{
+    background:none; border:none; padding:2px; line-height:0;
+  }
+  .star-picker svg{ width:26px; height:26px; fill:none; stroke:var(--muted-on-paper); stroke-width:1.6; transition:fill .15s, stroke .15s; }
+  .star-picker button.filled svg{ fill:var(--star); stroke:var(--star); }
+  .review-form-success{ display:none; text-align:center; padding:20px 6px; }
+  .review-form-success.show{ display:block; }
+  .review-form-wrap.hide-fields .review-fields{ display:none; }
+
+  /* ---------- FREE DESIGN OPINION ---------- */
+  #opinion{ background:var(--paper-2); }
+  .consult-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:60px; }
+  .consult-item{ background:var(--paper); border:1px solid var(--line-on-paper); border-radius:var(--radius-m); padding:26px 24px; }
+  .consult-item .consult-num{
+    width:32px; height:32px; border-radius:8px; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; margin-bottom:16px; font-family:'Poppins',sans-serif;
+  }
+  .consult-item h4{ font-size:16.5px; margin-bottom:8px; }
+  .consult-item p{ font-size:14.5px; color:var(--muted-on-paper); line-height:1.6; }
+
+  .opinion-grid{ display:grid; grid-template-columns: 0.85fr 1.15fr; gap:56px; align-items:start; }
+  .opinion-side h3{ font-size:clamp(24px,3.2vw,30px); margin-bottom:14px; }
+  .opinion-side p{ font-size:15.5px; color:var(--muted-on-paper); line-height:1.65; margin-bottom:26px; }
+  .contact-info{ display:flex; flex-direction:column; gap:16px; }
+  .contact-info-item{ display:flex; gap:12px; align-items:center; font-size:14.5px; font-weight:500; }
+  .contact-info-item svg{ width:17px; height:17px; color:var(--accent); flex-shrink:0; }
+
+  form#project-form{
+    background:var(--paper); border:1px solid var(--line-on-paper); border-radius:var(--radius-l);
+    padding:32px; box-shadow:var(--shadow-1);
+  }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; margin-bottom:7px; color:var(--muted-on-paper); }
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--line-on-paper);
+    background:var(--paper-2); font-family:inherit; font-size:14.5px; color:var(--text-on-paper); transition: border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:100px; }
+  .field-error{ display:none; font-size:12px; color:#D9534F; margin-top:6px; }
+  .field.invalid input, .field.invalid select, .field.invalid textarea{ border-color:#D9534F; }
+  .field.invalid .field-error{ display:block; }
+  form#project-form button[type="submit"]{ width:100%; margin-top:6px; }
+
+  .form-success{ display:none; text-align:center; padding:36px 10px; }
+  .form-success.show{ display:block; }
+  form#project-form.hide-fields .form-fields{ display:none; }
+  .form-success .check-circle{
+    width:54px; height:54px; border-radius:50%; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+  }
+  .form-success h3{ font-size:19px; margin-bottom:8px; }
+  .form-success p{ font-size:14.5px; color:var(--muted-on-paper); }
+  .form-error-banner{
+    display:none; background:#FDECEC; border:1px solid #F3C6C6; color:#B3261E;
+    border-radius:9px; padding:12px 14px; font-size:13.5px; margin-bottom:18px;
+  }
+  .form-error-banner.show{ display:block; }
+
+  /* ---------- FINAL CTA ---------- */
+  #final-cta{ text-align:center; background:var(--ink); }
+  #final-cta h2{ font-size:clamp(28px,4.4vw,42px); color:var(--text-on-ink); max-width:680px; margin:0 auto; }
+  #final-cta p{ margin:18px auto 0; max-width:520px; font-size:16.5px; color:var(--muted-on-ink); line-height:1.6; }
+  #final-cta .hero-actions{ justify-content:center; margin-top:34px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--ink); color:var(--muted-on-ink); padding:60px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:40px; border-bottom:1px solid var(--line-on-ink); }
+  .footer-brand .brand{ color:var(--text-on-ink); }
+  .footer-brand p{ margin-top:14px; font-size:14px; line-height:1.65; max-width:280px; color:var(--muted-on-ink); }
+  .footer-social{ display:flex; gap:10px; margin-top:20px; }
+  .footer-social a{
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(8px) saturate(160%); -webkit-backdrop-filter: blur(8px) saturate(160%);
+    display:flex; align-items:center; justify-content:center; transition: border-color .2s, transform .2s, background .2s;
+  }
+  .footer-social a:hover{ border-color:var(--accent); transform:translateY(-2px); background:rgba(249,115,22,0.14); }
+  .footer-social svg{ width:15px; height:15px; color:var(--muted-on-ink); }
+  .footer-col h4{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-on-ink); margin-bottom:18px; font-weight:700; font-family:'Poppins',sans-serif; }
+  .footer-col ul{ display:flex; flex-direction:column; gap:12px; }
+  .footer-col a{ font-size:14px; transition:color .2s; }
+  .footer-col a:hover{ color:var(--text-on-ink); }
+  .footer-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-top:26px; font-size:13px; }
+  .footer-credit{ text-align:center; font-size:12.5px; color:var(--muted-on-ink); padding-top:14px; }
+  .footer-credit a{ color:var(--accent); font-weight:600; }
+
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .nav-links{ gap:20px; }
+    .brand{ font-size:16px; }
+    .hero-grid{ grid-template-columns:1fr; gap:40px; }
+    .opinion-grid{ grid-template-columns:1fr; gap:40px; }
+    .services-grid{ grid-template-columns:repeat(2,1fr); }
+    .consult-grid{ grid-template-columns:1fr; }
+    .reviews-grid{ grid-template-columns:1fr 1fr; }
+    .process-track{ grid-template-columns:1fr; gap:34px; }
+    .process-track::before{ display:none; }
+    .stat-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width: 720px){
+    .nav-links{ display:none; }
+    .hamburger{ display:flex; }
+    section{ padding:70px 0; }
+    #home{ padding:126px 0 64px; }
+    .services-grid{ grid-template-columns:1fr; }
+    .reviews-grid{ grid-template-columns:1fr; }
+    .form-row{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; gap:32px; }
+    .footer-brand{ grid-column:1/-1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  /* ---------- WhatsApp-style order tracker + chat (floating) ---------- */
+  .wa-fab{
+    display:none; position:fixed; right:20px; bottom:20px; z-index:1400;
+    width:58px; height:58px; border-radius:50%; background:#25D366; color:#fff; border:none;
+    align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(0,0,0,0.28);
+  }
+  .wa-fab.show{ display:flex; }
+  .wa-fab .wa-fab-dot{
+    display:none; position:absolute; top:2px; right:2px; width:13px; height:13px; border-radius:50%;
+    background:#F43F5E; border:2px solid #fff;
+  }
+  .wa-fab.has-unread .wa-fab-dot{ display:block; }
+
+  .wa-panel{
+    display:none; flex-direction:column; position:fixed; right:20px; bottom:90px; z-index:1400;
+    width:340px; max-width:calc(100vw - 32px); height:480px; max-height:calc(100vh - 130px);
+    background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 20px 55px rgba(0,0,0,0.32);
+  }
+  .wa-panel.open{ display:flex; }
+  .wa-panel-header{ background:#075E54; color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .wa-panel-header .wa-avatar{
+    width:36px; height:36px; border-radius:50%; background:var(--accent); display:flex; align-items:center;
+    justify-content:center; font-weight:800; font-family:'Poppins',sans-serif; flex-shrink:0;
+  }
+  .wa-panel-header .wa-title{ flex:1; min-width:0; }
+  .wa-panel-header h4{ font-size:14.5px; color:#fff; margin-bottom:2px; }
+  .wa-panel-header .wa-status-line{ font-size:11.5px; color:rgba(255,255,255,0.78); display:flex; align-items:center; gap:6px; }
+  .wa-status-chip{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:2px 8px; border-radius:999px; }
+  .wa-status-chip.pending{ background:#FEF3C7; color:#92400E; }
+  .wa-status-chip.confirmed{ background:#DCFCE7; color:#166534; }
+  .wa-status-chip.denied{ background:#FEE2E2; color:#991B1B; }
+  .wa-panel-header .wa-panel-close{ background:none; border:none; color:#fff; font-size:22px; line-height:1; padding:4px 6px; }
+  .wa-panel-order-select{ padding:6px 10px; background:#F7F7F5; border-bottom:1px solid #eee; flex-shrink:0; }
+  .wa-panel-order-select select{ width:100%; padding:6px 8px; border-radius:6px; border:1px solid #ddd; font-size:12.5px; font-family:inherit; }
+  .wa-panel-messages{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:6px; background:#ECE5DD; }
+  .wa-panel-bubble{ max-width:78%; padding:7px 10px 8px; border-radius:9px; font-size:13.5px; line-height:1.42; word-wrap:break-word; }
+  .wa-panel-bubble.user{ align-self:flex-end; background:#DCF8C6; border-bottom-right-radius:2px; }
+  .wa-panel-bubble.admin{ align-self:flex-start; background:#fff; border-bottom-left-radius:2px; box-shadow:0 1px 1px rgba(0,0,0,0.08); }
+  .wa-panel-bubble time{ display:block; font-size:10px; color:#00000073; margin-top:3px; text-align:right; }
+  .wa-panel-empty{ text-align:center; color:#5b6b62; font-size:12px; margin:auto; padding:0 10px; }
+  .wa-panel-input-row{ display:flex; gap:8px; padding:10px; background:#F0F0F0; flex-shrink:0; }
+  .wa-panel-input-row input{ flex:1; border-radius:22px; border:1px solid #ddd; padding:10px 16px; font-size:13.5px; font-family:inherit; outline:none; }
+  .wa-panel-input-row input:focus{ border-color:#25D366; }
+  .wa-panel-input-row button{ width:40px; height:40px; border-radius:50%; background:#075E54; color:#fff; border:none; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .wa-panel-input-row button:disabled{ opacity:.5; }
+  @media (max-width:420px){
+    .wa-panel{ right:16px; left:16px; width:auto; bottom:86px; }
+    .wa-fab{ right:16px; bottom:16px; }
+  }</style>
+<script>
+  // Applies any theme colors saved from the admin page (admin.html) before
+  // the page paints, so returning visitors see the customized theme.
+  (function(){
+    try{
+      var raw = localStorage.getItem('rushEnvThemeSettings');
+      if(!raw) return;
+      var theme = JSON.parse(raw);
+      Object.keys(theme).forEach(function(varName){
+        document.documentElement.style.setProperty(varName, theme[varName]);
+      });
+    }catch(e){}
+  })();
+</script>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header id="nav">
+  <div class="nav-inner">
+    <a href="#home" class="brand" id="navBrand"><span class="brand-mark">R</span>Rush Environment<span class="brand-dot">.</span></a>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#opinion">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#opinion" class="btn btn-primary btn-sm">Start Your Project</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home">Home</a>
+  <a href="#services">Services</a>
+  <a href="#process">Process</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#opinion">Contact</a>
+  <a href="#opinion" class="btn btn-primary">Start Your Project</a>
+</div>
+
+<!-- ================= HERO ================= -->
+<section id="home" class="dark">
+  <div class="hero-glow" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal in">
+      <div class="eyebrow">Web Development Studio</div>
+      <h1>Your business deserves <span class="accent-text">a better website.</span></h1>
+      <p class="lede">We design and build modern, responsive websites that turn your online presence into a powerful business tool.</p>
+      <div class="hero-actions">
+        <a href="#opinion" class="btn btn-primary">Start Your Project</a>
+        <a href="#reviews" class="btn btn-ghost">See Reviews</a>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal in">
+      <div class="vcard">
+        <div class="vcard-top"><span>Business Website</span><span class="badge">Live</span></div>
+        <div class="vcard-bar"><span style="width:92%"></span></div>
+        <div class="vcard-row"><span>Design</span><span>Complete</span></div>
+      </div>
+      <div class="vcard">
+        <div class="vcard-top"><span>Mobile Optimization</span><span class="badge">100%</span></div>
+        <div class="vcard-bar"><span style="width:100%"></span></div>
+        <div class="vcard-row"><span>Responsive</span><span>All devices</span></div>
+      </div>
+      <div class="vcard">
+        <div class="vcard-top"><span>Page Speed</span><span class="badge">Fast</span></div>
+        <div class="vcard-bar"><span style="width:88%"></span></div>
+        <div class="vcard-row"><span>Performance</span><span>Optimized</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">What We Do</div>
+      <h2>Everything you need to grow online</h2>
+      <p>From a first landing page to a full online store, we build the right kind of website for where your business is right now.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+        <h3>Business Websites</h3>
+        <p>A professional home for your business online — built to explain what you do and earn trust at first glance.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+        <h3>Landing Pages</h3>
+        <p>Focused, high-converting single pages built for a campaign, launch, or offer that needs to perform.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.2 11.2a2 2 0 002 1.8h7.6a2 2 0 002-1.6L20 8H6"/></svg></div>
+        <h3>E-commerce Websites</h3>
+        <p>Online stores that make it simple for customers to browse, choose, and buy — on any device.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg></div>
+        <h3>Portfolio Websites</h3>
+        <p>A clean, visual showcase for your work — designed to let what you make speak for itself.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 0115.3-6.4M21 12a9 9 0 01-15.3 6.4"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div>
+        <h3>Website Redesign</h3>
+        <p>Already have a site that feels outdated or slow? We rebuild it with modern design and better performance.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l6-6-6-6M12 19h8"/></svg></div>
+        <h3>Custom Web Solutions</h3>
+        <p>Booking forms, dashboards, or something specific to how your business runs — built around your needs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section class="alt tight">
+  <div class="wrap">
+    <div class="stat-grid">
+      <div class="stat-card reveal"><div class="stat-num">Custom</div><div class="stat-label">Every Website, Custom-Built</div></div>
+      <div class="stat-card reveal"><div class="stat-num">100%</div><div class="stat-label">Mobile Responsive</div></div>
+      <div class="stat-card reveal"><div class="stat-num">24/7</div><div class="stat-label">Online Presence</div></div>
+      <div class="stat-card reveal"><div class="stat-num">1–2</div><div class="stat-label">Day Response Time</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section id="process" class="dark">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">How We Work</div>
+      <h2>From idea to launch</h2>
+      <p>A clear, ordered path from your first conversation with us to a live website your customers can find.</p>
+    </div>
+    <div class="process-track">
+      <div class="process-step reveal">
+        <div class="process-num">01</div>
+        <h3>Discover</h3>
+        <p>We understand your business, goals, audience, and requirements before any design begins.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-num">02</div>
+        <h3>Design</h3>
+        <p>We create a modern visual direction and user experience shaped around your brand.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-num">03</div>
+        <h3>Develop</h3>
+        <p>We build a responsive, fast, and fully functional website from the approved design.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-num">04</div>
+        <h3>Launch</h3>
+        <p>We test across devices, optimize performance, and launch your website online.</p>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:44px; font-size:13.5px; color:var(--muted-on-ink);">Every project is designed and built by a developer working together with AI — combining human judgment with AI-assisted speed.</p>
+  </div>
+</section>
+
+<!-- ================= REVIEWS & RATINGS ================= -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Client Reviews</div>
+      <h2>What businesses say about working with us</h2>
+      <p>Real feedback from the people we've built websites for.</p>
+    </div>
+
+    <div class="reviews-grid" id="reviewsGrid"></div>
+    <div class="reviews-empty" id="reviewsEmpty">
+      <p>No reviews yet — be the first business to share your experience.</p>
+    </div>
+
+    <div class="review-cta">
+      <button type="button" class="btn btn-ghost" id="showReviewFormBtn">Write a Review</button>
+    </div>
+
+    <div class="review-form-wrap" id="reviewFormWrap">
+      <h3>Share your experience</h3>
+      <p>Worked with us before? Leave a quick review — it helps other businesses decide.</p>
+
+      <div class="review-fields">
+        <div class="star-picker" id="starPicker">
+          <button type="button" data-star="1" aria-label="1 star"><svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg></button>
+          <button type="button" data-star="2" aria-label="2 stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg></button>
+          <button type="button" data-star="3" aria-label="3 stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg></button>
+          <button type="button" data-star="4" aria-label="4 stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg></button>
+          <button type="button" data-star="5" aria-label="5 stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg></button>
+        </div>
+        <div class="field" data-field="rname">
+          <label for="r-name">Your Name</label>
+          <input id="r-name" name="rname" type="text" placeholder="Your name">
+          <div class="field-error">Please enter your name.</div>
+        </div>
+        <div class="field" data-field="rrole">
+          <label for="r-role">Business / Role</label>
+          <input id="r-role" name="rrole" type="text" placeholder="e.g. Restaurant Owner">
+          <div class="field-error">Please enter your business or role.</div>
+        </div>
+        <div class="field" data-field="rtext">
+          <label for="r-text">Your Review</label>
+          <textarea id="r-text" name="rtext" placeholder="Tell us about your experience working with us."></textarea>
+          <div class="field-error">Please write a short review.</div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" id="submitReviewBtn" style="width:100%;">Submit Review</button>
+
+      <div class="review-form-success" id="reviewFormSuccess">
+        <div class="check-circle"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 10l4 4 8-8"/></svg></div>
+        <h3>Thanks for your review!</h3>
+        <p>We appreciate you taking the time to share your feedback.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FREE DESIGN OPINION + CONTACT ================= -->
+<section id="opinion">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow" style="justify-content:center">Free Design Opinion</div>
+      <h2>Not sure what your website needs? Let's talk it through.</h2>
+      <p>Send us your business details or an existing website, and we'll give you an honest, no-obligation opinion on what would work best — before you commit to anything.</p>
+    </div>
+
+    <div class="consult-grid">
+      <div class="consult-item reveal">
+        <div class="consult-num">01</div>
+        <h4>Share your business</h4>
+        <p>Tell us what you do, who your customers are, and what you're trying to achieve online.</p>
+      </div>
+      <div class="consult-item reveal">
+        <div class="consult-num">02</div>
+        <h4>Get an honest opinion</h4>
+        <p>We'll review your current site — or your idea — and tell you plainly what's working and what isn't.</p>
+      </div>
+      <div class="consult-item reveal">
+        <div class="consult-num">03</div>
+        <h4>See a recommended direction</h4>
+        <p>We'll suggest the kind of website that fits your business best. No generic packages, no pressure.</p>
+      </div>
+    </div>
+
+    <div class="opinion-grid">
+      <div class="opinion-side reveal">
+        <h3>Let's build something great.</h3>
+        <p>Share a few details about your business and what you're looking for. We'll get back to you with next steps.</p>
+        <div class="contact-info">
+          <div class="contact-info-item"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M2 5l8 6 8-6"/></svg>rusthir236@gmail.com</div>
+          <div class="contact-info-item"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4c0 7 6 13 13 13l2-3-5-2-2 2c-2-1-4-3-5-5l2-2-2-5-3 2z"/></svg>Available on WhatsApp</div>
+          <div class="contact-info-item"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="8" r="3"/><path d="M4 17c0-3 3-5 6-5s6 2 6 5"/></svg>Response within 1–2 business days</div>
+        </div>
+      </div>
+
+      <form id="project-form" class="reveal" novalidate>
+        <div class="form-error-banner" id="formErrorBanner">Something went wrong sending your request. Please try again, or email rusthir236@gmail.com directly.</div>
+        <div class="form-fields">
+          <div class="form-row">
+            <div class="field" data-field="name">
+              <label for="f-name">Name</label>
+              <input id="f-name" name="name" type="text" placeholder="Your full name">
+              <div class="field-error">Please enter your name.</div>
+            </div>
+            <div class="field" data-field="business">
+              <label for="f-business">Business Name</label>
+              <input id="f-business" name="business" type="text" placeholder="Your business name">
+              <div class="field-error">Please enter your business name.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" data-field="email">
+              <label for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" placeholder="you@business.com">
+              <div class="field-error">Please enter a valid email address.</div>
+            </div>
+            <div class="field" data-field="phone">
+              <label for="f-phone">Phone / WhatsApp</label>
+              <input id="f-phone" name="phone" type="tel" placeholder="+94 7X XXX XXXX">
+              <div class="field-error">Please enter a contact number.</div>
+            </div>
+          </div>
+          <div class="field" data-field="type">
+            <label for="f-type">Website Type</label>
+            <select id="f-type" name="type">
+              <option value="">Select a website type</option>
+              <option>Business Website</option>
+              <option>Landing Page</option>
+              <option>E-commerce Website</option>
+              <option>Portfolio Website</option>
+              <option>Website Redesign</option>
+              <option>Custom Web Solution</option>
+              <option>Not sure — want a design opinion</option>
+            </select>
+            <div class="field-error">Please select a website type.</div>
+          </div>
+          <div class="field" data-field="details">
+            <label for="f-details">Project Details</label>
+            <textarea id="f-details" name="details" placeholder="Tell us a bit about your business and what you need."></textarea>
+            <div class="field-error">Please share a few details about your project.</div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Get My Free Design Opinion</button>
+
+        <div class="form-success" id="formSuccess">
+          <div class="check-circle"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 10l4 4 8-8"/></svg></div>
+          <h3>Request sent.</h3>
+          <p>Thanks for reaching out — we'll review your details and get back to you shortly.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section id="final-cta">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" style="justify-content:center">Get Started</div>
+      <h2>Ready to build your digital presence?</h2>
+      <p>Tell us about your business and let's turn your idea into a website that works for you.</p>
+      <div class="hero-actions">
+        <a href="#opinion" class="btn btn-primary">Start Your Project</a>
+        <a href="#reviews" class="btn btn-ghost">Read Reviews</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="#home" class="brand"><span class="brand-mark">R</span>Rush Environment<span class="brand-dot">.</span></a>
+      <p>A web development studio designing modern, responsive websites that help businesses build trust and grow online.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4a2 2 0 014 0v4M12 13v4"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l1.5-4.5A8 8 0 1112 20a8 8 0 01-4-1.1L4 20z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Business Websites</a></li>
+        <li><a href="#services">Landing Pages</a></li>
+        <li><a href="#services">E-commerce</a></li>
+        <li><a href="#services">Website Redesign</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#opinion">rusthir236@gmail.com</a></li>
+        <li><a href="#opinion">Message on WhatsApp</a></li>
+        <li><a href="#opinion">Get a Free Design Opinion</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Rush Environment. All rights reserved.</span>
+    <span>Designed &amp; built by Rush Environment.</span>
+  </div>
+  <div class="footer-credit wrap">Powered by Rushdhi — designed &amp; developed together with AI</div>
+</footer>
+
+<!-- ================= ORDER TRACKER + CHAT (WhatsApp-style) ================= -->
+<button type="button" class="wa-fab" id="waFab" aria-label="My order chat">
+  <svg width="27" height="27" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.14 2 11.24c0 2.6 1.16 4.94 3.05 6.62L4 22l4.36-1.5c1.13.4 2.36.62 3.64.62 5.52 0 10-4.14 10-9.24S17.52 2 12 2z"/></svg>
+  <span class="wa-fab-dot"></span>
+</button>
+
+<div class="wa-panel" id="waPanel">
+  <div class="wa-panel-header">
+    <div class="wa-avatar" id="waPanelAvatar">R</div>
+    <div class="wa-title">
+      <h4>Rush Environment</h4>
+      <div class="wa-status-line">Your order: <span class="wa-status-chip pending" id="waPanelStatus">pending</span></div>
+    </div>
+    <button type="button" class="wa-panel-close" id="waPanelClose">&times;</button>
+  </div>
+  <div class="wa-panel-order-select" id="waOrderSelectWrap" style="display:none;">
+    <select id="waOrderSelect"></select>
+  </div>
+  <div class="wa-panel-messages" id="waPanelMessages">
+    <div class="wa-panel-empty" id="waPanelEmpty">No messages yet — ask us anything about your order here.</div>
+  </div>
+  <div class="wa-panel-input-row">
+    <input type="text" id="waPanelInput" placeholder="Type a message...">
+    <button type="button" id="waPanelSendBtn" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ================= FIREBASE ================= -->
+<!--
+  Firebase setup:
+  1. Firebase Console la project create pannu → Firestore Database + Authentication (Anonymous) enable pannu.
+     (Authentication → Sign-in method → Anonymous → Enable. Idhu backend-la Firestore access-ku dhaan, admin login screen-oda relation illa.)
+  2. Project Settings → General → "Your apps" → Web app add pannu → firebaseConfig kudukum.
+  3. Kீழே irukka placeholder values-a, unga real config values kondu maathu.
+  4. Idha chat-la paste panna vendaam — file-a direct-a nano/edit panni maathunga.
+  5. Admin login username/password idhu file-lame set panniruken (script kadaisila "ADMIN_USERNAME" / "ADMIN_PASSWORD" variables paakunga) — vேற வேணா maathikonga.
+  6. Firestore Rules-la (Console → Firestore → Rules) idha vachikonga:
+     match /projectRequests/{doc} {
+       allow create: if true;
+       allow read: if true;
+       allow update: if request.auth != null;
+       match /messages/{msg} {
+         allow read, create: if true;
+       }
+     }
+     match /reviews/{doc} {
+       allow create: if true;
+       allow read, update, delete: if request.auth != null;
+     }
+     (Order doc IDs are random/unguessable, so "read: if true" on projectRequests
+     lets a visitor's browser live-track ONLY the order it already has the ID
+     for — it can't list/browse other people's orders. Same idea for messages.)
+  7. Admin panel open panna: website brand logo-a (top-left "Rush Environment.") 4 vaati thodara click pannunga — login screen varum, step 5-la vachiruka username/password kondu login pannunga.
+-->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyAkgofYNwVv1vIoaMki8luUFFzxsboZmqs",
+    authDomain: "rush-270e3.firebaseapp.com",
+    projectId: "rush-270e3",
+    storageBucket: "rush-270e3.firebasestorage.app",
+    messagingSenderId: "184692987390",
+    appId: "1:184692987390:web:2ebf744be2e8e006a21caf"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+  var auth = firebase.auth();
+</script>
+
+<script>
+(function(){
+  var nav = document.getElementById('nav');
+  function onScroll(){
+    if(window.scrollY > 12){ nav.classList.add('scrolled'); }
+    else{ nav.classList.remove('scrolled'); }
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  function closeMenu(){
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded','false');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  hamburger.addEventListener('click', function(){
+    var isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen ? 'true':'false');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', closeMenu);
+  });
+
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  var form = document.getElementById('project-form');
+  var success = document.getElementById('formSuccess');
+  var errorBanner = document.getElementById('formErrorBanner');
+
+  function validators(){
+    return {
+      name: function(v){ return v.trim().length > 1; },
+      business: function(v){ return v.trim().length > 1; },
+      email: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); },
+      phone: function(v){ return v.trim().length >= 7; },
+      type: function(v){ return v.trim().length > 0; },
+      details: function(v){ return v.trim().length > 9; }
+    };
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    errorBanner.classList.remove('show');
+    var checks = validators();
+    var valid = true;
+    var data = {};
+    Object.keys(checks).forEach(function(name){
+      var input = form.querySelector('[name="'+name+'"]');
+      var fieldWrap = input.closest('.field');
+      var ok = checks[name](input.value);
+      fieldWrap.classList.toggle('invalid', !ok);
+      if(!ok) valid = false;
+      data[name] = input.value.trim();
+    });
+    if(!valid){
+      var firstInvalid = form.querySelector('.field.invalid input, .field.invalid select, .field.invalid textarea');
+      if(firstInvalid) firstInvalid.focus();
+      return;
+    }
+
+    var submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    data.submittedAt = firebase.firestore.FieldValue.serverTimestamp();
+    data.source = 'rush-environment-website';
+
+    db.collection('projectRequests').add(data)
+      .then(function(docRef){
+        form.classList.add('hide-fields');
+        submitBtn.style.display = 'none';
+        success.classList.add('show');
+        waAddOrder(docRef.id, data.name);
+        waOpenPanel();
+      })
+      .catch(function(err){
+        console.error('Firebase save failed:', err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Get My Free Design Opinion';
+        errorBanner.classList.add('show');
+      });
+  });
+
+  form.querySelectorAll('input, select, textarea').forEach(function(el){
+    el.addEventListener('input', function(){
+      el.closest('.field').classList.remove('invalid');
+    });
+  });
+
+  // ---- Load real approved reviews (no fake data) ----
+  var reviewsGrid = document.getElementById('reviewsGrid');
+  var reviewsEmpty = document.getElementById('reviewsEmpty');
+  var starIconPath = '<svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2L4.6 17.3l1.3-6L1.3 7.2l6.1-.6z"/></svg>';
+
+  function renderReviews(docs){
+    if(!docs.length){
+      reviewsEmpty.classList.add('show');
+      return;
+    }
+    reviewsGrid.innerHTML = docs.map(function(d){
+      var r = d.data();
+      var stars = '';
+      for(var i=0;i<5;i++){ stars += i < (r.rating||0) ? starIconPath : ''; }
+      var initial = (r.name || '?').trim().charAt(0).toUpperCase();
+      return '<div class="review-card reveal in">' +
+        '<div class="review-stars">' + stars + '</div>' +
+        '<p class="quote">"' + escapeHtml(r.text || '') + '"</p>' +
+        '<div class="review-who"><div class="review-avatar">' + escapeHtml(initial) + '</div>' +
+        '<div><div class="name">' + escapeHtml(r.name || '') + '</div><div class="role">' + escapeHtml(r.role || '') + '</div></div></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  db.collection('reviews').where('approved','==',true).orderBy('submittedAt','desc').limit(9).get()
+    .then(function(snapshot){ renderReviews(snapshot.docs); })
+    .catch(function(err){
+      console.error('Could not load reviews:', err);
+      reviewsEmpty.classList.add('show');
+    });
+
+  // ---- Write a Review ----
+  var showReviewFormBtn = document.getElementById('showReviewFormBtn');
+  var reviewFormWrap = document.getElementById('reviewFormWrap');
+  var starPicker = document.getElementById('starPicker');
+  var submitReviewBtn = document.getElementById('submitReviewBtn');
+  var reviewFormSuccess = document.getElementById('reviewFormSuccess');
+  var selectedStars = 0;
+
+  showReviewFormBtn.addEventListener('click', function(){
+    var isOpen = reviewFormWrap.classList.toggle('open');
+    showReviewFormBtn.textContent = isOpen ? 'Hide Review Form' : 'Write a Review';
+    if(isOpen){ reviewFormWrap.scrollIntoView({behavior:'smooth', block:'center'}); }
+  });
+
+  starPicker.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      selectedStars = parseInt(btn.getAttribute('data-star'), 10);
+      starPicker.querySelectorAll('button').forEach(function(b){
+        b.classList.toggle('filled', parseInt(b.getAttribute('data-star'),10) <= selectedStars);
+      });
+    });
+  });
+
+  submitReviewBtn.addEventListener('click', function(){
+    var nameInput = document.getElementById('r-name');
+    var roleInput = document.getElementById('r-role');
+    var textInput = document.getElementById('r-text');
+
+    var nameOk = nameInput.value.trim().length > 1;
+    var roleOk = roleInput.value.trim().length > 1;
+    var textOk = textInput.value.trim().length > 9;
+    var starsOk = selectedStars > 0;
+
+    nameInput.closest('.field').classList.toggle('invalid', !nameOk);
+    roleInput.closest('.field').classList.toggle('invalid', !roleOk);
+    textInput.closest('.field').classList.toggle('invalid', !textOk);
+
+    if(!nameOk || !roleOk || !textOk || !starsOk){
+      if(!starsOk){ starPicker.scrollIntoView({behavior:'smooth', block:'center'}); }
+      return;
+    }
+
+    submitReviewBtn.disabled = true;
+    submitReviewBtn.textContent = 'Submitting...';
+
+    db.collection('reviews').add({
+      name: nameInput.value.trim(),
+      role: roleInput.value.trim(),
+      text: textInput.value.trim(),
+      rating: selectedStars,
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      source: 'rush-environment-website',
+      approved: false
+    }).then(function(){
+      reviewFormWrap.classList.add('hide-fields');
+      starPicker.style.display = 'none';
+      submitReviewBtn.style.display = 'none';
+      reviewFormSuccess.classList.add('show');
+    }).catch(function(err){
+      console.error('Firebase review save failed:', err);
+      submitReviewBtn.disabled = false;
+      submitReviewBtn.textContent = 'Submit Review';
+      alert('Something went wrong submitting your review. Please try again.');
+    });
+  });
+
+  // ---- Order tracker + WhatsApp-style chat (floating widget) ----
+  var WA_ORDERS_KEY = 'rushEnvMyOrders';
+  var waFab = document.getElementById('waFab');
+  var waPanel = document.getElementById('waPanel');
+  var waPanelClose = document.getElementById('waPanelClose');
+  var waPanelStatus = document.getElementById('waPanelStatus');
+  var waPanelAvatar = document.getElementById('waPanelAvatar');
+  var waOrderSelectWrap = document.getElementById('waOrderSelectWrap');
+  var waOrderSelect = document.getElementById('waOrderSelect');
+  var waPanelMessages = document.getElementById('waPanelMessages');
+  var waPanelEmpty = document.getElementById('waPanelEmpty');
+  var waPanelInput = document.getElementById('waPanelInput');
+  var waPanelSendBtn = document.getElementById('waPanelSendBtn');
+  var waActiveOrderId = null;
+  var waActiveUnsubOrder = null;
+  var waActiveUnsubMessages = null;
+
+  function waGetOrders(){
+    try{
+      var raw = localStorage.getItem(WA_ORDERS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+
+  function waSaveOrders(list){
+    try{ localStorage.setItem(WA_ORDERS_KEY, JSON.stringify(list)); }catch(e){}
+  }
+
+  function waAddOrder(id, name){
+    var list = waGetOrders();
+    list = list.filter(function(o){ return o.id !== id; });
+    list.unshift({ id: id, name: name || 'You' });
+    if(list.length > 8) list = list.slice(0, 8);
+    waSaveOrders(list);
+    waRefreshFab();
+  }
+
+  function waRefreshFab(){
+    var list = waGetOrders();
+    waFab.classList.toggle('show', list.length > 0);
+  }
+
+  function waFormatTime(ts){
+    if(!ts || !ts.toDate) return '';
+    var d = ts.toDate();
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if(h === 0) h = 12;
+    return h + ':' + (m < 10 ? '0'+m : m) + ' ' + ampm;
+  }
+
+  function waPopulateOrderSelect(){
+    var list = waGetOrders();
+    waOrderSelectWrap.style.display = list.length > 1 ? 'block' : 'none';
+    waOrderSelect.innerHTML = list.map(function(o){
+      return '<option value="' + o.id + '">' + escapeHtml(o.name || 'Order') + ' — ' + o.id.slice(0,6) + '</option>';
+    }).join('');
+    waOrderSelect.value = waActiveOrderId;
+  }
+
+  function waListenOrder(id){
+    if(waActiveUnsubOrder) waActiveUnsubOrder();
+    waActiveUnsubOrder = db.collection('projectRequests').doc(id).onSnapshot(function(doc){
+      var status = (doc.exists && doc.data().status) || 'pending';
+      waPanelStatus.textContent = status;
+      waPanelStatus.className = 'wa-status-chip ' + status;
+    }, function(err){ console.error('Could not track order status:', err); });
+  }
+
+  function waListenMessages(id){
+    if(waActiveUnsubMessages) waActiveUnsubMessages();
+    waActiveUnsubMessages = db.collection('projectRequests').doc(id).collection('messages')
+      .orderBy('createdAt','asc').onSnapshot(function(snapshot){
+        if(snapshot.empty){
+          waPanelMessages.innerHTML = '';
+          waPanelMessages.appendChild(waPanelEmpty);
+          return;
+        }
+        waPanelMessages.innerHTML = '';
+        snapshot.forEach(function(doc){
+          var m = doc.data();
+          var bubble = document.createElement('div');
+          bubble.className = 'wa-panel-bubble ' + (m.sender === 'admin' ? 'admin' : 'user');
+          bubble.innerHTML = escapeHtml(m.text || '') + '<time>' + waFormatTime(m.createdAt) + '</time>';
+          waPanelMessages.appendChild(bubble);
+        });
+        waPanelMessages.scrollTop = waPanelMessages.scrollHeight;
+      }, function(err){ console.error('Could not load messages:', err); });
+  }
+
+  function waSetActiveOrder(id){
+    waActiveOrderId = id;
+    waListenOrder(id);
+    waListenMessages(id);
+  }
+
+  function waOpenPanel(){
+    var list = waGetOrders();
+    if(!list.length) return;
+    if(!waActiveOrderId || !list.some(function(o){ return o.id === waActiveOrderId; })){
+      waActiveOrderId = list[0].id;
+    }
+    waPopulateOrderSelect();
+    waSetActiveOrder(waActiveOrderId);
+    waPanel.classList.add('open');
+    waFab.classList.remove('has-unread');
+  }
+
+  function waClosePanel(){
+    waPanel.classList.remove('open');
+  }
+
+  waFab.addEventListener('click', function(){
+    if(waPanel.classList.contains('open')) waClosePanel(); else waOpenPanel();
+  });
+  waPanelClose.addEventListener('click', waClosePanel);
+  waOrderSelect.addEventListener('change', function(){
+    waSetActiveOrder(waOrderSelect.value);
+  });
+
+  function waPanelSend(){
+    var text = waPanelInput.value.trim();
+    if(!text || !waActiveOrderId) return;
+    waPanelSendBtn.disabled = true;
+    db.collection('projectRequests').doc(waActiveOrderId).collection('messages').add({
+      sender: 'user',
+      text: text,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      waPanelInput.value = '';
+      waPanelSendBtn.disabled = false;
+      waPanelInput.focus();
+    }).catch(function(err){
+      console.error('Could not send message:', err);
+      waPanelSendBtn.disabled = false;
+      alert('Could not send your message. Please try again.');
+    });
+  }
+
+  waPanelSendBtn.addEventListener('click', waPanelSend);
+  waPanelInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); waPanelSend(); }
+  });
+
+  waRefreshFab();
+
+})();
+</script>
+
+</body>
+</html>

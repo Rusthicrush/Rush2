@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rush Environment — Start Your Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --base:#f7f4ee;
+    --ivory:#2a251d;
+    --ivory-dim:#5a5245;
+    --gold:#a8802f;
+    --gold-soft:rgba(168,128,47,0.13);
+    --burgundy:#8f7038;
+    --burgundy-soft:rgba(143,112,56,0.13);
+    --muted:rgba(42,37,29,0.56);
+    --green:#4d8f68;
+    --amber:#ad7a26;
+    --red:#b6564f;
+    --border:rgba(168,128,47,0.26);
+    --glass:rgba(255,255,255,0.62);
+    --glass-strong:rgba(255,255,255,0.88);
+    --glass-hi:rgba(255,255,255,0.95);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{background:var(--base);}
+  body{
+    background:
+      radial-gradient(900px 700px at 10% -10%, rgba(168,128,47,0.10), transparent 62%),
+      radial-gradient(800px 650px at 100% 10%, rgba(168,128,47,0.08), transparent 60%),
+      var(--base);
+    color:var(--ivory);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  h1,h2,h3,.brand,.order-num{font-family:'Playfair Display',serif;}
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--gold); border-radius:3px;}
+
+  /* ---------- Glass base (kept light for smooth scrolling on lower-end phones) ---------- */
+  .card, header, .wa-panel, .lock-screen, .review-modal{
+    -webkit-backdrop-filter:blur(12px) saturate(130%);
+    backdrop-filter:blur(12px) saturate(130%);
+  }
+
+  .hero-title{ font-size:30px; line-height:1.15; font-weight:700; color:var(--ivory); margin:2px 0 8px; }
+  .hero-mission{ font-size:14.5px; color:var(--muted); line-height:1.55; margin-bottom:6px; }
+  .availability-note{
+    display:inline-block; margin-top:12px; font-size:12px; font-weight:600; color:var(--gold);
+    background:var(--gold-soft); border:1px solid var(--border); border-radius:20px; padding:6px 14px;
+  }
+
+
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px;
+    border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+    box-shadow:0 1px 0 var(--glass-hi) inset, 0 8px 24px rgba(184,134,15,0.10);
+  }
+  .brand{font-size:20px; font-weight:700; letter-spacing:0.5px; cursor:pointer; user-select:none; color:var(--ivory);}
+  .brand span{color:var(--gold);}
+  nav{display:flex; gap:8px;}
+  nav button{
+    background:transparent; border:1px solid transparent; color:var(--muted);
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    padding:8px 14px; border-radius:20px; cursor:pointer; letter-spacing:0.3px;
+    transition:background .2s, border-color .2s;
+  }
+  nav button.active{
+    color:var(--ivory); border-color:var(--border); background:var(--gold-soft);
+    box-shadow:0 1px 0 var(--glass-hi) inset;
+  }
+
+  main{flex:1; width:100%; max-width:720px; margin:0 auto; padding:28px 20px 60px;}
+
+  footer{
+    text-align:center; padding:22px; color:var(--muted); font-size:12px;
+    border-top:1px solid var(--border);
+  }
+  footer a{color:var(--gold); text-decoration:none;}
+
+  .card{
+    position:relative;
+    background:linear-gradient(155deg, var(--glass-strong), var(--glass) 65%, rgba(255,255,255,0.35));
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:24px;
+    margin-bottom:16px;
+    box-shadow:0 1px 0 var(--glass-hi) inset, 0 18px 40px rgba(184,134,15,0.14);
+  }
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:2px; font-size:11px;
+    color:var(--gold); font-weight:600; margin-bottom:8px;
+  }
+  h2.section-title{font-size:26px; font-weight:600; margin-bottom:6px; color:var(--ivory);}
+  .sub{color:var(--muted); font-size:14px; line-height:1.5; margin-bottom:18px;}
+
+  label{display:block; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px; margin-top:16px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=tel], input[type=email], input[type=date], textarea, select{
+    width:100%; background:rgba(255,255,255,0.65); border:1px solid var(--border); color:var(--ivory);
+    padding:11px 12px; border-radius:12px; font-family:'Inter',sans-serif; font-size:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  input:focus, textarea:focus, select:focus{outline:none; border-color:var(--gold); background:rgba(255,255,255,0.85);}
+  textarea{resize:vertical; min-height:90px;}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5;}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    border:1px solid var(--border); background:rgba(255,255,255,0.5); color:var(--ivory-dim);
+    padding:9px 14px; border-radius:20px; font-size:13px; cursor:pointer; user-select:none;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .chip.selected{background:var(--gold-soft); border-color:var(--gold); color:var(--gold);}
+
+  .btn{
+    display:inline-block; width:100%; text-align:center;
+    background:linear-gradient(155deg, #d9b64a, #b8860f);
+    color:#3a2a05; border:1px solid rgba(255,255,255,0.5);
+    font-family:'Inter',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.3px;
+    padding:13px 18px; border-radius:14px; cursor:pointer; margin-top:22px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 26px rgba(184,134,15,0.28);
+  }
+  .btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .btn.secondary{
+    background:rgba(255,255,255,0.55); border:1px solid var(--border); color:var(--ivory); font-weight:600;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  .btn.danger{background:linear-gradient(155deg, #e0857c, #c05a52); color:#3a0f0c; border-color:rgba(255,255,255,0.4);}
+  .btn.small{width:auto; padding:8px 14px; font-size:12px; margin-top:0;}
+
+  .error{color:#b8433a; font-size:13px; margin-top:10px;}
+  .ok{color:var(--green); font-size:13px; margin-top:10px;}
+
+  .status-pill{
+    display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px;
+    font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+    border:1px solid var(--border);
+  }
+  .status-pending{background:rgba(185,121,31,0.16); color:var(--amber);}
+  .status-confirmed{background:rgba(79,157,110,0.16); color:var(--green);}
+  .status-progress{background:var(--gold-soft); color:var(--gold);}
+  .status-completed{background:rgba(79,157,110,0.24); color:var(--green);}
+  .status-cancelled{background:rgba(192,90,82,0.16); color:var(--red);}
+
+  .order-num{font-size:34px; color:var(--gold); font-weight:700; margin:6px 0;}
+
+  .order-card{border-top:1px solid var(--border); padding-top:14px; margin-top:14px;}
+  .order-card:first-child{border-top:none; padding-top:0; margin-top:0;}
+  .order-row{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .order-row .meta{font-size:13px; color:var(--muted); margin-top:4px;}
+  .order-desc{font-size:13px; color:var(--ivory-dim); margin-top:8px; line-height:1.5;}
+
+  .weekend-note{
+    background:var(--gold-soft); border:1px solid rgba(184,134,15,0.35);
+    border-radius:12px; padding:10px 12px; font-size:12.5px; color:var(--ivory-dim); margin-top:10px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+
+  .admin-tabs{display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; padding-bottom:4px;}
+  .admin-tabs button{
+    flex:0 0 auto; background:rgba(255,255,255,0.5); border:1px solid var(--border); color:var(--muted);
+    padding:7px 13px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;
+  }
+  .admin-tabs button.active{background:var(--gold-soft); border-color:var(--gold); color:var(--gold);}
+
+  .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 12px;}
+  @media (max-width:520px){ .field-grid{grid-template-columns:1fr;} }
+
+  .hidden{display:none !important;}
+
+  .lock-screen{
+    max-width:360px; margin:60px auto;
+    background:linear-gradient(155deg, var(--glass-strong), var(--glass));
+    border:1px solid var(--border); border-radius:22px; padding:24px;
+    box-shadow:0 1px 0 var(--glass-hi) inset, 0 18px 40px rgba(184,134,15,0.14);
+  }
+
+  /* ---------- Floating order tracker + chat ---------- */
+  .wa-fab{
+    display:none; position:fixed; right:20px; bottom:20px; z-index:1400;
+    width:58px; height:58px; border-radius:50%;
+    background:linear-gradient(155deg, #d9b64a, #b8860f);
+    color:#3a2a05; border:1px solid rgba(255,255,255,0.6);
+    align-items:center; justify-content:center;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 30px rgba(184,134,15,0.35); cursor:pointer;
+  }
+  .wa-fab.show{ display:flex; }
+  .wa-fab .wa-fab-dot{
+    display:none; position:absolute; top:2px; right:2px; width:13px; height:13px; border-radius:50%;
+    background:var(--red); border:2px solid var(--base);
+  }
+  .wa-fab.has-unread .wa-fab-dot{ display:block; }
+  .wa-panel{
+    display:none; flex-direction:column; position:fixed; right:20px; bottom:90px; z-index:1400;
+    width:340px; max-width:calc(100vw - 32px); height:480px; max-height:calc(100vh - 130px);
+    background:linear-gradient(160deg, var(--glass-strong), var(--glass) 65%, rgba(255,255,255,0.4));
+    border:1px solid var(--border); border-radius:22px; overflow:hidden;
+    box-shadow:0 1px 0 var(--glass-hi) inset, 0 24px 60px rgba(184,134,15,0.22);
+  }
+  .wa-panel.open{ display:flex; }
+  .wa-panel-header{ background:rgba(255,255,255,0.6); color:var(--ivory); padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .wa-panel-header .wa-avatar{
+    width:36px; height:36px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center;
+    justify-content:center; font-weight:800; flex-shrink:0;
+  }
+  .wa-panel-header .wa-title{ flex:1; min-width:0; }
+  .wa-panel-header h4{ font-size:14.5px; color:var(--ivory); margin-bottom:2px; }
+  .wa-panel-header .wa-status-line{ font-size:11.5px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .wa-status-chip{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:2px 8px; border-radius:999px; border:1px solid var(--border); }
+  .wa-status-chip.pending{ background:rgba(185,121,31,0.18); color:var(--amber); }
+  .wa-status-chip.confirmed{ background:rgba(79,157,110,0.18); color:var(--green); }
+  .wa-status-chip.progress{ background:var(--gold-soft); color:var(--gold); }
+  .wa-status-chip.completed{ background:rgba(79,157,110,0.26); color:var(--green); }
+  .wa-status-chip.cancelled{ background:rgba(192,90,82,0.18); color:var(--red); }
+  .wa-panel-header .wa-panel-close{ background:none; border:none; color:var(--ivory); font-size:22px; line-height:1; padding:4px 6px; cursor:pointer; }
+  .wa-panel-order-select{ padding:6px 10px; background:rgba(255,255,255,0.45); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .wa-panel-order-select select{ width:100%; padding:6px 8px; border-radius:10px; border:1px solid var(--border); background:rgba(255,255,255,0.7); color:var(--ivory); font-size:12.5px; }
+  .wa-panel-messages{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,0.28); }
+  .wa-panel-bubble{ max-width:78%; padding:7px 10px 8px; border-radius:12px; font-size:13.5px; line-height:1.42; word-wrap:break-word; }
+  .wa-panel-bubble.user{ align-self:flex-end; background:var(--gold-soft); color:var(--ivory); border:1px solid rgba(184,134,15,0.4); border-bottom-right-radius:3px; }
+  .wa-panel-bubble.admin{ align-self:flex-start; background:rgba(255,255,255,0.75); color:var(--ivory); border:1px solid var(--border); border-bottom-left-radius:3px; }
+  .wa-panel-bubble time{ display:block; font-size:10px; color:var(--muted); margin-top:3px; text-align:right; }
+  .wa-panel-empty{ text-align:center; color:var(--muted); font-size:12px; margin:auto; padding:0 10px; }
+  .wa-panel-input-row{ display:flex; gap:8px; padding:10px; background:rgba(255,255,255,0.55); flex-shrink:0; }
+  .wa-panel-input-row input{ flex:1; border-radius:22px; border:1px solid var(--border); background:rgba(255,255,255,0.7); color:var(--ivory); padding:10px 16px; font-size:13.5px; outline:none; }
+  .wa-panel-input-row input:focus{ border-color:var(--gold); }
+  .wa-panel-input-row button{
+    width:40px; height:40px; border-radius:50%;
+    background:linear-gradient(155deg, #d9b64a, #b8860f);
+    color:#3a2a05; border:1px solid rgba(255,255,255,0.5); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;
+  }
+  .wa-panel-input-row button:disabled{ opacity:.5; }
+  @media (max-width:420px){
+    .wa-panel{ right:16px; left:16px; width:auto; bottom:86px; }
+    .wa-fab{ right:16px; bottom:16px; }
+  }
+  .admin-msgs{
+    margin-top:12px; border-top:1px solid var(--border); padding-top:12px;
+    background:transparent;
+  }
+  .admin-msg-list{ max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+  .admin-msg-row{ display:flex; gap:8px; }
+  .admin-msg-row input{ flex:1; }
+
+  /* ---------- Highlights widgets ---------- */
+  .highlight-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
+  @media (max-width:420px){ .highlight-grid{ grid-template-columns:1fr; } }
+  .highlight-widget{
+    background:rgba(255,255,255,0.5); border:1px solid var(--border); border-radius:14px;
+    padding:12px 14px; box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  .highlight-widget .hw-icon{ font-size:20px; margin-bottom:4px; }
+  .highlight-widget .hw-title{ font-size:13px; font-weight:700; color:var(--ivory); }
+  .highlight-widget .hw-desc{ font-size:11.5px; color:var(--muted); margin-top:2px; line-height:1.4; }
+
+  /* ---------- Reviews & ratings ---------- */
+  .review-badge{
+    display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+    background:rgba(255,255,255,0.5); border:1px solid var(--border); border-radius:20px;
+    padding:8px 14px; width:fit-content; margin-top:10px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  .review-badge .stars{ color:var(--gold); font-size:14px; letter-spacing:1px; }
+  .review-badge .review-count{ font-size:12px; color:var(--muted); }
+  .review-modal-overlay{
+    display:none; position:fixed; inset:0; z-index:1500; background:rgba(43,35,24,0.35);
+    align-items:center; justify-content:center; padding:16px;
+  }
+  .review-modal-overlay.open{ display:flex; }
+  .review-modal{
+    width:100%; max-width:420px; max-height:82vh; overflow-y:auto;
+    background:linear-gradient(155deg, var(--glass-strong), var(--glass) 65%, rgba(255,255,255,0.4));
+    border:1px solid var(--border); border-radius:22px; padding:22px;
+    box-shadow:0 1px 0 var(--glass-hi) inset, 0 24px 60px rgba(184,134,15,0.22);
+  }
+  .review-modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .review-modal-close{ background:none; border:none; font-size:22px; color:var(--ivory); cursor:pointer; line-height:1; }
+  .star-picker{ display:flex; gap:6px; font-size:26px; color:var(--border); margin-top:6px; }
+  .star-picker span{ cursor:pointer; transition:color .15s; }
+  .star-picker span.filled{ color:var(--gold); }
+  .review-item{ border-top:1px solid var(--border); padding-top:10px; margin-top:10px; }
+  .review-item:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  .review-item .stars{ color:var(--gold); font-size:13px; letter-spacing:1px; }
+  .review-item .rname{ font-size:13px; font-weight:700; margin-left:6px; }
+  .review-item .rtext{ font-size:13px; color:var(--ivory-dim); margin-top:4px; line-height:1.5; }
+  .review-item .rdate{ font-size:11px; color:var(--muted); margin-top:3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand" id="brandLogo">RUSH <span>ENVIRONMENT</span></div>
+  <nav>
+    <button id="navOrder" class="active">Start Order</button>
+    <button id="navHistory">My Orders</button>
+  </nav>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div>Rush Environment — Web design &amp; development</div>
+  <div style="margin-top:4px;">© 2026 Rush Environment. All rights reserved.</div>
+  <div style="margin-top:6px; opacity:0.75;">Crafted by AI + Developer, together.</div>
+</footer>
+
+<button type="button" class="wa-fab" id="waFab" aria-label="My order chat">
+  <svg width="27" height="27" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.14 2 11.24c0 2.6 1.16 4.94 3.05 6.62L4 22l4.36-1.5c1.13.4 2.36.62 3.64.62 5.52 0 10-4.14 10-9.24S17.52 2 12 2z"/></svg>
+  <span class="wa-fab-dot"></span>
+</button>
+
+<div class="wa-panel" id="waPanel">
+  <div class="wa-panel-header">
+    <div class="wa-avatar" id="waPanelAvatar">R</div>
+    <div class="wa-title">
+      <h4>Rush Environment</h4>
+      <div class="wa-status-line">Your order: <span class="wa-status-chip pending" id="waPanelStatus">pending</span></div>
+    </div>
+    <button type="button" class="wa-panel-close" id="waPanelClose">&times;</button>
+  </div>
+  <div class="wa-panel-order-select" id="waOrderSelectWrap" style="display:none;">
+    <select id="waOrderSelect"></select>
+  </div>
+  <div class="wa-panel-messages" id="waPanelMessages">
+    <div class="wa-panel-empty" id="waPanelEmpty">No messages yet — ask us anything about your order here.</div>
+  </div>
+  <div class="wa-panel-input-row">
+    <input type="text" id="waPanelInput" placeholder="Type a message...">
+    <button type="button" id="waPanelSendBtn" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="review-modal-overlay" id="reviewModalOverlay">
+  <div class="review-modal">
+    <div class="review-modal-header">
+      <h2 class="section-title" style="margin-bottom:0;">Reviews</h2>
+      <button type="button" class="review-modal-close" id="reviewModalClose">&times;</button>
+    </div>
+    <div class="sub" style="margin-bottom:14px;">See what past clients say, or leave your own.</div>
+
+    <label>Your Rating</label>
+    <div class="star-picker" id="starPicker">
+      <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span>
+    </div>
+    <label>Your Name</label>
+    <input type="text" id="reviewName" placeholder="Your name">
+    <label>Your Review</label>
+    <textarea id="reviewText" placeholder="How was working with us?"></textarea>
+    <div class="error hidden" id="reviewErr"></div>
+    <button class="btn" id="reviewSubmitBtn">Submit Review</button>
+
+    <div id="reviewsList" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<script>
+/* ====== FIREBASE CONFIG ======
+   Replace with your own Firebase project's config (Firebase Console > Project
+   Settings). You can reuse the same Firebase project as FJ Saloon if you like —
+   this file uses its own collection names (rushOrders / rushCounters /
+   rushSettings) so the data never mixes with the saloon's bookings.
+*/
+const firebaseConfig = {
+  apiKey: "AIzaSyAkgofYNwVv1vIoaMki8luUFFzxsboZmqs",
+  authDomain: "rush-270e3.firebaseapp.com",
+  projectId: "rush-270e3",
+  storageBucket: "rush-270e3.firebasestorage.app",
+  messagingSenderId: "184692987390",
+  appId: "1:184692987390:web:2ebf744be2e8e006a21caf",
+  measurementId: "G-NJNPFM2QBN"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* Owner password — default fallback; once changed via Settings the real
+   password lives in Firestore so it persists across devices. */
+const OWNER_PASSWORD = "0929";
+function getSettingsDoc(){ return db.collection("rushSettings").doc("config"); }
+async function getOwnerPassword(){
+  try{
+    const doc = await getSettingsDoc().get();
+    const data = doc.data() || {};
+    return data.ownerPassword || OWNER_PASSWORD;
+  }catch(e){
+    return OWNER_PASSWORD;
+  }
+}
+
+const PROJECT_TYPES = ["Web Development","Business Website","Portfolio Site","Online Store","Landing Page","Web App","Other"];
+
+const WEB_DEV_SERVICES = [
+  {title:"Custom Websites", desc:"Built from scratch to match your business — no generic templates."},
+  {title:"Web Apps & Dashboards", desc:"Interactive tools, booking systems, admin panels — like this one."},
+  {title:"Ongoing Support", desc:"Updates, fixes, and new features after launch, not just a one-time build."}
+];
+const WEB_DEV_STACK = ["HTML/CSS/JS","Firebase","React","Responsive Design","API Integration"];
+const WEB_DEV_HIGHLIGHTS = [
+  {icon:"🎯", title:"Custom-Built", desc:"No templates — every site is built around your business."},
+  {icon:"📅", title:"Weekend Delivery", desc:"Work is scheduled and delivered on the weekend after your date."},
+  {icon:"🛠️", title:"Ongoing Support", desc:"We stick around for fixes and updates after launch."},
+  {icon:"💬", title:"Direct Chat", desc:"Message us anytime about your order right from this page."}
+];
+const STATUS_LABELS = {
+  pending:"Pending", confirmed:"Confirmed", progress:"In Progress",
+  completed:"Completed", cancelled:"Cancelled"
+};
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function fmtDate(str){
+  if(!str) return "";
+  const d = new Date(str+"T00:00:00");
+  return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+/* Given any preferred date, work out the very next Sat-Sun after it —
+   that's the weekend the project gets delivered on. */
+function nextWeekendFor(dateStr){
+  const d = new Date(dateStr+"T00:00:00");
+  const day = d.getDay(); // 0 Sun .. 6 Sat
+  let daysToSat = (6 - day + 7) % 7;
+  if(daysToSat === 0) daysToSat = 7; // if the date itself is Saturday, target the *next* one
+  const sat = new Date(d); sat.setDate(d.getDate() + daysToSat);
+  const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+  const opts = {day:'numeric', month:'short'};
+  return sat.toLocaleDateString('en-GB',opts) + " - " + sun.toLocaleDateString('en-GB',opts);
+}
+function nextOrderNumber(){
+  const counterRef = db.collection("rushCounters").doc("orders");
+  return db.runTransaction(async (tx) => {
+    const doc = await tx.get(counterRef);
+    const current = doc.exists ? doc.data().count : 0;
+    const next = current + 1;
+    tx.set(counterRef, {count: next});
+    return next;
+  });
+}
+function myOrderIds(){
+  try{ return JSON.parse(localStorage.getItem("rush_my_orders") || "[]"); }
+  catch(e){ return []; }
+}
+function addMyOrderId(id){
+  const ids = myOrderIds();
+  ids.unshift(id);
+  localStorage.setItem("rush_my_orders", JSON.stringify(ids.slice(0,50)));
+}
+
+const app = document.getElementById("app");
+const navOrder = document.getElementById("navOrder");
+const navHistory = document.getElementById("navHistory");
+const brandLogo = document.getElementById("brandLogo");
+let view = "order"; // order | history | admin | chat
+let currentChatOrderId = null;
+let chatMsgsUnsub = null;
+let chatOrderUnsub = null;
+let selectedType = null;
+let selectedDate = null;
+let isOwner = sessionStorage.getItem("rush_owner") === "1";
+let adminSubView = "orders";
+let adminStatusFilter = "all";
+let ordersUnsub = null;
+
+navOrder.onclick = () => { view = "order"; history.replaceState(null,"",location.pathname); render(); };
+navHistory.onclick = () => { view = "history"; history.replaceState(null,"",location.pathname); render(); };
+
+/* Secret owner access - no visible button.
+   Tap the brand logo 5 times within 2 seconds, or open the page with
+   #owner at the end of the URL (e.g. yoursite.html#owner). */
+let tapCount = 0, tapTimer = null;
+brandLogo.onclick = () => {
+  tapCount++;
+  clearTimeout(tapTimer);
+  tapTimer = setTimeout(()=>{ tapCount = 0; }, 2000);
+  if(tapCount >= 5){
+    tapCount = 0;
+    view = "admin";
+    render();
+  }
+};
+if(location.hash === "#owner"){ view = "admin"; }
+
+function setActive(){
+  navOrder.classList.toggle("active", view==="order");
+  navHistory.classList.toggle("active", view==="history");
+}
+
+function render(){
+  setActive();
+  if(ordersUnsub){ ordersUnsub(); ordersUnsub = null; }
+  if(view !== "chat"){
+    if(chatMsgsUnsub){ chatMsgsUnsub(); chatMsgsUnsub = null; }
+    if(chatOrderUnsub){ chatOrderUnsub(); chatOrderUnsub = null; }
+  }
+  if(view === "order") renderOrderView();
+  else if(view === "history") renderHistoryView();
+  else if(view === "admin") renderAdmin();
+  else if(view === "chat") renderChatView();
+}
+render();
+
+/* ================= ORDER FORM ================= */
+function renderOrderView(){
+  app.innerHTML = `
+    <div class="card">
+      <div class="eyebrow">Rush Environment</div>
+      <h1 class="hero-title">We Build Your Digital Future</h1>
+      <div class="hero-mission">To transform ideas into modern, creative, and effective websites that help businesses grow.</div>
+      <div class="availability-note">Available Friday · Saturday · Sunday</div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">What We Do</div>
+      <h2 class="section-title">Web Development</h2>
+      <div class="sub" style="margin-bottom:14px;">We design and build websites and web apps end to end — here's what's included.</div>
+      <div id="serviceList"></div>
+      <div class="hint" style="margin-top:14px; margin-bottom:6px;">Built with:</div>
+      <div class="chip-row" id="stackChips"></div>
+      <div class="highlight-grid" id="highlightGrid"></div>
+      <div class="review-badge" id="reviewBadge">
+        <span class="stars">★★★★★</span>
+        <span class="review-count" id="reviewCountText">See reviews</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Start Your Project</div>
+      <h2 class="section-title">Tell us what you need</h2>
+      <div class="sub">Fill this in and we'll get back to you to confirm the details. Work is scheduled and delivered over the weekend following your preferred date.</div>
+
+      <label>Full Name</label>
+      <input type="text" id="fName" placeholder="Your name">
+
+      <div class="field-grid">
+        <div>
+          <label>Business Name</label>
+          <input type="text" id="fBiz" placeholder="Optional">
+        </div>
+        <div>
+          <label>Phone</label>
+          <input type="tel" id="fPhone" placeholder="07XXXXXXXX">
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div>
+          <label>WhatsApp</label>
+          <input type="tel" id="fWhatsapp" placeholder="Optional, if different">
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" id="fEmail" placeholder="Optional">
+        </div>
+      </div>
+
+      <label>Project Type</label>
+      <div class="chip-row" id="typeChips"></div>
+
+      <label>Project Description</label>
+      <textarea id="fDesc" placeholder="What's the project about, and what do you need on it?"></textarea>
+
+      <label>Budget (optional)</label>
+      <input type="text" id="fBudget" placeholder="e.g. Rs. 15,000 - 20,000, or Get a Quote">
+
+      <label>Preferred Date</label>
+      <input type="date" id="fDate" min="${todayStr()}">
+      <div class="hint" id="weekendHint">Pick a date - we'll show which weekend your project lands in below.</div>
+
+      <div class="error hidden" id="formErr"></div>
+      <button class="btn" id="submitBtn">Submit Order</button>
+    </div>
+  `;
+
+  const serviceListEl = document.getElementById("serviceList");
+  WEB_DEV_SERVICES.forEach(s => {
+    const row = document.createElement("div");
+    row.className = "order-card";
+    row.innerHTML = `<strong>${s.title}</strong><div class="order-desc">${s.desc}</div>`;
+    serviceListEl.appendChild(row);
+  });
+  const stackWrap = document.getElementById("stackChips");
+  WEB_DEV_STACK.forEach(s => {
+    const c = document.createElement("div");
+    c.className = "chip";
+    c.style.cursor = "default";
+    c.textContent = s;
+    stackWrap.appendChild(c);
+  });
+
+  const hlWrap = document.getElementById("highlightGrid");
+  WEB_DEV_HIGHLIGHTS.forEach(h => {
+    const w = document.createElement("div");
+    w.className = "highlight-widget";
+    w.innerHTML = `<div class="hw-icon">${h.icon}</div><div class="hw-title">${h.title}</div><div class="hw-desc">${h.desc}</div>`;
+    hlWrap.appendChild(w);
+  });
+
+  document.getElementById("reviewBadge").onclick = openReviewModal;
+  refreshReviewBadge();
+
+  const chipWrap = document.getElementById("typeChips");
+  PROJECT_TYPES.forEach(t => {
+    const c = document.createElement("div");
+    c.className = "chip";
+    c.textContent = t;
+    c.onclick = () => {
+      selectedType = t;
+      [...chipWrap.children].forEach(ch => ch.classList.remove("selected"));
+      c.classList.add("selected");
+    };
+    chipWrap.appendChild(c);
+  });
+
+  document.getElementById("fDate").onchange = (e) => {
+    selectedDate = e.target.value;
+    const hint = document.getElementById("weekendHint");
+    if(selectedDate){
+      hint.textContent = "Delivery weekend: " + nextWeekendFor(selectedDate);
+    }else{
+      hint.textContent = "Pick a date - we'll show which weekend your project lands in below.";
+    }
+  };
+
+  document.getElementById("submitBtn").onclick = async () => {
+    const name = document.getElementById("fName").value.trim();
+    const phone = document.getElementById("fPhone").value.trim();
+    const desc = document.getElementById("fDesc").value.trim();
+    const errEl = document.getElementById("formErr");
+    errEl.classList.add("hidden");
+
+    if(!name || !phone || !selectedType || !desc || !selectedDate){
+      errEl.textContent = "Please fill in your name, phone, project type, description and preferred date.";
+      errEl.classList.remove("hidden");
+      return;
+    }
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
+    try{
+      const num = await nextOrderNumber();
+      const docRef = await db.collection("rushOrders").add({
+        orderNumber: num,
+        name,
+        businessName: document.getElementById("fBiz").value.trim(),
+        phone,
+        whatsapp: document.getElementById("fWhatsapp").value.trim(),
+        email: document.getElementById("fEmail").value.trim(),
+        projectType: selectedType,
+        description: desc,
+        budget: document.getElementById("fBudget").value.trim(),
+        preferredDate: selectedDate,
+        status: "pending",
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      addMyOrderId(docRef.id);
+      waAddOrder(docRef.id, name);
+      await db.collection("rushOrders").doc(docRef.id).collection("messages").add({
+        sender: "user",
+        text: `New order #${String(num).padStart(4,"0")} — ${selectedType}: ${desc}`,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      currentChatOrderId = docRef.id;
+      view = "chat";
+      render();
+    }catch(e){
+      errEl.textContent = "Something went wrong submitting your order. Please try again.";
+      errEl.classList.remove("hidden");
+      btn.disabled = false;
+      btn.textContent = "Submit Order";
+    }
+  };
+}
+
+/* ================= INLINE CHAT (WhatsApp-style, embedded) ================= */
+function renderChatView(){
+  const orderId = currentChatOrderId;
+  if(!orderId){ view = "order"; render(); return; }
+  app.innerHTML = `
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="wa-panel-header" style="border-radius:22px 22px 0 0;">
+        <div class="wa-avatar" id="chatAvatar">R</div>
+        <div class="wa-title">
+          <h4>Rush Environment</h4>
+          <div class="wa-status-line">Your order: <span class="wa-status-chip pending" id="chatStatus">pending</span></div>
+        </div>
+        <button type="button" class="btn small secondary" id="chatBackBtn">Back</button>
+      </div>
+      <div class="wa-panel-messages" id="chatMessages" style="height:360px;">
+        <div class="wa-panel-empty" id="chatEmpty">Loading...</div>
+      </div>
+      <div class="wa-panel-input-row">
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button type="button" id="chatSendBtn" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("chatBackBtn").onclick = () => { view = "history"; render(); };
+
+  chatOrderUnsub = db.collection("rushOrders").doc(orderId).onSnapshot(doc => {
+    const status = (doc.exists && doc.data().status) || "pending";
+    const statusEl = document.getElementById("chatStatus");
+    if(statusEl){
+      statusEl.textContent = STATUS_LABELS[status] || status;
+      statusEl.className = "wa-status-chip " + status;
+    }
+  });
+
+  chatMsgsUnsub = db.collection("rushOrders").doc(orderId).collection("messages")
+    .orderBy("createdAt","asc").onSnapshot(snap => {
+      const msgsEl = document.getElementById("chatMessages");
+      if(!msgsEl) return;
+      if(snap.empty){
+        msgsEl.innerHTML = `<div class="wa-panel-empty">No messages yet — ask us anything about your order here.</div>`;
+        return;
+      }
+      msgsEl.innerHTML = "";
+      snap.forEach(doc => {
+        const m = doc.data();
+        const bubble = document.createElement("div");
+        bubble.className = "wa-panel-bubble " + (m.sender === "admin" ? "admin" : "user");
+        bubble.innerHTML = escapeHtml(m.text || "") + "<time>" + waFormatTime(m.createdAt) + "</time>";
+        msgsEl.appendChild(bubble);
+      });
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    });
+
+  const send = () => {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if(!text) return;
+    const btn = document.getElementById("chatSendBtn");
+    btn.disabled = true;
+    db.collection("rushOrders").doc(orderId).collection("messages").add({
+      sender: "user", text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      input.value = ""; btn.disabled = false; input.focus();
+    }).catch(() => { btn.disabled = false; });
+  };
+  document.getElementById("chatSendBtn").onclick = send;
+  document.getElementById("chatInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); send(); } });
+}
+
+/* ================= MY ORDERS / HISTORY ================= */
+function renderHistoryView(){
+  const ids = myOrderIds();
+  if(ids.length === 0){
+    app.innerHTML = `
+      <div class="card" style="text-align:center;">
+        <div class="eyebrow">My Orders</div>
+        <div class="sub" style="margin-bottom:0;">You haven't submitted any orders on this device yet.</div>
+        <button class="btn secondary" id="startBtn">Start an Order</button>
+      </div>
+    `;
+    document.getElementById("startBtn").onclick = () => { view = "order"; render(); };
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="eyebrow">My Orders</div>
+      <h2 class="section-title">Your submissions</h2>
+      <div id="historyList"><div class="sub">Loading...</div></div>
+    </div>
+  `;
+
+  const listEl = document.getElementById("historyList");
+  Promise.all(ids.map(id => db.collection("rushOrders").doc(id).get().catch(()=>null)))
+    .then(docs => {
+      const valid = docs.filter(d => d && d.exists);
+      if(valid.length === 0){
+        listEl.innerHTML = `<div class="sub">No orders found.</div>`;
+        return;
+      }
+      listEl.innerHTML = "";
+      valid.forEach(doc => {
+        const o = doc.data();
+        listEl.appendChild(orderCard(doc.id, o));
+      });
+    });
+}
+
+function orderCard(id, o){
+  const wrap = document.createElement("div");
+  wrap.className = "order-card";
+  const statusClass = "status-" + (o.status || "pending");
+  wrap.innerHTML = `
+    <div class="order-row">
+      <div>
+        <strong>#${String(o.orderNumber).padStart(4,"0")} - ${escapeHtml(o.name)}</strong>
+        <div class="meta">${escapeHtml(o.projectType)}${o.businessName ? " . " + escapeHtml(o.businessName) : ""}</div>
+      </div>
+      <span class="status-pill ${statusClass}">${STATUS_LABELS[o.status] || o.status}</span>
+    </div>
+    <div class="order-desc">${escapeHtml(o.description)}</div>
+    <div class="weekend-note">Preferred date: ${fmtDate(o.preferredDate)} &nbsp;.&nbsp; Delivery weekend: ${nextWeekendFor(o.preferredDate)}</div>
+    <button class="btn small secondary chatOpenBtn" style="margin-top:10px;">Chat</button>
+  `;
+  wrap.querySelector(".chatOpenBtn").onclick = () => {
+    currentChatOrderId = id;
+    view = "chat";
+    render();
+  };
+  return wrap;
+}
+function escapeHtml(s){
+  if(!s) return "";
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ================= ORDER TRACKER + CHAT (floating widget) ================= */
+const WA_ORDERS_KEY = "rush_wa_orders";
+const waFab = document.getElementById("waFab");
+const waPanel = document.getElementById("waPanel");
+const waPanelClose = document.getElementById("waPanelClose");
+const waPanelStatus = document.getElementById("waPanelStatus");
+const waOrderSelectWrap = document.getElementById("waOrderSelectWrap");
+const waOrderSelect = document.getElementById("waOrderSelect");
+const waPanelMessages = document.getElementById("waPanelMessages");
+const waPanelEmpty = document.getElementById("waPanelEmpty");
+const waPanelInput = document.getElementById("waPanelInput");
+const waPanelSendBtn = document.getElementById("waPanelSendBtn");
+let waActiveOrderId = null;
+let waActiveUnsubOrder = null;
+let waActiveUnsubMessages = null;
+
+function waGetOrders(){
+  try{ return JSON.parse(localStorage.getItem(WA_ORDERS_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function waSaveOrders(list){
+  try{ localStorage.setItem(WA_ORDERS_KEY, JSON.stringify(list)); }catch(e){}
+}
+function waAddOrder(id, name){
+  let list = waGetOrders().filter(o => o.id !== id);
+  list.unshift({id, name: name || "You"});
+  if(list.length > 8) list = list.slice(0,8);
+  waSaveOrders(list);
+  waRefreshFab();
+}
+function waRefreshFab(){
+  waFab.classList.toggle("show", waGetOrders().length > 0);
+}
+function waFormatTime(ts){
+  if(!ts || !ts.toDate) return "";
+  const d = ts.toDate();
+  let h = d.getHours(); const m = d.getMinutes();
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12; if(h === 0) h = 12;
+  return h + ":" + (m < 10 ? "0"+m : m) + " " + ampm;
+}
+function waPopulateOrderSelect(){
+  const list = waGetOrders();
+  waOrderSelectWrap.style.display = list.length > 1 ? "block" : "none";
+  waOrderSelect.innerHTML = list.map(o => `<option value="${o.id}">${escapeHtml(o.name || "Order")} - ${o.id.slice(0,6)}</option>`).join("");
+  waOrderSelect.value = waActiveOrderId;
+}
+function waListenOrder(id){
+  if(waActiveUnsubOrder) waActiveUnsubOrder();
+  waActiveUnsubOrder = db.collection("rushOrders").doc(id).onSnapshot(doc => {
+    const status = (doc.exists && doc.data().status) || "pending";
+    waPanelStatus.textContent = STATUS_LABELS[status] || status;
+    waPanelStatus.className = "wa-status-chip " + status;
+  }, err => console.error("Could not track order status:", err));
+}
+function waListenMessages(id){
+  if(waActiveUnsubMessages) waActiveUnsubMessages();
+  waActiveUnsubMessages = db.collection("rushOrders").doc(id).collection("messages")
+    .orderBy("createdAt","asc").onSnapshot(snap => {
+      if(snap.empty){
+        waPanelMessages.innerHTML = "";
+        waPanelMessages.appendChild(waPanelEmpty);
+        return;
+      }
+      waPanelMessages.innerHTML = "";
+      snap.forEach(doc => {
+        const m = doc.data();
+        const bubble = document.createElement("div");
+        bubble.className = "wa-panel-bubble " + (m.sender === "admin" ? "admin" : "user");
+        bubble.innerHTML = escapeHtml(m.text || "") + "<time>" + waFormatTime(m.createdAt) + "</time>";
+        waPanelMessages.appendChild(bubble);
+      });
+      waPanelMessages.scrollTop = waPanelMessages.scrollHeight;
+    }, err => console.error("Could not load messages:", err));
+}
+function waSetActiveOrder(id){
+  waActiveOrderId = id;
+  waListenOrder(id);
+  waListenMessages(id);
+}
+function waOpenPanel(){
+  const list = waGetOrders();
+  if(!list.length) return;
+  if(!waActiveOrderId || !list.some(o => o.id === waActiveOrderId)) waActiveOrderId = list[0].id;
+  waPopulateOrderSelect();
+  waSetActiveOrder(waActiveOrderId);
+  waPanel.classList.add("open");
+  waFab.classList.remove("has-unread");
+}
+function waClosePanel(){ waPanel.classList.remove("open"); }
+waFab.addEventListener("click", () => { waPanel.classList.contains("open") ? waClosePanel() : waOpenPanel(); });
+waPanelClose.addEventListener("click", waClosePanel);
+waOrderSelect.addEventListener("change", () => waSetActiveOrder(waOrderSelect.value));
+function waPanelSend(){
+  const text = waPanelInput.value.trim();
+  if(!text || !waActiveOrderId) return;
+  waPanelSendBtn.disabled = true;
+  db.collection("rushOrders").doc(waActiveOrderId).collection("messages").add({
+    sender: "user", text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    waPanelInput.value = "";
+    waPanelSendBtn.disabled = false;
+    waPanelInput.focus();
+  }).catch(err => {
+    console.error("Could not send message:", err);
+    waPanelSendBtn.disabled = false;
+    alert("Could not send your message. Please try again.");
+  });
+}
+waPanelSendBtn.addEventListener("click", waPanelSend);
+waPanelInput.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); waPanelSend(); } });
+waRefreshFab();
+
+/* ================= REVIEWS & RATINGS ================= */
+const reviewModalOverlay = document.getElementById("reviewModalOverlay");
+const reviewModalClose = document.getElementById("reviewModalClose");
+const starPicker = document.getElementById("starPicker");
+const reviewSubmitBtn = document.getElementById("reviewSubmitBtn");
+const reviewsListEl = document.getElementById("reviewsList");
+let reviewRating = 0;
+
+starPicker.querySelectorAll("span").forEach(star => {
+  star.addEventListener("click", () => {
+    reviewRating = parseInt(star.dataset.v, 10);
+    paintStars();
+  });
+});
+function paintStars(){
+  starPicker.querySelectorAll("span").forEach(star => {
+    star.classList.toggle("filled", parseInt(star.dataset.v,10) <= reviewRating);
+  });
+}
+function openReviewModal(){
+  reviewModalOverlay.classList.add("open");
+  loadReviewsList();
+}
+function closeReviewModal(){ reviewModalOverlay.classList.remove("open"); }
+reviewModalClose.addEventListener("click", closeReviewModal);
+reviewModalOverlay.addEventListener("click", e => { if(e.target === reviewModalOverlay) closeReviewModal(); });
+
+function loadReviewsList(){
+  db.collection("rushReviews").orderBy("createdAt","desc").get().then(snap => {
+    if(snap.empty){
+      reviewsListEl.innerHTML = `<div class="sub" style="margin-bottom:0;">No reviews yet — be the first!</div>`;
+      return;
+    }
+    reviewsListEl.innerHTML = "";
+    snap.forEach(doc => {
+      const r = doc.data();
+      const item = document.createElement("div");
+      item.className = "review-item";
+      const starStr = "★".repeat(r.rating||0) + "☆".repeat(5-(r.rating||0));
+      item.innerHTML = `
+        <div><span class="stars">${starStr}</span><span class="rname">${escapeHtml(r.name||"Anonymous")}</span></div>
+        <div class="rtext">${escapeHtml(r.text||"")}</div>
+        <div class="rdate">${r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : ""}</div>
+      `;
+      reviewsListEl.appendChild(item);
+    });
+  }).catch(() => {
+    reviewsListEl.innerHTML = `<div class="sub" style="margin-bottom:0;">Could not load reviews.</div>`;
+  });
+}
+
+reviewSubmitBtn.addEventListener("click", () => {
+  const name = document.getElementById("reviewName").value.trim();
+  const text = document.getElementById("reviewText").value.trim();
+  const errEl = document.getElementById("reviewErr");
+  errEl.classList.add("hidden");
+  if(!reviewRating || !name || !text){
+    errEl.textContent = "Please give a rating, your name, and a short review.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+  reviewSubmitBtn.disabled = true;
+  reviewSubmitBtn.textContent = "Submitting...";
+  db.collection("rushReviews").add({
+    rating: reviewRating, name, text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    document.getElementById("reviewName").value = "";
+    document.getElementById("reviewText").value = "";
+    reviewRating = 0; paintStars();
+    reviewSubmitBtn.disabled = false;
+    reviewSubmitBtn.textContent = "Submit Review";
+    loadReviewsList();
+    refreshReviewBadge();
+  }).catch(() => {
+    errEl.textContent = "Could not submit your review. Please try again.";
+    errEl.classList.remove("hidden");
+    reviewSubmitBtn.disabled = false;
+    reviewSubmitBtn.textContent = "Submit Review";
+  });
+});
+
+function refreshReviewBadge(){
+  const badge = document.getElementById("reviewBadge");
+  if(!badge) return;
+  db.collection("rushReviews").get().then(snap => {
+    const countEl = document.getElementById("reviewCountText");
+    if(!countEl) return;
+    if(snap.empty){
+      countEl.textContent = "No reviews yet — leave one";
+      return;
+    }
+    let total = 0;
+    snap.forEach(doc => { total += (doc.data().rating || 0); });
+    const avg = (total / snap.size).toFixed(1);
+    countEl.textContent = avg + " (" + snap.size + " review" + (snap.size === 1 ? "" : "s") + ")";
+  }).catch(() => {});
+}
+
+/* ================= ADMIN ================= */
+function renderAdmin(){
+  if(!isOwner){ renderAdminLogin(); return; }
+  if(adminSubView === "settings"){ renderAdminSettings(); return; }
+  if(adminSubView === "reviews"){ renderAdminReviews(); return; }
+  renderAdminOrders();
+}
+
+function renderAdminLogin(){
+  app.innerHTML = `
+    <div class="card lock-screen">
+      <div class="eyebrow">Owner Access</div>
+      <h2 class="section-title">Enter Password</h2>
+      <input type="text" id="ownerPass" placeholder="Password" style="margin-top:14px;">
+      <div class="error hidden" id="loginErr"></div>
+      <button class="btn" id="loginBtn">Unlock</button>
+      <button class="btn secondary" id="backBtn">Back to site</button>
+    </div>
+  `;
+  document.getElementById("backBtn").onclick = () => { view = "order"; render(); };
+  document.getElementById("loginBtn").onclick = async () => {
+    const val = document.getElementById("ownerPass").value;
+    const correct = await getOwnerPassword();
+    if(val === correct){
+      isOwner = true;
+      sessionStorage.setItem("rush_owner","1");
+      render();
+    }else{
+      const e = document.getElementById("loginErr");
+      e.textContent = "Incorrect password.";
+      e.classList.remove("hidden");
+    }
+  };
+}
+
+function renderAdminOrders(){
+  app.innerHTML = `
+    <div class="card">
+      <div class="order-row" style="margin-bottom:14px;">
+        <div class="eyebrow" style="margin-bottom:0;">Owner Dashboard</div>
+        <div>
+          <button class="btn small secondary" id="reviewsBtn">Reviews</button>
+          <button class="btn small secondary" id="settingsBtn">Settings</button>
+          <button class="btn small secondary" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+      <h2 class="section-title">Orders</h2>
+      <div class="admin-tabs" id="statusTabs"></div>
+      <div id="ordersList"><div class="sub">Loading...</div></div>
+    </div>
+  `;
+  document.getElementById("reviewsBtn").onclick = () => { adminSubView = "reviews"; render(); };
+  document.getElementById("settingsBtn").onclick = () => { adminSubView = "settings"; render(); };
+  document.getElementById("logoutBtn").onclick = () => {
+    isOwner = false; sessionStorage.removeItem("rush_owner");
+    view = "order"; render();
+  };
+
+  const tabsEl = document.getElementById("statusTabs");
+  const tabs = [["all","All"],["pending","Pending"],["confirmed","Confirmed"],["progress","In Progress"],["completed","Completed"],["cancelled","Cancelled"]];
+  tabs.forEach(([key,label]) => {
+    const b = document.createElement("button");
+    b.textContent = label;
+    if(key === adminStatusFilter) b.classList.add("active");
+    b.onclick = () => { adminStatusFilter = key; renderAdminOrders(); };
+    tabsEl.appendChild(b);
+  });
+
+  let q = db.collection("rushOrders").orderBy("submittedAt","desc");
+  ordersUnsub = q.onSnapshot(snap => {
+    const listEl = document.getElementById("ordersList");
+    if(!listEl) return;
+    let docs = snap.docs;
+    if(adminStatusFilter !== "all"){
+      docs = docs.filter(d => (d.data().status || "pending") === adminStatusFilter);
+    }
+    if(docs.length === 0){
+      listEl.innerHTML = `<div class="sub">No orders in this view.</div>`;
+      return;
+    }
+    listEl.innerHTML = "";
+    docs.forEach(doc => {
+      listEl.appendChild(adminOrderCard(doc.id, doc.data()));
+    });
+  });
+}
+
+function adminOrderCard(id, o){
+  const wrap = document.createElement("div");
+  wrap.className = "order-card";
+  const statusClass = "status-" + (o.status || "pending");
+  wrap.innerHTML = `
+    <div class="order-row">
+      <div>
+        <strong>#${String(o.orderNumber).padStart(4,"0")} - ${escapeHtml(o.name)}</strong>
+        <div class="meta">${escapeHtml(o.projectType)}${o.businessName ? " . " + escapeHtml(o.businessName) : ""}</div>
+        <div class="meta">${escapeHtml(o.phone)}${o.whatsapp ? " . WA: " + escapeHtml(o.whatsapp) : ""}${o.email ? " . " + escapeHtml(o.email) : ""}</div>
+      </div>
+      <span class="status-pill ${statusClass}">${STATUS_LABELS[o.status] || o.status}</span>
+    </div>
+    <div class="order-desc">${escapeHtml(o.description)}</div>
+    ${o.budget ? `<div class="meta" style="margin-top:6px;">Budget: ${escapeHtml(o.budget)}</div>` : ""}
+    <div class="weekend-note">Preferred date: ${fmtDate(o.preferredDate)} &nbsp;.&nbsp; Delivery weekend: ${nextWeekendFor(o.preferredDate)}</div>
+    <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+      <select class="statusSelect" style="width:auto;"></select>
+      <button class="btn small secondary msgsToggleBtn">Messages</button>
+      <button class="btn small danger deleteBtn">Delete</button>
+    </div>
+    <div class="admin-msgs hidden">
+      <div class="admin-msg-list"></div>
+      <div class="admin-msg-row">
+        <input type="text" class="adminMsgInput" placeholder="Reply to customer...">
+        <button class="btn small adminMsgSendBtn">Send</button>
+      </div>
+    </div>
+  `;
+  const msgsWrap = wrap.querySelector(".admin-msgs");
+  const msgList = wrap.querySelector(".admin-msg-list");
+  let msgsUnsub = null;
+  wrap.querySelector(".msgsToggleBtn").onclick = () => {
+    const opening = msgsWrap.classList.contains("hidden");
+    msgsWrap.classList.toggle("hidden");
+    if(opening && !msgsUnsub){
+      msgsUnsub = db.collection("rushOrders").doc(id).collection("messages")
+        .orderBy("createdAt","asc").onSnapshot(snap => {
+          msgList.innerHTML = snap.empty ? `<div class="sub" style="margin-bottom:0;">No messages yet.</div>` : "";
+          snap.forEach(doc => {
+            const m = doc.data();
+            const row = document.createElement("div");
+            row.style.cssText = "font-size:12.5px; padding:6px 8px; border-radius:6px; " +
+              (m.sender === "admin" ? "background:var(--gold-soft); text-align:right;" : "background:rgba(255,255,255,0.06); border:1px solid var(--border);");
+            row.textContent = (m.sender === "admin" ? "You: " : "") + (m.text || "");
+            msgList.appendChild(row);
+          });
+          msgList.scrollTop = msgList.scrollHeight;
+        });
+    }
+  };
+  const sendReply = () => {
+    const input = wrap.querySelector(".adminMsgInput");
+    const text = input.value.trim();
+    if(!text) return;
+    db.collection("rushOrders").doc(id).collection("messages").add({
+      sender:"admin", text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => { input.value = ""; });
+  };
+  wrap.querySelector(".adminMsgSendBtn").onclick = sendReply;
+  wrap.querySelector(".adminMsgInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); sendReply(); } });
+  const select = wrap.querySelector(".statusSelect");
+  Object.keys(STATUS_LABELS).forEach(key => {
+    const opt = document.createElement("option");
+    opt.value = key; opt.textContent = STATUS_LABELS[key];
+    if((o.status||"pending") === key) opt.selected = true;
+    select.appendChild(opt);
+  });
+  select.onchange = () => {
+    db.collection("rushOrders").doc(id).update({status: select.value});
+  };
+  wrap.querySelector(".deleteBtn").onclick = () => {
+    if(confirm("Delete this order permanently?")){
+      db.collection("rushOrders").doc(id).delete();
+    }
+  };
+  return wrap;
+}
+
+function renderAdminReviews(){
+  app.innerHTML = `
+    <div class="card">
+      <div class="order-row" style="margin-bottom:14px;">
+        <div class="eyebrow" style="margin-bottom:0;">Reviews</div>
+        <button class="btn small secondary" id="backBtn">Back to Orders</button>
+      </div>
+      <h2 class="section-title">Manage Reviews</h2>
+      <div id="adminReviewsList"><div class="sub">Loading...</div></div>
+    </div>
+  `;
+  document.getElementById("backBtn").onclick = () => { adminSubView = "orders"; render(); };
+  const listEl = document.getElementById("adminReviewsList");
+  db.collection("rushReviews").orderBy("createdAt","desc").get().then(snap => {
+    if(snap.empty){
+      listEl.innerHTML = `<div class="sub" style="margin-bottom:0;">No reviews yet.</div>`;
+      return;
+    }
+    listEl.innerHTML = "";
+    snap.forEach(doc => {
+      const r = doc.data();
+      const item = document.createElement("div");
+      item.className = "review-item";
+      const starStr = "★".repeat(r.rating||0) + "☆".repeat(5-(r.rating||0));
+      item.innerHTML = `
+        <div class="order-row">
+          <div><span class="stars">${starStr}</span><span class="rname">${escapeHtml(r.name||"Anonymous")}</span></div>
+          <button class="btn small danger delReviewBtn">Delete</button>
+        </div>
+        <div class="rtext">${escapeHtml(r.text||"")}</div>
+      `;
+      item.querySelector(".delReviewBtn").onclick = () => {
+        if(confirm("Delete this review permanently?")){
+          db.collection("rushReviews").doc(doc.id).delete().then(() => item.remove());
+        }
+      };
+      listEl.appendChild(item);
+    });
+  }).catch(() => {
+    listEl.innerHTML = `<div class="sub" style="margin-bottom:0;">Could not load reviews.</div>`;
+  });
+}
+
+function renderAdminSettings(){
+  app.innerHTML = `
+    <div class="card">
+      <div class="order-row" style="margin-bottom:14px;">
+        <div class="eyebrow" style="margin-bottom:0;">Settings</div>
+        <button class="btn small secondary" id="backBtn">Back to Orders</button>
+      </div>
+      <h2 class="section-title">Change Owner Password</h2>
+      <label>Current Password</label>
+      <input type="text" id="curPass">
+      <label>New Password</label>
+      <input type="text" id="newPass">
+      <label>Confirm New Password</label>
+      <input type="text" id="confPass">
+      <div class="error hidden" id="settingsErr"></div>
+      <div class="ok hidden" id="settingsOk"></div>
+      <button class="btn" id="savePassBtn">Save Password</button>
+    </div>
+  `;
+  document.getElementById("backBtn").onclick = () => { adminSubView = "orders"; render(); };
+  document.getElementById("savePassBtn").onclick = async () => {
+    const cur = document.getElementById("curPass").value;
+    const next = document.getElementById("newPass").value;
+    const conf = document.getElementById("confPass").value;
+    const errEl = document.getElementById("settingsErr");
+    const okEl = document.getElementById("settingsOk");
+    errEl.classList.add("hidden"); okEl.classList.add("hidden");
+
+    const correct = await getOwnerPassword();
+    if(cur !== correct){
+      errEl.textContent = "Current password is incorrect."; errEl.classList.remove("hidden"); return;
+    }
+    if(!next || next.length < 4){
+      errEl.textContent = "New password must be at least 4 characters."; errEl.classList.remove("hidden"); return;
+    }
+    if(next !== conf){
+      errEl.textContent = "New passwords don't match."; errEl.classList.remove("hidden"); return;
+    }
+    const btn = document.getElementById("savePassBtn");
+    btn.disabled = true; btn.textContent = "Saving...";
+    try{
+      await getSettingsDoc().set({ownerPassword: next}, {merge:true});
+      okEl.textContent = "Password updated."; okEl.classList.remove("hidden");
+      document.getElementById("curPass").value = "";
+      document.getElementById("newPass").value = "";
+      document.getElementById("confPass").value = "";
+    }catch(e){
+      errEl.textContent = "Could not save. Try again."; errEl.classList.remove("hidden");
+    }
+    btn.disabled = false; btn.textContent = "Save Password";
+  };
+}
+</script>
+</body>
+</html>
