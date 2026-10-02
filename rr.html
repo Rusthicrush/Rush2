@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIK 💙</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050a18;--surface:rgba(255,255,255,0.045);--border:rgba(255,255,255,0.09);
+  --pink:#ff6b9d;--blue:#4da6ff;--purple:#b56aff;--gold:#ffd166;
+  --text:#f0f0f8;--muted:rgba(240,240,248,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+#starCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.heart-particle{position:fixed;font-size:1rem;pointer-events:none;z-index:1;animation:floatUp 3.5s ease-in forwards;opacity:0;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-180px) scale(0.3);}}
+#app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:0 16px 80px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp 0.5s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.logo-bar{text-align:center;padding:36px 0 20px;}
+.logo{font-family:'Satisfy',cursive;font-size:2.2rem;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 16px rgba(255,107,157,0.5));}
+.tagline{font-size:0.75rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;backdrop-filter:blur(20px);margin-bottom:14px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(77,166,255,0.04),transparent 60%);pointer-events:none;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:5px;background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{font-size:0.76rem;color:var(--muted);margin-bottom:18px;}
+.input-group{margin-bottom:12px;}
+.input-group label{display:block;font-size:0.73rem;color:var(--muted);margin-bottom:5px;letter-spacing:0.4px;}
+.input-group input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.93rem;outline:none;transition:border-color 0.3s,box-shadow 0.3s;}
+.input-group input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,0.15);}
+.input-group input::placeholder{color:rgba(240,240,248,0.22);}
+.btn{width:100%;padding:13px;border:none;border-radius:13px;font-family:'DM Sans',sans-serif;font-size:0.97rem;font-weight:600;cursor:pointer;transition:all 0.3s;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;box-shadow:0 4px 20px rgba(255,107,157,0.35);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,157,0.5);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-ghost{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);margin-top:10px;}
+
+/* MODE SELECTOR */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+.mode-card{background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:16px;padding:20px 14px;text-align:center;cursor:pointer;transition:all 0.3s;}
+.mode-card:hover,.mode-card.sel{border-color:var(--pink);background:rgba(255,107,157,0.1);transform:translateY(-2px);}
+.mode-card .mode-icon{font-size:2.2rem;display:block;margin-bottom:8px;}
+.mode-card .mode-name{font-weight:600;font-size:0.9rem;}
+.mode-card .mode-desc{font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:18px;}
+.prog-row{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);margin-bottom:6px;}
+.progress-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--blue));border-radius:99px;transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* QUESTIONS */
+.q-emoji{font-size:2.2rem;text-align:center;display:block;margin-bottom:10px;}
+.q-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;line-height:1.6;margin-bottom:18px;color:var(--text);}
+.options-grid{display:grid;gap:9px;}
+.option-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;text-align:left;transition:all 0.22s;width:100%;}
+.option-btn:hover{border-color:var(--pink);background:rgba(255,107,157,0.1);transform:translateX(3px);}
+.option-btn.sel{border-color:var(--pink);background:rgba(255,107,157,0.17);box-shadow:0 0 10px rgba(255,107,157,0.2);}
+.skip-btn{background:none;border:none;color:var(--muted);font-size:0.78rem;cursor:pointer;text-align:center;display:block;width:100%;padding:10px 0;text-decoration:underline;text-underline-offset:3px;transition:color 0.2s;}
+.skip-btn:hover{color:var(--text);}
+
+/* LOADING */
+.load-center{text-align:center;padding:50px 20px;}
+.heart-loader{font-size:3rem;animation:hb 0.8s ease-in-out infinite;display:block;margin:0 auto 20px;}
+@keyframes hb{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+.loading-names{font-family:'Playfair Display',serif;font-size:1.7rem;font-style:italic;color:var(--pink);margin-bottom:6px;filter:drop-shadow(0 0 18px rgba(255,107,157,0.55));}
+.loading-sub{font-size:0.82rem;color:var(--muted);margin-bottom:32px;letter-spacing:1px;}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pink);margin:0 3px;animation:dot 1.2s ease-in-out infinite;}
+.dots span:nth-child(2){animation-delay:.2s;background:var(--purple);}
+.dots span:nth-child(3){animation-delay:.4s;background:var(--blue);}
+@keyframes dot{0%,80%,100%{transform:scale(0.5);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
+#loadStatus{font-size:0.76rem;color:var(--muted);margin-top:18px;line-height:1.9;}
+
+/* LINK SHARE */
+.link-box{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 15px;font-size:0.8rem;color:var(--muted);word-break:break-all;margin-bottom:12px;font-family:monospace;position:relative;}
+.copy-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--pink);border:none;border-radius:7px;padding:4px 10px;color:white;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+
+/* WAITING */
+.waiting-anim{font-size:3.5rem;text-align:center;animation:pulse 1.5s ease-in-out infinite;display:block;margin:16px 0;}
+@keyframes pulse{0%,100%{opacity:0.5;transform:scale(0.95);}50%{opacity:1;transform:scale(1.05);}}
+
+/* RESULT */
+.result-badge{display:inline-block;padding:5px 16px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;color:white;}
+.score-ring{position:relative;width:155px;height:155px;margin:0 auto 20px;}
+.score-ring svg{width:155px;height:155px;transform:rotate(-90deg);}
+.score-ring circle{fill:none;stroke-width:10;stroke-linecap:round;}
+.bg-ring{stroke:rgba(255,255,255,0.06);}
+.fg-ring{stroke:url(#sg);stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset 2s cubic-bezier(0.34,1.56,0.64,1);}
+.score-number{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--pink);}
+.couple-names-r{font-family:'Satisfy',cursive;font-size:1.5rem;color:var(--text);}
+.heart-join{color:var(--pink);margin:0 7px;}
+.result-type{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;font-style:italic;margin:14px 0 7px;background:linear-gradient(135deg,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.result-desc{font-size:0.84rem;color:var(--muted);line-height:1.75;}
+.stat-row{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.stat-label{font-size:0.76rem;color:var(--muted);width:108px;text-align:right;flex-shrink:0;}
+.stat-track{flex:1;height:6px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(0.34,1.56,0.64,1);}
+.stat-pct{font-size:0.76rem;font-weight:600;width:34px;color:var(--text);}
+.badges-row{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:12px 0;}
+.badge-chip{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);border-radius:99px;padding:5px 13px;font-size:0.76rem;display:flex;align-items:center;gap:5px;animation:bpop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes bpop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.timeline{position:relative;padding-left:22px;text-align:left;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--pink),var(--blue),transparent);}
+.tl-item{position:relative;margin-bottom:18px;animation:fadeUp .5s ease both;}
+.tl-dot{position:absolute;left:-22px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--pink);border:2px solid var(--bg);box-shadow:0 0 8px var(--pink);}
+.tl-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.tl-text{font-family:'Playfair Display',serif;font-size:0.93rem;font-style:italic;color:var(--text);margin-top:2px;}
+.share-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;}
+.share-btn{padding:11px;border-radius:11px;border:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.25s;}
+.share-btn:hover{transform:translateY(-2px);}
+.s-wa{background:#25D366;color:white;}
+.s-ig{background:linear-gradient(135deg,#fd5949,#d6249f,#285AEB);color:white;}
+.s-cp{background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text);}
+.s-re{background:rgba(255,107,157,0.14);border:1px solid rgba(255,107,157,0.28);color:var(--pink);}
+.glow-div{height:1px;background:linear-gradient(90deg,transparent,var(--pink),var(--blue),transparent);margin:20px 0;opacity:0.28;}
+.zero-card{background:linear-gradient(135deg,rgba(255,50,50,0.08),rgba(180,0,0,0.08));border:1px solid rgba(255,60,60,0.25);border-radius:16px;padding:20px;text-align:center;}
+.zero-card .big{font-size:3rem;}
+.zero-card p{font-size:0.88rem;color:rgba(255,160,160,0.9);margin-top:8px;line-height:1.6;}
+.easter{font-size:0.69rem;color:rgba(255,107,157,0.38);text-align:center;margin-top:6px;font-style:italic;padding:0 20px;line-height:1.6;}
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:999;animation:cf var(--dur,3s) ease-in forwards;}
+@keyframes cf{0%{opacity:1;transform:translateY(-20px) rotate(0deg);}100%{opacity:0;transform:translateY(100vh) rotate(720deg);}}
+.section-lbl{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.who-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(77,166,255,0.12);border:1px solid rgba(77,166,255,0.25);border-radius:99px;padding:5px 14px;font-size:0.78rem;color:var(--blue);margin-bottom:16px;}
+
+
+
+/* ADMIN */
+#adminOv{display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);overflow-y:auto;padding:16px 16px 60px;}
+#adminOv.on{display:block;}
+#adminIn{max-width:480px;margin:0 auto;}
+.ad-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;}
+.ad-tab{flex:1;white-space:nowrap;padding:9px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:.78rem;cursor:pointer;}
+.ad-tab.on{border-color:var(--pink);background:rgba(255,107,157,.16);}
+.ad-chip{display:inline-block;margin:3px;padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--border);font-size:.76rem;}
+.ad-sw{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ad-sw button{border:1.5px solid var(--border);border-radius:14px;padding:12px;color:#fff;font:inherit;font-size:.82rem;cursor:pointer;text-align:left;}
+.ad-sw button.on{border-color:#fff;}
+.ad-x{background:none;border:none;color:var(--pink);cursor:pointer;font-size:1rem;}
+.ad-sm{font-size:.74rem;color:var(--muted);line-height:1.6;margin:8px 0;}
+.ad-p{border-bottom:1px solid var(--border);}
+.ad-p summary,.ad-d summary{cursor:pointer;padding:11px 0;font-weight:600;list-style-position:outside;}
+.ad-p small,.ad-d small{color:var(--muted);font-weight:400;}
+.ad-rec{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:6px 12px;margin:10px 0;}
+.ad-rec h4{font-size:.9rem;margin:8px 0 2px;}
+.ad-q{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:10px 14px;color:var(--text);font:inherit;font-size:.88rem;margin-bottom:10px;outline:none;}
+/* FRIEND ZONE - HIGH VISUAL */
+.fz-float{position:fixed;bottom:-40px;pointer-events:none;z-index:1;animation:fzUp var(--d,7s) linear forwards;opacity:.85;}
+@keyframes fzUp{to{transform:translateY(-115vh) translateX(var(--x,0px)) rotate(40deg);opacity:0;}}
+@keyframes fzBeat{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+@keyframes fzPop{from{transform:scale(.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes fzGlow{0%,100%{box-shadow:0 4px 20px rgba(255,107,157,.35);}50%{box-shadow:0 0 36px rgba(255,107,157,.95);}}
+@keyframes fzShake{0%,100%{transform:rotate(0);}20%{transform:rotate(-8deg);}40%{transform:rotate(8deg);}60%{transform:rotate(-5deg);}80%{transform:rotate(5deg);}}
+.fz-glow{border-color:rgba(255,107,157,.4)!important;box-shadow:0 0 50px rgba(255,107,157,.22),inset 0 0 40px rgba(77,166,255,.08);}
+.fz-title{font-family:'Satisfy',cursive;font-size:2.2rem;line-height:1.25;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(255,107,157,.45));margin:6px 0;}
+.fz-pop{animation:fzPop .7s cubic-bezier(.34,1.56,.64,1) both;}
+.fz-yes{animation:fzGlow 1.2s ease-in-out infinite;}
+.fz-bigheart{font-size:6.5rem;line-height:1.1;display:block;animation:fzBeat .8s ease-in-out infinite;filter:drop-shadow(0 0 30px #ff6b9d);}
+.fz-env{position:relative;width:210px;height:140px;margin:26px auto 14px;cursor:pointer;animation:fzBeat 1.4s ease-in-out infinite;}
+.fz-env .eb{position:absolute;inset:0;background:linear-gradient(135deg,#ff6b9d,#b56aff);border-radius:12px;box-shadow:0 10px 44px rgba(255,107,157,.55);}
+.fz-env .ef{position:absolute;top:0;left:0;width:100%;height:78px;background:linear-gradient(135deg,#ff8fb5,#c98aff);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .8s;}
+.fz-env .es{position:absolute;top:52px;left:50%;transform:translateX(-50%);font-size:2.2rem;z-index:2;transition:opacity .4s;}
+.fz-env.open{animation:none;}.fz-env.open .ef{transform:rotateX(180deg);}.fz-env.open .es{opacity:0;}
+.fz-gift{font-size:6rem;display:block;cursor:pointer;margin:20px 0 10px;animation:fzShake 1.4s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(255,209,102,.6));}
+.fz-hint{font-size:.78rem;color:var(--muted);animation:fzBeat 1.6s ease-in-out infinite;}
+.fz-cursor::after{content:'|';animation:fzBeat .7s infinite;color:var(--pink);}
+@media(prefers-reduced-motion:reduce){.fz-float{display:none;}.fz-env,.fz-gift,.fz-yes,.fz-bigheart{animation:none;}}
+/* FRIEND ZONE */
+.input-group textarea{width:100%;min-height:90px;resize:vertical;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.93rem;outline:none;}
+.input-group textarea:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,0.15);}
+.fz-back{background:none;border:none;color:var(--muted);font-family:inherit;font-size:0.8rem;cursor:pointer;margin-bottom:12px;}
+.fz-msg{white-space:pre-wrap;font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;line-height:1.7;margin:10px 0;}
+.fz-arena{position:relative;height:120px;margin-top:12px;}
+.fz-arena .btn{position:absolute;top:0;width:48%;}
+#fzNo{left:52%;transition:left .15s,top .15s;}
+.fz-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:0.85rem;}
+.fz-ok{color:#48c774;}.fz-bad{color:#ff6b6b;}
+.fz-score{font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.mode-card.wide{grid-column:1/-1;}
+@media(max-width:380px){.mode-card.wide{grid-column:auto;}}
+@media(max-width:380px){.mode-grid{grid-template-columns:1fr;}.score-ring{width:135px;height:135px;}.score-ring svg{width:135px;height:135px;}}
+</style>
+</head>
+<body>
+<canvas id="starCanvas"></canvas>
+<div id="app">
+
+<!-- ===== HOME ===== -->
+<div id="homeScreen" class="screen active">
+  <div class="logo-bar">
+    <div class="logo">LIK 💙</div>
+    <div class="tagline">Your Love, Decoded</div>
+  </div>
+  <div class="card">
+    <div class="sec-title">Choose Your Mode</div>
+    <div class="sec-sub">How do you want to find out?</div>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="selectMode('quiz')">
+        <span class="mode-icon">💌</span>
+        <div class="mode-name">Quiz Link</div>
+        <div class="mode-desc">Answer 20 questions → send link to partner → see your score together</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('quick')">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-name">Quick Score</div>
+        <div class="mode-desc">Just enter names → instant love score result</div>
+      </div>
+      <div class="mode-card wide" onclick="selectMode('friend')">
+        <span class="mode-icon">🤝</span>
+        <div class="mode-name">Friend Zone</div>
+        <div class="mode-desc">Proposal 💌 · Birthday wish 🎂 · Friendship Match 🤝 — make a link, send to your friend</div>
+      </div>
+    </div>
+  </div>
+  <p class="easter">✨ Some names carry a different kind of magic...</p>
+</div>
+
+<!-- ===== FRIEND ZONE ===== -->
+<div id="fzScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div id="fzBody"></div>
+</div>
+
+<!-- ===== QUIZ SETUP ===== -->
+<div id="quizSetupScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card">
+    <div class="sec-title">💌 Quiz Link Mode</div>
+    <div class="sec-sub">First, tell us about yourself</div>
+    <div class="input-group">
+      <label>Your Name</label>
+      <input type="text" id="qsMyName" placeholder="e.g. jack" maxlength="20">
+    </div>
+    <div class="input-group">
+      <label>Partner's Name</label>
+      <input type="text" id="qsPartnerName" placeholder="e.g. Roes" maxlength="20">
+    </div>
+    <div class="input-group">
+      <label>You are…</label>
+      <select id="qsGender" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.93rem;outline:none;appearance:none;">
+        <option value="boy" style="background:#050a18">Boy (BF)</option>
+        <option value="girl" style="background:#050a18">Girl (GF)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="startQuizSetup()">Start My Questions 💙</button>
+    <button class="btn btn-ghost" onclick="showScreen('homeScreen')">← Back</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ QUESTIONS (Person 1) ===== -->
+<div id="quizQScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="qLabel"></span><span id="qCount"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="qProg" style="width:0%"></div></div>
+  </div>
+  <div class="card">
+    <div class="who-pill" id="whoLabel">💙 Your questions</div>
+    <span class="q-emoji" id="qEmoji"></span>
+    <div class="q-text" id="qText"></div>
+    <div class="options-grid" id="qOpts"></div>
+    <button class="skip-btn" onclick="skipQuestion()">Skip this question →</button>
+  </div>
+</div>
+
+<!-- ===== LINK SHARE ===== -->
+<div id="linkScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card" style="text-align:center">
+    <span class="heart-loader">💌</span>
+    <div class="sec-title" style="justify-content:center;display:flex">Your questions done! 🎉</div>
+    <div class="sec-sub" style="text-align:center">Now send this link to <span id="partnerNameLink" style="color:var(--pink)"></span></div>
+    <div class="link-box" id="shareLinkBox">
+      <span id="shareLinkText"></span>
+      <button class="copy-btn" onclick="copyShareLink()">Copy</button>
+    </div>
+    <button class="btn btn-primary" style="margin-top:4px" onclick="shareToWA()">💬 Send via WhatsApp</button>
+    <div class="glow-div"></div>
+    <div style="font-size:0.78rem;color:var(--muted);line-height:1.8">
+      After they answer, come back here and tap below 👇
+    </div>
+    <button class="btn btn-ghost" onclick="checkPartnerDone()" style="margin-top:10px">🔍 Check Results</button>
+  </div>
+</div>
+
+<!-- ===== PARTNER QUESTIONS ===== -->
+<div id="partnerQScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card" style="text-align:center;padding:20px">
+    <div class="sec-title" style="display:flex;justify-content:center" id="partnerWelcome"></div>
+    <div class="sec-sub" style="text-align:center" id="partnerWelcomeSub"></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="pqLabel"></span><span id="pqCount"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="pqProg" style="width:0%"></div></div>
+  </div>
+  <div class="card">
+    <div class="who-pill" id="partnerWhoLabel" style="background:rgba(255,107,157,0.12);border-color:rgba(255,107,157,0.25);color:var(--pink);">🩷 Your questions</div>
+    <span class="q-emoji" id="pqEmoji"></span>
+    <div class="q-text" id="pqText"></div>
+    <div class="options-grid" id="pqOpts"></div>
+    <button class="skip-btn" onclick="skipPartnerQ()">Skip this question →</button>
+  </div>
+</div>
+
+<!-- ===== ANALYSIS LOADING ===== -->
+<div id="analysisScreen" class="screen">
+  <div class="load-center">
+    <span class="heart-loader">💘</span>
+    <div class="loading-names" id="analysisNames"></div>
+    <div class="loading-sub">CALCULATING YOUR BOND...</div>
+    <div class="dots"><span></span><span></span><span></span></div>
+    <div id="loadStatus"></div>
+  </div>
+</div>
+
+<!-- ===== QUICK SCORE SETUP ===== -->
+<div id="quickScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+  <div class="card">
+    <div class="sec-title">⚡ Quick Score</div>
+    <div class="sec-sub">Enter names and reveal your love score instantly</div>
+    <div class="input-group">
+      <label>💙 Your Name</label>
+      <input type="text" id="qkName1" placeholder="e.g. jack" maxlength="20">
+    </div>
+    <div class="input-group">
+      <label>🩷 Partner's Name</label>
+      <input type="text" id="qkName2" placeholder="e.g. Rose" maxlength="20">
+    </div>
+    <button class="btn btn-primary" onclick="doQuickScore()">Reveal Score 💫</button>
+    <button class="btn btn-ghost" onclick="showScreen('homeScreen')">← Back</button>
+  </div>
+  <p class="easter">Names matter more than you think... 👀</p>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="resultScreen" class="screen">
+  <div class="logo-bar"><div class="logo">LIK 💙</div></div>
+
+  <div id="zeroBlock" style="display:none">
+    <div class="card">
+      <div class="zero-card">
+        <div class="big">💀😭</div>
+        <p id="zeroMsg"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="normalBlock">
+    <div class="card" style="text-align:center">
+      <div class="result-badge" id="resBadge"></div>
+      <div class="score-ring">
+        <svg viewBox="0 0 155 155">
+          <defs>
+            <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff6b9d"/>
+              <stop offset="100%" stop-color="#4da6ff"/>
+            </linearGradient>
+          </defs>
+          <circle class="bg-ring" cx="77.5" cy="77.5" r="67.5"/>
+          <circle class="fg-ring" id="scoreRing" cx="77.5" cy="77.5" r="67.5"/>
+        </svg>
+        <div class="score-number" id="scoreNum">0%</div>
+      </div>
+      <div class="couple-names-r">
+        <span id="rn1"></span><span class="heart-join">💙</span><span id="rn2"></span>
+      </div>
+      <div class="result-type" id="rType"></div>
+      <div class="result-desc" id="rDesc"></div>
+    </div>
+
+    <div class="card" id="quizBreakdownCard" style="display:none">
+      <div class="sec-title">🎯 Answer Match</div>
+      <div class="sec-sub">How many questions you both answered the same</div>
+      <div id="matchBreakdown"></div>
+    </div>
+
+    <div class="card"> <div class="sec-title">📊 Relationship Meter</div>
+      <div id="statBars"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">🏆 Hidden Badges</div>
+      <div class="badges-row" id="badgesRow"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">🕰️ Timeline</div>
+      <div class="timeline" id="tlEl"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">📲 Share</div>
+      <div class="sec-sub">Let the world know 💙</div>
+      <div class="share-btns">
+        <button class="share-btn s-wa" onclick="shareWA()">💬 WhatsApp</button>
+        <button class="share-btn s-ig" onclick="shareIG()">📸 Instagram</button>
+        <button class="share-btn s-cp" onclick="copyResult()">🔗 Copy</button>
+        <button class="share-btn s-re" onclick="goHome()">🔄 Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="easter" id="finalEgg"></p>
+</div>
+
+</div><!-- #app -->
+
+<div id="adminOv"><div id="adminIn"></div></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+// BOY questions (about his GF) — 20 unique questions
+const BOY_QS = [
+  {e:'😢',t:'Aval sad ah irundha nee first enna seyvai?',
+   o:['Silently hug pannuven','Msg pannuven — "enna aachu?"','Funny meme pathupven','Just beside iruppven 🤍'],w:[8,6,4,9]},
+  {e:'😤',t:'Fight aprom yaaru first message pannuva?',
+   o:['Naan first pannuven 😌','Aval pannuva','Yarum pannala — cold war 😭','Naan sorry solluven even though not my fault'],w:[7,7,3,9]},
+  {e:'💬',t:'One word la aval ah describe pannuna?',
+   o:['Mine 💙','Chaos 😭','Home 🏠','Everything ✨'],w:[8,5,9,10]},
+  {e:'😤',t:'Aval yaaravadhu kitta adhigama pesuvanga — nee jealous aaviya?',
+   o:['Illa — full trust irukku','Konjam feel aagum but say matten','Aama — silently suffer panruven 😭','Naan direct ah keppuven'],w:[9,6,3,7]},
+  {e:'🔑',t:'Aval phone password therinja open pannuvia?',
+   o:['Illa — respect matter','Aama — nothing to hide','Avan theriyama — probably illa 😅','Aama but msgs padikka matten'],w:[8,7,3,9]},
+  {e:'🌙',t:'Late night call la aval thoongitta — nee enna pannuva?',
+   o:['Slowly cut pannuven 🥺','Wait pannuven — she wakes up','Message pottupven "night da"','Avale thoonganum nu feel aavum'],w:[9,6,8,9]},
+  {e:'🎁',t:'Aval birthday ku gift enna kuduppay?',
+   o:['Something expensive 💎','Handmade/personal 🎨','Surprise outing 🎉','Long emotional letter 😭'],w:[6,9,8,10]},
+  {e:'🚗',t:'Long drive la Avala kூட்டிட்டு poga chance kidaichutu — poga solluvia?',
+   o:['Kavanama yes solluven 💙','Casual ah yes','Situation paathu decide pannuven','Yes but hide pannuven 😅'],w:[10,6,5,4]},
+  {e:'🤝',t:'Aval enoda best friend kitta close ah pesuvanga — reaction?',
+   o:['Trust irukku — no issue','Konjam uncomfortable but ok','Naan notice pannuven 👀','Subtle ah withdraw aaguven'],w:[9,6,4,3]},
+  {e:'💭',t:'Aval enna paathi dream kandacha keppuvia?',
+   o:['Kavanama keppuven 😊','Pesi pesi details keppuven','Casual ah keppuven','Shy ah feel aagum — kekka matten'],w:[8,10,6,4]},
+  {e:'🌧️',t:'Rain la aval sicchukalannu msg pannaa — reaction?',
+   o:['Immediately pick drop pannuven','Umbrella kidaichurukkaa nu keppuven','Aww solluven 🥺','Come na wait panna solluven'],w:[9,7,6,8]},
+  {e:'📸',t:'Unga couple photo edukka sollichaa — pose?',
+   o:['Natural ah — already ready 😌','Shy aguvam but ok','Posing ellam illa — candid only','Enthustiastic ah full pose 😁'],w:[9,7,6,8]},
+  {e:'😴',t:'Aval bore ah irukka nu sollichaa — nee enna pannuva?',
+   o:['Immediate plan panni surprise pannuven','Song/movie suggest pannuven','Video call pannuven','Drive kittuvam solthuven'],w:[9,7,8,9]},
+  {e:'🥗',t:'Aval diet ah irukkaa — restaurant la enna order pannuva?',
+   o:['Ava diet match pannu food choose pannuven','Both ku separate order pannuven','Aval choose pannatum','Oru plate share pannurom 😌'],w:[8,7,6,9]},
+  {e:'🎵',t:'Love la which type of song reminds you of her?',
+   o:['Munbe Vaa type — soft 💙','Nenjukkul Peidhidum — emotional 😭','Uyire — intense 🔥','Any song becomes about her 😅'],w:[8,9,8,10]},
+  {e:'💔',t:'Avala hurt panniten nu therinja — reaction?',
+   o:['Immediately sorry solluven','Explain pannuven — unintentional','Silent ah feel aaguven inside','Ava ku better pannu overcompensate pannuven'],w:[8,7,6,9]},
+  {e:'🌅',t:'Future la aval kitta enna expect pannuva?',
+   o:['Just same feelings — enough','Settle down, family 💍','Growth together as individuals','Whatever she wants — follow pannuven 💙'],w:[7,8,9,10]},
+  {e:'💪',t:'Aval job/exam pressure la irukkaa — nee enna pannuva?',
+   o:['Motivate pannuven — silently support','Help notes, material, guidance','"Nee winner da" solluven repeatedly 😂','Just beside iruppven — no words needed'],w:[8,7,6,10]},
+  {e:'🤫',t:'Aval secret oru friend kitta share pannaa — nee feel aaguva?',
+   o:['Normal — friends are important','Konjam hurt aagum 😔','Understand pannuven — it\'s ok','Slow ah open aagum nu wait pannuven'],w:[9,5,8,7]},
+  {e:'💙',t:'Ava kitta one thing nee always love pannuva ennanu?',
+   o:['Her loyalty 🤝','The way she cares for everyone','Her laugh / smile 😊','The fact that she chose me 💙'],w:[9,8,9,10]},
+];
+
+// GIRL questions (about her BF) — 20 unique questions
+const GIRL_QS = [
+  {e:'😢',t:'Avan sad ah irundha nee first enna seyvai?',
+   o:['Silently hug pannuven','Msg pannuven — "enna aachu?"','Funny meme pathupven','Just beside iruppven 🤍'],w:[8,6,4,9]},
+  {e:'😤',t:'Fight aprom yaaru first message pannuva?',
+   o:['Naan first pannuven 😌','Avan pannuva','Yarum pannala — cold war 😭','Naan sorry solluven even though not my fault'],w:[7,7,3,9]},
+  {e:'💬',t:'One word la avan ah describe pannuna?',
+   o:['Mine 💙','Stubborn 😭','Safe 🏠','Idiot but loveable 😂'],w:[8,5,9,10]},
+  {e:'😤',t:'Avan yaar kitta close ah pesuvaan — nee jealous aaviya?',
+   o:['Illa — full trust','Konjam feel aagum but say matten','Aama — silently upset 😭','Direct ah keppuven'],w:[9,6,3,7]},
+  {e:'📱',t:'Avan late night irukkaan — first thought?',
+   o:['Work/gaming irukkaan — ok','Who is he talking to 👀','Miss panni msg pannuven','Ava thoonaatum nu feel aagum 🥺'],w:[9,3,8,7]},
+  {e:'🎂',t:'His birthday — nee enna pannuva?',
+   o:['Surprise trip/outing 🎉','Handmade memory gift 🎨','Emotional letter + photos 😭','Cook something special 🍳'],w:[8,9,10,8]},
+  {e:'💅',t:'New dress poduven — avan notice pannaana?',
+   o:['Always notice pannuvan 💙','Sometimes pannuvan','Rarely — naan sollanum','Never pannuvan 😭'],w:[10,7,5,3]},
+  {e:'🌧️',t:'Rain la irukkiyaa — avan pick up vara solluvaanaa?',
+   o:['Without asking varuvaan 💙','Sollichaa varuvaan','Busy ah irunthaa varamataan','Never thinks abt that stuff 😭'],w:[10,7,5,3]},
+  {e:'👥',t:'His friends vs me — important conflict?',
+   o:['He balances both well','Friends first sometimes — ok','Always me first 💙','Still figuring this out 😅'],w:[8,7,9,5]},
+  {e:'💭',t:'Avan enna paathi dream kandacha solluvaanaa?',
+   o:['Excitedly solluvan 😊','Shy ah solluvan','Naan keppanum','Apdiye hide pannuvan'],w:[10,8,6,4]},
+  {e:'📸',t:'Couple photo eduka sollichaa — avan?',
+   o:['Happy ah iruppaan','Shy but ok','Posing hate pannuvan — candid only','Idhu unnecessary nu solluvan 😭'],w:[9,7,6,3]},
+  {e:'🎵',t:'Which song reminds you of him?',
+   o:['Nenjukkul Peidhidum 😭','En Jathagam — intense 🔥','Uyirey Uyirey — soft 💙','Every song becomes abt him 😅'],w:[9,8,8,10]},
+  {e:'🤝',t:'Avan enna paathi others kitta pugazhndhan — nee?',
+   o:['Proud feel aagum 💙','Shy feel aagum','Don\'t mind it','He never does that 😭'],w:[10,7,6,3]},
+  {e:'😴',t:'Avan busy ah irukkaan — nee bore ah irukkiyaa?',
+   o:['Understand — let him finish','Miss pannuven but ok','Subtle hint koduppuven 😅','Directly tell pannuven'],w:[9,7,6,8]},
+  {e:'💪',t:'Avan exam/work pressure la irundha — nee?',
+   o:['Motivate + silently support','Notes/help pannuven','"You\'ll be fine" repeatedly solluven','Just iruppuven — no pressure'],w:[8,7,6,10]},
+  {e:'💔',t:'Avan hurt pannaa — nee enna pannuva?',
+   o:['Immediately tell pannuven','Silent ah feel aaguven','Cry but forgive quickly','Wait for him to realize'],w:[8,6,7,5]},
+  {e:'🌅',t:'Future la avan kitta enna expect pannuva?',
+   o:['Respect and understanding','Settle down together 💍','Grow individually + together','Just love — enough'],w:[9,8,9,7]},
+  {e:'🤫',t:'Avan enna kitta share pannaama pona — feel?',
+   o:['Hurt aagum, keppuven','Understand — some things private','Silent ah sad aaguven','Trust pannirukkiyaa nu wonder pannuven'],w:[7,9,6,5]},
+  {e:'🌙',t:'Late night avan cute msg pathuchaa — reaction?',
+   o:['Immediately reply 💙','Smile aagum, slowly reply','Screenshot panni save pannuven 😂','Aval reply wait panna solluven 😌'],w:[9,7,10,8]},
+  {e:'💙',t:'Avan kitta one thing nee always love pannuva ennanu?',
+   o:['His protective nature 🛡️','The way he looks at me 👀','His dumbness + cuteness 😂','The fact that he chose me 💙'],w:[9,9,8,10]},
+];
+
+// PARTNER questions (opposite set — different 20 questions for the receiver)
+const PARTNER_BOY_QS = GIRL_QS; // partner is girl, gets girl questions
+const PARTNER_GIRL_QS = BOY_QS; // partner is boy, gets boy questions
+
+const REL_TYPES = [
+  {min:90,type:'Soulmate Pair 💍',desc:'Indha connection rare da. Logic vida feeling strong. Trust unbreakable, future bright. You two are written in the stars.',badge:'WRITTEN IN STARS',grad:'linear-gradient(135deg,#ffd166,#ff6b9d)',bc:'#ffd166'},
+  {min:75,type:'Silent Loyal Couple 🌙',desc:'Words less, but actions loud. They know your silence before you speak. That\'s the rarest kind of love 💙',badge:'DEEP BOND',grad:'linear-gradient(135deg,#4da6ff,#b56aff)',bc:'#4da6ff'},
+  {min:60,type:'Chaotic Lovers 😭',desc:'Fight panrom, cry panrom, but end up together every single time. Chaotic? Yes. Real? 100% 💀',badge:'BEAUTIFUL CHAOS',grad:'linear-gradient(135deg,#ff6b9d,#ff9f43)',bc:'#ff9f43'},
+  {min:45,type:'Bestfriend Love 💫',desc:'Before lovers, best friends. That foundation? Unshakeable. Keep growing together 💛',badge:'BEST FRIENDS',grad:'linear-gradient(135deg,#ffd166,#48c774)',bc:'#48c774'},
+  {min:0, type:'Toxic but Cute 💀',desc:'Y\'all fight like enemies and love like soulmates. Somewhere in between is your truth. Fix the communication 😭',badge:'WORK IN PROGRESS',grad:'linear-gradient(135deg,#b56aff,#ff6b9d)',bc:'#b56aff'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  mode: '',
+  myName:'', partnerName:'', gender:'boy',
+  myAnswers:[], partnerAnswers:[],
+  qIndex:0, pqIndex:0,
+  skipped1:0, skipped2:0,
+  finalScore:0,
+  isSpecial:false, isZero:false,
+  sessionKey:'',
+};
+
+// ============================================================
+// SPECIAL NAME LOGIC
+// ============================================================
+const SPECIAL = [
+  ['rusthi','rushdha'],['rushdhi','rushdha'],['rusthi','rustha'],['rushdhi','rustha'],
+  ['rushdhi','rushdha'],['rushthi','rustha'],
+];
+const ZERO_PAIRS = [
+  ['rusthi','zumra'],['rushdhi','zumra'],['rush','zumra'],
+];
+
+function checkNames(a,b){
+  const n1=a.toLowerCase().trim(), n2=b.toLowerCase().trim();
+  for(const[x,y] of ZERO_PAIRS) if((n1===x&&n2===y)||(n1===y&&n2===x)) return 'zero';
+  for(const[x,y] of SPECIAL) if((n1===x&&n2===y)||(n1===y&&n2===x)) return 'special';
+  return null;
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function spawnHearts(x,y){
+  ['💗','💕','💙','✨','💫','🩷'].forEach((em,i)=>{
+    const h=document.createElement('div');
+    h.className='heart-particle';
+    h.textContent=em;
+    h.style.left=(x+(Math.random()-0.5)*60)+'px';
+    h.style.top=(y-20)+'px';
+    h.style.animationDelay=(i*0.08)+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3500);
+  });
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.classList.contains('option-btn')&&e.target.id!=='tapHeart')
+    spawnHearts(e.clientX,e.clientY);
+});
+
+function confetti(){
+  const cols=['#ff6b9d','#4da6ff','#ffd166','#b56aff','#48c774','#ff9f43'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=cols[Math.floor(Math.random()*cols.length)];
+    c.style.setProperty('--dur',(2+Math.random()*2)+'s');
+    c.style.animationDelay=(Math.random()*1.5)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+  }
+}
+
+// ============================================================
+// STAR CANVAS
+// ============================================================
+const cv=document.getElementById('starCanvas'),cx=cv.getContext('2d');
+let stars=[];
+function rsz(){
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  stars=Array.from({length:110},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+0.2,a:Math.random(),da:(Math.random()-0.5)*0.006}));
+}
+rsz(); window.addEventListener('resize',rsz);
+(function anim(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  stars.forEach(s=>{
+    s.a=Math.max(0.1,Math.min(1,s.a+s.da));
+    if(s.a<=0.1||s.a>=1)s.da*=-1;
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(200,210,255,${s.a})`;cx.fill();
+  });
+  requestAnimationFrame(anim);
+})();
+
+// ============================================================
+// MODE SELECT
+// ============================================================
+function selectMode(m){
+  likPrefill();
+  S.mode=m;
+  if(m==='quiz') showScreen('quizSetupScreen');
+  else if(m==='friend') fzHome();
+  else showScreen('quickScreen');
+}
+
+// ============================================================
+// QUIZ SETUP
+// ============================================================
+function startQuizSetup(){
+  const n1=document.getElementById('qsMyName').value.trim();
+  const n2=document.getElementById('qsPartnerName').value.trim();
+  if(!n1||!n2){alert('💙 Please enter both names!');return;}
+  S.myName=n1; S.partnerName=n2;
+  S.gender=document.getElementById('qsGender').value;
+  S.myAnswers=[]; S.qIndex=0; S.skipped1=0;
+  likLog('quiz-start',n1,n2,null);
+  S.sessionKey='ss_'+btoa(n1+'|'+n2+'|'+Date.now()).replace(/=/g,'').substring(0,12);
+  showScreen('quizQScreen');
+  renderQ1();
+}
+
+// ============================================================
+// PERSON 1 QUESTIONS
+// ============================================================
+function getMyQs(){return S.gender==='boy'?BOY_QS:GIRL_QS;}
+
+function renderQ1(){
+  const qs=getMyQs();
+  const q=qs[S.qIndex];
+  const total=qs.length;
+  const done=S.qIndex;
+  document.getElementById('qProg').style.width=(done/total*100)+'%';
+  document.getElementById('qCount').textContent=`${done+1} / ${total}`;
+  document.getElementById('qLabel').textContent=S.gender==='boy'?'💙 BF Questions':'🩷 GF Questions';
+  document.getElementById('whoLabel').textContent=(S.gender==='boy'?'💙 '+S.myName+'\'s questions':'🩷 '+S.myName+'\'s questions');
+  document.getElementById('qEmoji').textContent=q.e;
+  document.getElementById('qText').textContent=q.t;
+  const opts=document.getElementById('qOpts');
+  opts.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='option-btn';
+    b.textContent=opt;
+    b.onclick=()=>answerQ1(i,b);
+    opts.appendChild(b);
+  });
+}
+
+function answerQ1(i,el){
+  document.querySelectorAll('#qOpts .option-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  spawnHearts(el.getBoundingClientRect().left+el.offsetWidth/2,el.getBoundingClientRect().top);
+  S.myAnswers.push(getMyQs()[S.qIndex].w[i]);
+  setTimeout(()=>nextQ1(),380);
+}
+
+function skipQuestion(){
+  S.myAnswers.push(5); // middle score for skipped
+  S.skipped1++;
+  nextQ1();
+}
+
+function nextQ1(){
+  S.qIndex++;
+  if(S.qIndex>=getMyQs().length){
+    // Save to localStorage for partner to retrieve
+    const data={myName:S.myName,partnerName:S.partnerName,gender:S.gender,answers:S.myAnswers,key:S.sessionKey};
+    try{localStorage.setItem(S.sessionKey,JSON.stringify(data));}catch(e){}
+    fbSet('lik_sessions',S.sessionKey,Object.assign({ts:Date.now()},data));
+    showLinkScreen();
+  } else renderQ1();
+}
+
+// ============================================================
+// LINK SCREEN
+// ============================================================
+function showLinkScreen(){
+  showScreen('linkScreen');
+  document.getElementById('partnerNameLink').textContent=S.partnerName;
+  // Fake URL with session key encoded
+  const fakeLink=window.location.href.split('?')[0]+'?partner='+S.sessionKey+'&from='+encodeURIComponent(S.myName);
+  document.getElementById('shareLinkText').textContent=fakeLink;
+  S._shareLink=fakeLink;
+}
+
+function copyShareLink(){
+  navigator.clipboard.writeText(S._shareLink).then(()=>{
+    document.querySelector('.copy-btn').textContent='✅';
+    setTimeout(()=>document.querySelector('.copy-btn').textContent='Copy',2000);
+  });
+}
+
+function shareToWA(){
+  const msg=`💙 ${S.myName} irukkura link open pannu, enoda questions answer pannu — namma love score paakalam!\n\n${S._shareLink}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg));
+}
+
+function checkPartnerDone0(){
+  // Check if partner answered (from localStorage)
+  try{
+    const saved=localStorage.getItem(S.sessionKey);
+    if(saved){
+      const d=JSON.parse(saved);
+      if(d.partnerAnswers&&d.partnerAnswers.length>0){
+        S.partnerAnswers=d.partnerAnswers;
+        runAnalysis();
+        return;
+      }
+    }
+  }catch(e){}
+  // Simulate: for demo purposes, if partner hasn't answered yet → show partner Q screen directly
+  if(FB.on){alert('⏳ Partner hasn\'t answered yet. Try again in a bit 💙');return;}
+  alert('💙 Partner hasn\'t answered yet!\n\nFor demo: Starting partner questions now...');
+  startPartnerFlow();
+}
+
+// ============================================================
+// PARTNER QUESTIONS FLOW
+// ============================================================
+function startPartnerFlow(){
+  // Detect if opened via link
+  const params=new URLSearchParams(window.location.search);
+  const pKey=params.get('partner');
+  const fromName=params.get('from');
+  if(pKey&&fromName){
+    try{
+      const saved=localStorage.getItem(pKey);
+      if(saved){
+        const d=JSON.parse(saved);
+        S.myName=d.myName||fromName; S.partnerName=d.partnerName||'You';
+        S.gender=d.gender||'boy'; S.myAnswers=d.answers||[];
+        S.sessionKey=pKey;
+      }
+    }catch(e){S.myName=fromName;S.partnerName='You';S.gender='boy';}
+  }
+  S.partnerAnswers=[]; S.pqIndex=0; S.skipped2=0;
+  showScreen('partnerQScreen');
+  document.getElementById('partnerWelcome').textContent=`Hey ${S.partnerName}! 🩷`;
+  document.getElementById('partnerWelcomeSub').textContent=`${S.myName} wants to know your compatibility. Answer 20 questions honestly!`;
+  renderPartnerQ();
+}
+
+function getPartnerQs(){return S.gender==='boy'?PARTNER_BOY_QS:PARTNER_GIRL_QS;}
+
+function renderPartnerQ(){
+  const qs=getPartnerQs();
+  const q=qs[S.pqIndex];
+  const total=qs.length;
+  document.getElementById('pqProg').style.width=(S.pqIndex/total*100)+'%';
+  document.getElementById('pqCount').textContent=`${S.pqIndex+1} / ${total}`;
+  document.getElementById('pqLabel').textContent=S.gender==='boy'?'🩷 GF Questions':'💙 BF Questions';
+  document.getElementById('partnerWhoLabel').textContent=(S.gender==='boy'?'🩷 '+S.partnerName+'\'s questions':'💙 '+S.partnerName+'\'s questions');
+  document.getElementById('pqEmoji').textContent=q.e;
+  document.getElementById('pqText').textContent=q.t;
+  const opts=document.getElementById('pqOpts');
+  opts.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='option-btn';
+    b.textContent=opt;
+    b.onclick=()=>answerPartnerQ(i,b);
+    opts.appendChild(b);
+  });
+}
+
+function answerPartnerQ(i,el){
+  document.querySelectorAll('#pqOpts .option-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  spawnHearts(el.getBoundingClientRect().left+el.offsetWidth/2,el.getBoundingClientRect().top);
+  S.partnerAnswers.push(getPartnerQs()[S.pqIndex].w[i]);
+  setTimeout(()=>nextPartnerQ(),380);
+}
+
+function skipPartnerQ(){
+  S.partnerAnswers.push(5);
+  S.skipped2++;
+  nextPartnerQ();
+}
+
+function nextPartnerQ(){
+  S.pqIndex++;
+  if(S.pqIndex>=getPartnerQs().length){
+    // Save partner answers
+    try{
+      const saved=localStorage.getItem(S.sessionKey);
+      const d=saved?JSON.parse(saved):{};
+      d.partnerAnswers=S.partnerAnswers;
+      localStorage.setItem(S.sessionKey,JSON.stringify(d));
+    }catch(e){}
+    fbSet('lik_sessions',S.sessionKey,{partnerAnswers:S.partnerAnswers,partnerAt:Date.now()},true);
+    runAnalysis();
+  } else renderPartnerQ();
+}
+
+// ============================================================
+// QUICK SCORE
+// ============================================================
+function doQuickScore(){
+  const n1=document.getElementById('qkName1').value.trim();
+  const n2=document.getElementById('qkName2').value.trim();
+  if(!n1||!n2){alert('💙 Enter both names!');return;}
+  S.myName=n1; S.partnerName=n2;
+  S.myAnswers=[]; S.partnerAnswers=[];
+  const chk=checkNames(n1,n2);
+  S.isSpecial=chk==='special'; S.isZero=chk==='zero';
+  runAnalysis();
+}
+
+// ============================================================
+// ANALYSIS + RESULT
+// ============================================================
+function runAnalysis(){
+  showScreen('analysisScreen');
+  document.getElementById('analysisNames').textContent=`${S.myName} 💙 ${S.partnerName}`;
+  const steps=['Analyzing your answers... 💭','Comparing both responses... 🔍','Reading emotional patterns... 💗','Calculating love coefficient... 💘','Finalizing your bond... ✨'];
+  let si=0;
+  const iv=setInterval(()=>{
+    document.getElementById('loadStatus').innerHTML=steps.slice(0,si+1).map(s=>`✅ ${s}`).join('<br>');
+    si++;
+    if(si>=steps.length){clearInterval(iv);setTimeout(buildResult,900);}
+  },550);
+}
+
+function buildResult(){
+  // Check special names
+  const chk=checkNames(S.myName,S.partnerName);
+  if(chk==='special')S.isSpecial=true;
+  if(chk==='zero')S.isZero=true;
+  likLog(S.mode||'quiz',S.myName,S.partnerName,null);
+
+  showScreen('resultScreen');
+  document.getElementById('zeroBlock').style.display='none';
+  document.getElementById('normalBlock').style.display='block';
+
+  if(S.isZero){
+    document.getElementById('zeroBlock').style.display='block';
+    document.getElementById('normalBlock').style.display='none';
+    document.getElementById('zeroMsg').textContent=
+      '💀😭 Rusthi + Zumra = 0% compatibility. The universe said a hard NO. Some connections are just not written da... Try again with the right one 😭';
+    document.getElementById('finalEgg').textContent='Some name combinations have cosmic blockers 😭';
+    likSetLastScore(0);
+    likResult(0);
+    return;
+  }
+
+  // Score calculation
+  let score;
+  if(S.isSpecial){
+    score=100;
+  } else if(likOv(S.myName,S.partnerName)!=null){
+    score=likOv(S.myName,S.partnerName);
+  } else if(S.mode==='quick'){
+    // Name-based hash score
+    const s1=S.myName.toLowerCase().split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const s2=S.partnerName.toLowerCase().split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    score=Math.min(97,Math.max(40,((s1*s2)%58)+42));
+  } else {
+    // Quiz mode: average of both answer sets
+    const allAns=[...S.myAnswers,...S.partnerAnswers];
+    const avg=allAns.length?allAns.reduce((a,b)=>a+b,0)/allAns.length:6;
+    const maxW=10;
+    const base=(avg/maxW)*85;
+    // Match bonus: how many questions had same top choice (index 3 = best)
+    let matchBonus=0;
+    const minLen=Math.min(S.myAnswers.length,S.partnerAnswers.length);
+    for(let i=0;i<minLen;i++){
+      if(S.myAnswers[i]===S.partnerAnswers[i])matchBonus++;
+    }
+    const matchPct=minLen>0?matchBonus/minLen:0;
+    score=Math.min(99,Math.max(40,Math.round(base+matchPct*15)));
+  }
+  S.finalScore=score;
+  likSetLastScore(score);
+  likResult(score);
+
+  // Names
+  document.getElementById('rn1').textContent=S.myName;
+  document.getElementById('rn2').textContent=S.partnerName;
+
+  // Score ring
+  setTimeout(()=>{
+    const r=document.getElementById('scoreRing');
+    const circ=2*Math.PI*67.5;
+    r.style.strokeDashoffset=circ-(score/100)*circ;
+    document.getElementById('scoreNum').textContent=score+'%';
+  },300);
+
+  // Rel type
+  const rt=REL_TYPES.find(r=>score>=r.min);
+  document.getElementById('rType').textContent=rt.type;
+  document.getElementById('rDesc').textContent=S.isSpecial?
+    `${S.myName} + ${S.partnerName} — Indha pairing thaana legend. Universe certified, soul confirmed. Written in the stars da 💙🌙` : rt.desc;
+  const badge=document.getElementById('resBadge');
+  badge.textContent=S.isSpecial?'UNIVERSE CERTIFIED 💙':rt.badge;
+  badge.style.background=S.isSpecial?'linear-gradient(135deg,#ffd166,#ff6b9d)':rt.grad;
+
+  // Quiz breakdown card
+  if(S.mode==='quiz'&&S.partnerAnswers.length>0){
+    document.getElementById('quizBreakdownCard').style.display='block';
+    const minLen=Math.min(S.myAnswers.length,S.partnerAnswers.length);
+    let matches=0;
+    for(let i=0;i<minLen;i++) if(S.myAnswers[i]===S.partnerAnswers[i])matches++;
+    const pct=Math.round(matches/minLen*100);
+    document.getElementById('matchBreakdown').innerHTML=`
+      <div style="text-align:center;padding:10px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--pink)">${matches}/${minLen}</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Questions matched — ${pct}% same thinking</div>
+        <div style="margin-top:12px;height:8px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--pink),var(--blue));border-radius:99px;transition:width 1.5s ease"></div>
+        </div>
+      </div>`;
+    setTimeout(()=>{
+      const bar=document.querySelector('#matchBreakdown div[style*="height:100%"]');
+      if(bar)bar.style.width=pct+'%';
+    },400);
+  }
+
+  // Stats
+  const stats=[
+    {l:'Trust',v:S.isSpecial?100:Math.min(100,score+8),c:'#4da6ff'},
+    {l:'Communication',v:S.isSpecial?98:Math.max(48,score-7),c:'#b56aff'},
+    {l:'Loyalty',v:S.isSpecial?100:Math.min(100,score+13),c:'#ff6b9d'},
+    {l:'Chemistry',v:S.isSpecial?100:Math.min(100,score+4),c:'#ffd166'},
+    {l:'Overthinking 😭',v:S.isSpecial?5:Math.min(200,145-score+(Math.random()*35|0)),c:'#ff6b9d',funny:true},
+  ];
+  const sb=document.getElementById('statBars');sb.innerHTML='';
+  stats.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='stat-row';
+    row.innerHTML=`<div class="stat-label">${s.l}</div><div class="stat-track"><div class="stat-fill" id="sf${i}" style="background:${s.c}"></div></div><div class="stat-pct">${s.v}%</div>`;
+    sb.appendChild(row);
+    setTimeout(()=>{document.getElementById('sf'+i).style.width=Math.min(100,s.v)+'%';},450+i*140);
+  });
+
+  // Badges
+  const allB=[
+    {e:'💙',t:'Deep Feeler'},{e:'🌙',t:'Night Owl Couple'},{e:'🫶',t:'Silent Support'},
+    {e:'✨',t:'Star-Crossed'},{e:'🔥',t:'Intense Bond'},{e:'🎯',t:'Perfect Timing'},
+    {e:'💎',t:'Rare Find'},{e:'🌸',t:'Soft Energy'},
+  ];
+  const picks=S.isSpecial?allB:[...allB].sort(()=>Math.random()-0.5).slice(0,3+Math.floor(score/26));
+  const br=document.getElementById('badgesRow');br.innerHTML='';
+  picks.forEach((b,i)=>{
+    const chip=document.createElement('div');chip.className='badge-chip';chip.style.animationDelay=(i*0.09)+'s';
+    chip.innerHTML=`<span>${b.e}</span><span>${b.t}</span>`;br.appendChild(chip);
+  });
+
+  // Timeline
+  const tls=[
+    {l:'First Spark',t:`${S.myName} noticed something different ✨`},
+    {l:'First Conversation',t:'Just talking... but something felt right 💙'},
+    {l:'First Fight 😭',t:'Hot. Emotional. Came back stronger.'},
+    {l:'First "Us" Moment',t:`Quietly becoming each other's person 🌙`},
+    {l:'Right Now',t:'Still writing the best chapters 📖'},
+  ];
+  const tl=document.getElementById('tlEl');tl.innerHTML='';
+  tls.forEach((t,i)=>{
+    const item=document.createElement('div');item.className='tl-item';item.style.animationDelay=(i*0.1)+'s';
+    item.innerHTML=`<div class="tl-dot"></div><div class="tl-label">${t.l}</div><div class="tl-text">${t.t}</div>`;
+    tl.appendChild(item);
+  });
+
+  document.getElementById('finalEgg').textContent=S.isSpecial?
+    '💙 Rusthi + Rushdha = Universe\'s favorite pair. 100% certified da 😭✨':
+    '✨ LIK — Because every love story deserves to be felt';
+
+  setTimeout(confetti,700);
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareWA(){
+  const rt=document.getElementById('rType')?.textContent||'';
+  const txt=`💙 LIK Result!\n${S.myName} + ${S.partnerName} = ${S.finalScore}% Love Score\nType: ${rt}\n\nFind yours 👉 rusthicrush.github.io/Rush2/rr.html`;
+  window.open('https://wa.me/?text='+encodeURIComponent(txt));
+}
+function shareIG(){alert('📸 Screenshot this and post to your Instagram story! Tag your partner 💙');}
+function copyResult(){
+  const txt=`💙 ${S.myName} + ${S.partnerName} = ${S.finalScore}% on LIK! rusthicrush.github.io/Rush2/rr.html`;
+  navigator.clipboard.writeText(txt).then(()=>alert('✅ Copied! Share it 💙'));
+}
+function goHome(){
+  Object.assign(S,{mode:'',myName:'',partnerName:'',gender:'boy',myAnswers:[],partnerAnswers:[],qIndex:0,pqIndex:0,skipped1:0,skipped2:0,finalScore:0,isSpecial:false,isZero:false,sessionKey:''});
+  showScreen('homeScreen');
+}
+
+
+// ============================================================
+// FRIEND ZONE (proposal / birthday / friendship match)
+// ============================================================
+const FZ_QS=['Favourite food','Favourite colour','Favourite movie / series','Favourite song','Favourite place','Favourite drink','Favourite game / sport','Dream job','Favourite actor / actress','Best memory with me'];
+const FZ_KIND={p:['💌','Proposal','Cute proposal card — Yes / No'],b:['🎂','Birthday Wish','Birthday card with your wish'],f:['🤝','Friendship Match','You enter your likes, friend guesses, gets marks']};
+let FZ=null;
+const fzEnc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const fzDec=x=>JSON.parse(decodeURIComponent(escape(atob(x.replace(/-/g,'+').replace(/_/g,'/')))));
+const fzEsc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fzNorm=x=>x.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+const fzWa=(t,p)=>'https://wa.me/'+(p||'')+'?text='+encodeURIComponent(t);
+const fzEl=id=>document.getElementById(id);
+function fzShow(h){fzEl('fzBody').innerHTML=h;showScreen('fzScreen');likPrefill();if(!window._fzAmb)window._fzAmb=setInterval(fzAmb,600);}
+function fzAmb(){
+  if(!fzEl('fzScreen').classList.contains('active')||document.hidden)return;
+  const t=FZ&&FZ.d?FZ.d.t:'p';
+  const set={p:['💗','💕','🌹','✨','💙'],b:['🎈','🎉','✨','🎂','💙'],f:['💙','✨','🤝','💫']}[t];
+  const e=document.createElement('div');
+  e.className='fz-float';e.textContent=set[Math.floor(Math.random()*set.length)];
+  e.style.left=Math.random()*94+'%';e.style.fontSize=(14+Math.random()*20)+'px';
+  e.style.setProperty('--d',(6+Math.random()*4)+'s');e.style.setProperty('--x',(Math.random()*80-40)+'px');
+  document.body.appendChild(e);setTimeout(()=>e.remove(),10500);
+}
+function fzType(el,text,done){
+  let i=0;const sp=text.length>200?14:32;el.classList.add('fz-cursor');
+  (function n(){el.textContent=text.slice(0,++i);if(i<text.length)setTimeout(n,sp);else{el.classList.remove('fz-cursor');done&&done();}})();
+}
+
+function fzHome(){
+  fzShow(`<div class="card"><div class="sec-title">Friend Zone 🤝</div><div class="sec-sub">Pick one, fill it, send the link</div>
+  <div class="mode-grid" style="grid-template-columns:1fr">`+
+  Object.keys(FZ_KIND).map(k=>`<div class="mode-card" onclick="fzForm('${k}')"><span class="mode-icon">${FZ_KIND[k][0]}</span><div class="mode-name">${FZ_KIND[k][1]}</div><div class="mode-desc">${FZ_KIND[k][2]}</div></div>`).join('')+
+  `</div><button class="btn btn-ghost" onclick="goHome()">← Back</button></div>`);
+}
+
+function fzForm(t){
+  let x='';
+  if(t==='p')x=`<div class="input-group"><label>Your message</label><textarea id="fzMsg" placeholder="Write it from the heart…"></textarea></div>`;
+  if(t==='b')x=`<div class="input-group"><label>Your birthday wish</label><textarea id="fzMsg" placeholder="Happy birthday da! …"></textarea></div>`;
+  if(t==='f')x=`<div class="sec-sub" style="margin-top:6px">Fill what you like (blank = skip, minimum 3)</div>`+
+    FZ_QS.map(q=>`<div class="input-group"><label>${q}</label><input class="fzQa" data-q="${fzEsc(q)}"></div>`).join('')+
+    `<div id="fzCustom"></div><button class="btn btn-ghost" style="margin:0 0 12px" onclick="fzAdd()">+ Add your own question</button>`;
+  fzShow(`<div class="card"><div class="sec-title">${FZ_KIND[t][0]} ${FZ_KIND[t][1]}</div><div class="sec-sub">Fill details</div>
+  <div class="input-group"><label>Your name</label><input id="fzFrom" placeholder="Your name"></div>
+  <div class="input-group"><label>Friend's name</label><input id="fzTo" placeholder="Their name"></div>
+  <div class="input-group"><label>Your WhatsApp number for reply (optional, e.g. 94771234567)</label><input id="fzPh" inputmode="numeric"></div>
+  ${x}<button class="btn btn-primary" onclick="fzMake('${t}')">Create Link 💙</button>
+  <button class="btn btn-ghost" onclick="fzHome()">← Back</button></div>`);
+}
+
+function fzAdd(){
+  const d=document.createElement('div');
+  d.innerHTML=`<div class="input-group"><label>Your question</label><input class="fzCq"></div><div class="input-group"><label>Your answer</label><input class="fzCa"></div>`;
+  fzEl('fzCustom').appendChild(d);
+}
+
+function fzMake(t){
+  const from=fzEl('fzFrom').value.trim(),to=fzEl('fzTo').value.trim();
+  if(!from||!to){alert('💙 Please enter both names!');return;}
+  const d={t,from,to,ph:fzEl('fzPh').value.replace(/\D/g,'')};
+  if(t!=='f'){d.m=fzEl('fzMsg').value.trim();if(!d.m){alert('💙 Write a message!');return;}}
+  else{
+    d.q=[];
+    document.querySelectorAll('.fzQa').forEach(i=>{if(i.value.trim())d.q.push([i.dataset.q,i.value.trim()]);});
+    const cq=[...document.querySelectorAll('.fzCq')],ca=[...document.querySelectorAll('.fzCa')];
+    cq.forEach((q,i)=>{if(q.value.trim()&&ca[i].value.trim())d.q.push([q.value.trim(),ca[i].value.trim()]);});
+    if(d.q.length<3){alert('💙 Answer at least 3 questions!');return;}
+  }
+  const base=window.location.href.split('#')[0].split('?')[0];
+  let link=base+'?fz='+fzEnc(d);
+  if(FB.on){const id='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);fbSet('lik_fz',id,Object.assign({ts:Date.now()},d,d.q?{q:d.q.map(x=>({q:x[0],a:x[1]}))}:{}));link=base+'?fzid='+id;}
+  const txt={p:`💌 ${to}, enakku unkitta oru vishayam kekkanum — open pannu 👇\n${link}`,b:`🎂 ${to}, unakaaga oru surprise — open pannu 👇\n${link}`,f:`🤝 ${to}, ennai evlo therium? Try pannu, marks paakalam 😎\n${link}`}[t];
+  likLog('friend-'+t,from,to,null);
+  FZ={link,txt};
+  fzShow(`<div class="card" style="text-align:center"><span class="heart-loader">🎉</span><div class="sec-title" style="justify-content:center;display:flex">Link ready!</div>
+  <div class="sec-sub">Send it to <span style="color:var(--pink)">${fzEsc(to)}</span></div>
+  <div class="link-box"><span>${fzEsc(link)}</span></div>
+  <button class="btn btn-ghost" style="margin:0 0 10px" onclick="navigator.clipboard.writeText(FZ.link).then(()=>{this.textContent='✅ Copied'})">Copy link</button>
+  <button class="btn btn-primary" onclick="window.open(fzWa(FZ.txt))">💬 Send via WhatsApp</button>
+  <button class="btn btn-ghost" onclick="fzHome()">Make another</button></div>`);
+}
+
+function fzView(d){
+  FZ={d,i:0,ans:[]};
+  if(d.t==='p'){
+    fzShow(`<div class="card fz-glow" style="text-align:center"><div class="fz-title">For ${fzEsc(d.to)} 💌</div>
+    <div class="fz-env" id="fzEnv" onclick="fzOpenEnv()"><div class="eb"></div><div class="ef"></div><div class="es">💗</div></div>
+    <div class="fz-hint" id="fzHint">Tap the envelope</div><div id="fzLetter"></div></div>`);
+  } else if(d.t==='b'){
+    fzShow(`<div class="card fz-glow" style="text-align:center"><div class="fz-title">${fzEsc(d.from)} sent you a gift 🎁</div>
+    <span class="fz-gift" id="fzGift" onclick="fzOpenGift()">🎁</span><div class="fz-hint" id="fzHint">Tap to open</div><div id="fzLetter"></div></div>`);
+  } else {
+    fzShow(`<div class="card fz-glow" style="text-align:center"><span class="fz-bigheart">🤝</span><div class="fz-title">How well do you know ${fzEsc(d.from)}?</div>
+    <div class="sec-sub">${fzEsc(d.to)}, ${d.q.length} questions. Every correct answer = 1 mark 💙</div>
+    <button class="btn btn-primary fz-yes" onclick="fzQ()">Start 💙</button></div>`);
+  }
+}
+
+function fzOpenEnv(){
+  const d=FZ.d;fzEl('fzEnv').classList.add('open');fzEl('fzHint').remove();
+  setTimeout(()=>{
+    fzEl('fzEnv').style.display='none';
+    fzEl('fzLetter').innerHTML=`<div class="fz-pop"><span class="fz-bigheart" style="font-size:3.4rem">💖</span><div class="fz-msg" id="fzTxt" style="min-height:70px"></div>
+    <div class="sec-sub" id="fzSign" style="opacity:0">— ${fzEsc(d.from)} 💙</div>
+    <div class="fz-arena" id="fzAr" style="opacity:0;transition:opacity .6s"><button class="btn btn-primary fz-yes" style="left:0" onclick="fzAnswer('Yes 💙')">Yes 💙</button>
+    <button class="btn btn-ghost" id="fzNo" style="margin:0" onmouseenter="fzDodge(event)" ontouchstart="fzDodge(event)" onclick="fzAnswer('I need some time 🤔')">No</button></div></div>`;
+    fzType(fzEl('fzTxt'),d.m,()=>{fzEl('fzSign').style.opacity=1;fzEl('fzAr').style.opacity=1;});
+  },900);
+}
+
+function fzOpenGift(){
+  const d=FZ.d;fzEl('fzHint').remove();fzEl('fzGift').style.animation='none';fzEl('fzGift').textContent='🎂';
+  confetti();for(let i=0;i<14;i++)setTimeout(fzAmb,i*90);
+  setTimeout(()=>{
+    fzEl('fzGift').style.display='none';
+    fzEl('fzLetter').innerHTML=`<div class="fz-pop"><div class="fz-title" style="font-size:2.5rem">Happy Birthday ${fzEsc(d.to)}! 🎉</div>
+    <div class="fz-msg" id="fzTxt" style="min-height:70px"></div><div class="sec-sub" id="fzSign" style="opacity:0">— ${fzEsc(d.from)} 💙</div>
+    <a class="btn btn-primary fz-yes" style="display:block;text-decoration:none;opacity:0;transition:opacity .6s" id="fzThx" target="_blank" rel="noopener" href="${fzWa('Thank you '+d.from+'! 🥳💙',d.ph)}">💬 Say thanks on WhatsApp</a></div>`;
+    fzType(fzEl('fzTxt'),d.m,()=>{fzEl('fzSign').style.opacity=1;fzEl('fzThx').style.opacity=1;confetti();});
+  },700);
+}
+
+function fzDodge(e){
+  e.preventDefault();
+  const a=fzEl('fzAr'),b=fzEl('fzNo');
+  b.style.left=Math.random()*(a.clientWidth-b.offsetWidth)+'px';
+  b.style.top=Math.random()*(a.clientHeight-b.offsetHeight)+'px';
+}
+
+function fzAnswer(a){
+  const d=FZ.d,yes=a.startsWith('Yes');
+  fzShow(`<div class="card fz-glow" style="text-align:center"><span class="fz-bigheart">${yes?'💞':'🤝'}</span><div class="fz-title">${fzEsc(a)}</div>
+  <div class="sec-sub">Let ${fzEsc(d.from)} know</div>
+  <a class="btn btn-primary fz-yes" style="display:block;text-decoration:none" target="_blank" rel="noopener" href="${fzWa(d.to+': '+a,d.ph)}">💬 Send my answer on WhatsApp</a></div>`);
+  if(yes){confetti();for(let i=0;i<20;i++)setTimeout(fzAmb,i*80);}
+}
+
+const FZ_EM=['🍕','🎨','🎬','🎵','📍','🥤','🎮','💼','🌟','💭'];
+function fzQ(){
+  const d=FZ.d,i=FZ.i,n=d.q.length;
+  fzShow(`<div class="card fz-glow"><div class="prog-wrap"><div class="prog-row"><span>Question ${i+1} / ${n}</span><span>${Math.round(i/n*100)}%</span></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(i/n*100)}%"></div></div></div>
+  <div class="fz-pop"><span class="q-emoji">${FZ_EM[i%FZ_EM.length]}</span><div class="q-text">${fzEsc(d.q[i][0])}?</div>
+  <div class="input-group"><input id="fzGi" placeholder="Your guess…" autocomplete="off" onkeydown="if(event.key==='Enter')fzNext()"></div>
+  <button class="btn btn-primary" onclick="fzNext()">${i+1<n?'Next 💙':'Finish 🎉'}</button></div></div>`);
+  setTimeout(()=>fzEl('fzGi')&&fzEl('fzGi').focus(),50);
+}
+function fzNext(){FZ.ans[FZ.i]=fzEl('fzGi').value.trim();FZ.i++;if(FZ.i<FZ.d.q.length)fzQ();else fzGrade();}
+
+function fzGrade(){
+  const d=FZ.d;let c=0;
+  const rows=d.q.map(([q,a],i)=>{
+    const g=FZ.ans[i]||'',x=fzNorm(g),y=fzNorm(a);
+    const ok=x&&y&&(x===y||(x.length>=3&&y.includes(x))||(y.length>=3&&x.includes(y)));
+    if(ok)c++;
+    return `<div class="fz-row" style="animation:fadeUp .5s ease both;animation-delay:${.9+i*.18}s"><span>${fzEsc(q)}<br><small class="${ok?'fz-ok':'fz-bad'}">You: ${fzEsc(g||'—')}</small></span><span class="${ok?'fz-ok':'fz-bad'}">${ok?'✔':'✘ '+fzEsc(a)}</span></div>`;
+  }).join('');
+  const n=d.q.length,p=Math.round(c/n*100);
+  likLog('friend-match',d.to,d.from,p);
+  if(window._fzId)fbSet('lik_fz',window._fzId,{lastScore:c,lastTotal:n,lastAt:Date.now()},true);
+  const tag=p===100?'Best friend level 💙':p>=70?'You know me well 🔥':p>=40?'Not bad, needs work 😄':'Stranger zone 😭';
+  fzShow(`<div class="card fz-glow" style="text-align:center"><div class="score-ring"><svg viewBox="0 0 155 155"><defs><linearGradient id="fzg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff6b9d"/><stop offset="100%" stop-color="#4da6ff"/></linearGradient></defs>
+  <circle class="bg-ring" cx="77.5" cy="77.5" r="70"/><circle class="fg-ring" id="fzRing" cx="77.5" cy="77.5" r="70" style="stroke:url(#fzg)"/></svg><div class="score-number" id="fzNum">0/${n}</div></div>
+  <div class="fz-title fz-pop" style="animation-delay:1.2s">${tag}</div><div class="sec-sub">${p}% match with ${fzEsc(d.from)}</div>
+  <div style="text-align:left">${rows}</div>
+  <a class="btn btn-primary fz-yes" style="display:block;text-decoration:none;margin-top:16px" target="_blank" rel="noopener" href="${fzWa(d.to+' scored '+c+'/'+n+' ('+p+'%) on your friendship quiz 🤝💙',d.ph)}">💬 Send my score on WhatsApp</a></div>`);
+  setTimeout(()=>{fzEl('fzRing').style.strokeDashoffset=440*(1-p/100);
+    let k=0;const t=setInterval(()=>{k++;fzEl('fzNum')&&(fzEl('fzNum').textContent=Math.min(k,c)+'/'+n);if(k>=c)clearInterval(t);},1600/Math.max(c,1));},100);
+  if(p>=70){setTimeout(confetti,1500);}
+}
+
+
+// ============================================================
+// ADMIN PANEL (tap the LIK logo 5 times)
+// ============================================================
+// ---------- FIREBASE (Firestore — same project & collections as LIK_firebase.html) ----------
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyAo-9M1ZCzGvFxIL41sSydZvrvHnB4tXhI",
+  authDomain:"love-insurance-57943.firebaseapp.com",
+  projectId:"love-insurance-57943",
+  storageBucket:"love-insurance-57943.firebasestorage.app",
+  messagingSenderId:"508532055892",
+  appId:"1:508532055892:web:99ebd1af06b95cc81232c1"
+};
+const FB={on:!!(FIREBASE_CONFIG.apiKey&&FIREBASE_CONFIG.projectId),db:null,ready:Promise.resolve()};
+if(FB.on){
+  const ld=u=>new Promise((r,j)=>{const e=document.createElement('script');e.src=u;e.onload=r;e.onerror=j;document.head.appendChild(e);});
+  const V='https://www.gstatic.com/firebasejs/10.12.0/';
+  FB.ready=ld(V+'firebase-app-compat.js').then(()=>ld(V+'firebase-firestore-compat.js')).then(()=>{firebase.initializeApp(FIREBASE_CONFIG);FB.db=firebase.firestore();}).catch(()=>{FB.on=false;});
+}
+const fbK=k=>String(k).replace(/\//g,'_');
+function fbStrip(o){if(Array.isArray(o))return o.map(x=>x===undefined?null:fbStrip(x));if(o&&typeof o==='object'&&!(o instanceof Date)){const r={};for(const k in o)if(o[k]!==undefined)r[k]=fbStrip(o[k]);return r;}return o;}
+function fbConv(o){if(o&&typeof o.toMillis==='function')return o.toMillis();if(Array.isArray(o))return o.map(fbConv);if(o&&typeof o==='object'){const r={};for(const k in o)r[k]=fbConv(o[k]);return r;}return o;}
+function fbSet(col,id,data,merge){if(!FB.on)return Promise.resolve(null);return FB.ready.then(()=>FB.db&&FB.db.collection(col).doc(fbK(id)).set(fbStrip(data),{merge:!!merge})).catch(e=>{console.warn('fbSet',col,e);return null;});}
+function fbAdd(col,data){if(!FB.on)return Promise.resolve(null);return FB.ready.then(()=>FB.db&&FB.db.collection(col).add(fbStrip(data))).catch(e=>{console.warn('fbAdd',col,e);return null;});}
+function fbGet(col,id){if(!FB.on)return Promise.resolve(null);return FB.ready.then(()=>FB.db?FB.db.collection(col).doc(fbK(id)).get():null).then(x=>x&&x.exists?fbConv(x.data()):null).catch(e=>{console.warn('fbGet',col,e);return null;});}
+function fbList(col,order,lim){if(!FB.on)return Promise.resolve([]);return FB.ready.then(()=>{if(!FB.db)return [];return FB.db.collection(col).limit(lim||1000).get().then(r=>r.docs.map(d=>Object.assign({id:d.id},fbConv(d.data()))));}).catch(e=>{console.warn('fbList',col,e);(window._adErr=window._adErr||[]).push(col);return [];});}
+const AD_COLS=['lik_sessions','lik_results','lik_log','lik_fz','lik_cfg'];
+function adExtraCols(){try{return JSON.parse(localStorage.getItem('lik_cols')||'[]');}catch(e){return [];}}
+function fbRoot(){if(!FB.on)return Promise.resolve(null);window._adErr=[];const cols=AD_COLS.concat(adExtraCols().filter(c=>!AD_COLS.includes(c)));return Promise.all(cols.map(c=>fbList(c,null,1000))).then(r=>{const root={};cols.forEach((c,i)=>{const o={};r[i].forEach(d=>{const id=d.id;delete d.id;o[id]=d;});root[c]=o;});return root;});}
+const NK=/^(myName|partnerName|from|to|a|b|name|username|user|partner|boy|girl|n1|n2|name1|name2|fromName|toName|yourName)$/i;
+function adNames(o,set,d){d=d||0;if(!o||typeof o!=='object'||d>8)return;for(const k in o){if(k==='q'||k==='answers'||k==='partnerAnswers')continue;const v=o[k];if(typeof v==='string'){if(NK.test(k)&&v.trim()&&v.length<60&&!set[v.trim().toLowerCase()])set[v.trim().toLowerCase()]=v.trim();}else adNames(v,set,d+1);}}
+const adFmt=ts=>ts?new Date(ts).toLocaleString():'—';
+const adCnt=x=>x&&typeof x==='object'?Object.keys(x).length:0;
+const adKv=(k,v)=>`<div class="fz-row"><span style="color:var(--muted)">${fzEsc(k)}</span><span style="text-align:right;word-break:break-word">${v}</span></div>`;
+const FZT={p:'💌 Proposal',b:'🎂 Birthday wish',f:'🤝 Friendship match'};
+function adData(){
+  const R=window._adRemote||[[],[],[],[]],seen={},sk={};
+  const logs=likLogs().concat(R[0]).filter(l=>{const k=l.ts+'|'+l.a+'|'+l.b+'|'+l.mode;if(seen[k])return false;seen[k]=1;return true;}).sort((x,y)=>y.ts-x.ts);
+  const sess=[];
+  R[1].forEach(d=>{const k=d.key||d.id;if(d.myName&&!sk[k]){sk[k]=1;sess.push(d);}});
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('ss_')){try{const d=JSON.parse(localStorage.getItem(k));if(d&&d.myName){d.key=d.key||k;if(!sk[d.key]){sk[d.key]=1;sess.push(d);}}}catch(e){}}}
+  return {logs,sess,fzs:R[2],res:R[3]||[],root:window._adRoot};
+}
+function adFzQa(f){return (Array.isArray(f.q)?f.q:Object.values(f.q||{})).map(x=>Array.isArray(x)?x:[x.q,x.a]);}
+function adEvents(D){
+  const ev=[];
+  D.logs.forEach(l=>{if(l.mode==='quiz-start')return;if(FB.on&&(l.mode==='quick'||l.mode==='quiz'))return;ev.push({ts:l.ts,n:[l.a,l.b],i:AD_MODE[l.mode]||l.mode,score:l.score==null?'':l.score+'%',d:'',x:''});});
+  D.res.forEach(r=>ev.push({ts:r.timestamp||r.ts||0,n:[r.name1,r.name2],i:(AD_MODE[r.mode]||r.mode||'Result')+(r.resultType?' · '+r.resultType:''),score:r.score!=null?r.score+'%':'',d:'',x:''}));
+  D.sess.forEach(d=>{const done=adCnt(d.partnerAnswers)>0;ev.push({ts:d.ts||0,n:[d.myName,d.partnerName],i:'💌 Quiz link',score:'',d:(d.gender?d.gender+' · ':'')+adCnt(d.answers)+' answers · '+(done?'✅ partner answered '+adFmt(d.partnerAt):'⏳ waiting for partner'),x:''});});
+  D.fzs.forEach(f=>{const qa=adFzQa(f);ev.push({ts:f.ts||0,n:[f.from,f.to],i:FZT[f.t]||'Friend Zone',score:f.lastScore!=null?f.lastScore+'/'+f.lastTotal:'',d:f.t==='f'?qa.length+' questions':'',x:f.t==='f'?qa.map(a=>`<div class="ad-sm">• ${fzEsc(a[0])}: <b>${fzEsc(a[1])}</b></div>`).join(''):(f.m?`<div class="ad-sm">“${fzEsc(f.m)}”</div>`:'')});});
+  return ev;
+}
+function adPeople(D){
+  const ev=adEvents(D),P={};
+  ev.forEach(e=>{const ns=e.n.filter(Boolean).map(n=>String(n).trim()).filter(Boolean);ns.forEach(n=>{const k=n.toLowerCase();const p=P[k]=P[k]||{name:n,ev:[],last:0};p.ev.push({e,w:ns.filter(m=>m.toLowerCase()!==k)});p.last=Math.max(p.last,e.ts||0);});});
+  if(D.root){const set={};adNames(adNoCfg(),set);for(const k in set)if(!P[k])P[k]={name:set[k],ev:[],last:0};}
+  return Object.values(P).sort((a,b)=>b.last-a.last||a.name.localeCompare(b.name));
+}
+function adFilter(){const q=adEl('adQ').value.trim().toLowerCase();document.querySelectorAll('.ad-p').forEach(e=>{e.style.display=e.dataset.n.includes(q)?'':'none';});}
+function adFlat(o,p,out,d){d=d||0;if(out.length>40)return;if(o===null||o===undefined)return;if(typeof o!=='object'){out.push([p,String(o)]);return;}if(d>4){out.push([p,'{…}']);return;}for(const k in o)adFlat(o[k],p?p+'.'+k:k,out,d+1);}
+function adPeopleHtml(D){
+  const people=adPeople(D);
+  return `<input class="ad-q" id="adQ" placeholder="🔍 Search name" oninput="adFilter()">`+
+  (people.map(p=>`<details class="ad-p" data-n="${fzEsc(p.name.toLowerCase())}"><summary>${fzEsc(p.name)} <span class="ad-chip">${p.ev.length}</span><br><small>${p.last?'Last: '+adFmt(p.last):'Found in database'}</small></summary>`+
+    (p.ev.map(x=>`<div class="fz-row"><span>${x.e.i}${x.w.length?' · with <b>'+fzEsc(x.w.join(', '))+'</b>':''}<br><small style="color:var(--muted)">${fzEsc(x.e.d)}${x.e.d?' · ':''}${adFmt(x.e.ts)}</small>${x.e.x}</span><b>${fzEsc(x.e.score)}</b></div>`).join('')||'<div class="ad-sm">No activity records, name found in other database data.</div>')+
+  `</details>`).join('')||'<div class="ad-sm">No names yet</div>');
+}
+function adRecordsHtml(D){
+  const root=D.root||{};let h='';
+  h+=`<div class="card"><div class="sec-title">💌 Quiz links (${D.sess.length})</div>`+(D.sess.map(d=>{const done=adCnt(d.partnerAnswers)>0;return `<div class="ad-rec"><h4>${fzEsc(d.myName)} → ${fzEsc(d.partnerName||'?')}</h4>`+adKv('Created',adFmt(d.ts))+adKv('Gender',fzEsc(d.gender||'—'))+adKv('Sender answers',adCnt(d.answers))+adKv('Partner',done?'✅ answered '+adFmt(d.partnerAt)+' ('+adCnt(d.partnerAnswers)+' answers)':'⏳ not answered yet')+`</div>`;}).join('')||'<div class="ad-sm">None</div>')+`</div>`;
+  h+=`<div class="card"><div class="sec-title">🤝 Friend Zone (${D.fzs.length})</div>`+(D.fzs.map(f=>{const qa=adFzQa(f);return `<div class="ad-rec"><h4>${FZT[f.t]||'Friend Zone'}: ${fzEsc(f.from||'')} → ${fzEsc(f.to||'')}</h4>`+adKv('Created',adFmt(f.ts))+adKv('Reply number',fzEsc(f.ph||'—'))+(f.m?adKv('Message',fzEsc(f.m)):'')+(qa.length?adKv('Questions',qa.length)+qa.map(a=>adKv(a[0],fzEsc(a[1]))).join(''):'')+(f.lastScore!=null?adKv('Last score',f.lastScore+'/'+f.lastTotal+' · '+adFmt(f.lastAt)):'')+`</div>`;}).join('')||'<div class="ad-sm">None</div>')+`</div>`;
+  h+=`<div class="card"><div class="sec-title">📊 Activity log (${D.logs.length})</div>`+(D.logs.map(l=>adKv((AD_MODE[l.mode]||l.mode)+' · '+fzEsc(l.a||'')+' + '+fzEsc(l.b||''),(l.score==null?'—':l.score+'%')+'<br><small style="color:var(--muted)">'+adFmt(l.ts)+'</small>')).join('')||'<div class="ad-sm">None</div>')+`</div>`;
+  h+=`<div class="card"><div class="sec-title">📈 Results (${D.res.length})</div>`+(D.res.slice().sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)).map(r=>adKv(fzEsc(r.name1||'')+' + '+fzEsc(r.name2||''),(r.score!=null?r.score+'%':'—')+'<br><small style="color:var(--muted)">'+fzEsc((r.mode||'')+(r.resultType?' · '+r.resultType:''))+' · '+adFmt(r.timestamp)+'</small>')).join('')||'<div class="ad-sm">None</div>')+`</div>`;
+  const c=root.lik_cfg&&root.lik_cfg.main;
+  if(c){const ov=Array.isArray(c.ov)?c.ov:Object.values(c.ov||{});h+=`<div class="card"><div class="sec-title">⚙️ Site settings</div>`+adKv('Theme',fzEsc((THEMES[c.theme]||{}).n||c.theme||'—'))+adKv('Fixed scores',ov.length||'none')+ov.map(o=>adKv(o.a+' + '+o.b,o.s+'%')).join('')+`</div>`;}
+  const other=Object.keys(root).filter(k=>!AD_COLS.includes(k));
+  other.forEach(k=>{const v=root[k],kids=v&&typeof v==='object'?Object.keys(v):[];
+    h+=`<div class="card"><div class="sec-title">📁 ${fzEsc(k)} (${kids.length||1})</div><div class="sec-sub">Other data in your database</div>`+
+    (kids.length?kids.slice(-40).reverse().map(id=>{const out=[];adFlat(v[id],'',out);return `<div class="ad-rec"><h4>${fzEsc(id)}</h4>${out.map(r=>adKv(r[0]||'value',fzEsc(r[1].length>140?r[1].slice(0,140)+'…':r[1]))).join('')}</div>`;}).join(''):adKv('value',fzEsc(String(v))))+`</div>`;});
+  return h;
+}
+function adAddCol(){const v=adEl('adCol').value.trim();if(!v||v.includes('/'))return;const c=adExtraCols();if(!c.includes(v)&&!AD_COLS.includes(v)){c.push(v);try{localStorage.setItem('lik_cols',JSON.stringify(c));}catch(e){}}window._adFetched=0;adminTab('db');}
+function adNoCfg(){const r=Object.assign({},window._adRoot);delete r.lik_cfg;return r;}
+function adLoad(cb){
+  window._adFetched=1;
+  fbRoot().then(root=>{
+    root=root||{};window._adRoot=root;
+    const v=o=>o&&typeof o==='object'?Object.keys(o).filter(k=>o[k]&&typeof o[k]==='object').map(k=>Object.assign({id:k},o[k])):[];
+    window._adRemote=[v(root.lik_log),v(root.lik_sessions),v(root.lik_fz),v(root.lik_results)];cb();
+  });
+}
+function checkPartnerDone(){fbGet('lik_sessions',S.sessionKey).then(d=>{if(d){try{localStorage.setItem(S.sessionKey,JSON.stringify(d));}catch(e){}}checkPartnerDone0();});}
+
+const LIK_PW='0929';
+const THEMES={
+  love:{n:'💙 Love Night',v:{'--bg':'#050a18','--pink':'#ff6b9d','--blue':'#4da6ff','--purple':'#b56aff','--gold':'#ffd166'}},
+  rose:{n:'🌹 Rose Gold',v:{'--bg':'#1a0a10','--pink':'#ff8fa3','--blue':'#ffb677','--purple':'#e07aa8','--gold':'#ffd9a0'}},
+  ocean:{n:'🌊 Ocean',v:{'--bg':'#031322','--pink':'#4dd0ff','--blue':'#4d8bff','--purple':'#7a6bff','--gold':'#7fffd4'}},
+  royal:{n:'👑 Royal Purple',v:{'--bg':'#0d0618','--pink':'#d96bff','--blue':'#7b8cff','--purple':'#9b5cff','--gold':'#ffd166'}},
+  sunset:{n:'🌅 Sunset',v:{'--bg':'#1a0b05','--pink':'#ff6b4a','--blue':'#ffb347','--purple':'#ff4d8d','--gold':'#ffe08a'}},
+  mint:{n:'🍃 Midnight Mint',v:{'--bg':'#04120f','--pink':'#3ddc97','--blue':'#4dd0e1','--purple':'#7ad9b4','--gold':'#e6ff8a'}}
+};
+const likDef={theme:'love',defName:'',defPh:'',ov:[]};
+function likCfg(){try{return Object.assign({},likDef,JSON.parse(localStorage.getItem('lik_cfg')||'{}'));}catch(e){return Object.assign({},likDef);}}
+function likSave(c){try{localStorage.setItem('lik_cfg',JSON.stringify(c));}catch(e){}fbSet('lik_cfg','main',{theme:c.theme,ov:c.ov},true);}
+function likLogs(){try{return JSON.parse(localStorage.getItem('lik_log')||'[]');}catch(e){return[];}}
+function likLog(mode,a,b,score){const e={ts:Date.now(),mode,a,b,score};const l=likLogs();l.push(e);if(l.length>500)l.shift();try{localStorage.setItem('lik_log',JSON.stringify(l));}catch(x){}window._lastLogRef=fbAdd('lik_log',e);}
+function likSetLastScore(sc){if(window._lastLogRef)window._lastLogRef.then(r=>{if(r)r.update({score:sc});});const l=likLogs();if(l.length){l[l.length-1].score=sc;try{localStorage.setItem('lik_log',JSON.stringify(l));}catch(e){}}}
+function likResult(score){fbAdd('lik_results',{name1:S.myName,name2:S.partnerName,score,mode:S.mode,resultType:((typeof REL_TYPES!=='undefined'&&REL_TYPES.find(r=>score>=r.min))||{}).type||'',timestamp:new Date()});}
+function likOv(a,b){const x=a.toLowerCase().trim(),y=b.toLowerCase().trim();for(const o of likCfg().ov){if((o.a===x&&o.b===y)||(o.a===y&&o.b===x))return o.s;}return null;}
+function applyTheme(id){const t=THEMES[id]||THEMES.love;for(const k in t.v)document.documentElement.style.setProperty(k,t.v[k]);}
+function likPrefill(){const c=likCfg();[['qsMyName',c.defName],['qkName1',c.defName],['fzFrom',c.defName],['fzPh',c.defPh]].forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v&&!el.value)el.value=v;});}
+applyTheme(likCfg().theme);
+fbGet('lik_cfg','main').then(r=>{if(r){const c=likCfg();if(r.theme)c.theme=r.theme;if(r.ov)c.ov=r.ov;try{localStorage.setItem('lik_cfg',JSON.stringify(c));}catch(e){}applyTheme(c.theme);}});
+
+let _likT=0,_likTm,_adOk=false;
+document.addEventListener('click',e=>{
+  if(e.target.closest&&e.target.closest('.logo')){
+    _likT++;clearTimeout(_likTm);_likTm=setTimeout(()=>{_likT=0;},2000);
+    if(_likT>=5){_likT=0;adminOpen();}
+  }
+});
+const adEl=id=>document.getElementById(id);
+function adminOpen(){
+  adEl('adminOv').classList.add('on');
+  if(_adOk)return adminTab('names');
+  adEl('adminIn').innerHTML=`<div class="logo-bar"><div class="logo" style="pointer-events:none">LIK 💙</div><div class="tagline">Admin</div></div>
+  <div class="card"><div class="sec-title">🔒 Admin Panel</div><div class="sec-sub">Enter password</div>
+  <div class="input-group"><input id="adPw" type="password" inputmode="numeric" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+  <div id="adErr" class="ad-sm" style="color:#ff6b6b"></div>
+  <button class="btn btn-primary" onclick="adminLogin()">Open</button><button class="btn btn-ghost" onclick="adminClose()">Close</button></div>`;
+  setTimeout(()=>adEl('adPw').focus(),50);
+}
+function adminLogin(){if(adEl('adPw').value===LIK_PW){_adOk=true;adminTab('names');}else{adEl('adErr').textContent='Wrong password';adEl('adPw').value='';}}
+function adminClose(){adEl('adminOv').classList.remove('on');}
+const AD_MODE={'quiz-start':'💌 Quiz started','quiz':'💌 Quiz result','quick':'⚡ Quick Score','friend-p':'💌 Proposal link','friend-b':'🎂 Birthday link','friend-f':'🤝 Match link','friend-match':'🤝 Match played'};
+function adminTab(t){
+  if((t==='names'||t==='db')&&FB.on&&!window._adFetched){adLoad(()=>adminTab(t));}
+  const tabs=[['names','👥 People'],['db','🔥 Database'],['quick','⚡ Quick Score'],['theme','🎨 Theme'],['def','⚙️ Defaults']];
+  let body='';
+  if(t==='names'){
+    if(FB.on&&!window._adRemote)body=`<div class="card"><div class="ad-sm">Loading database…</div></div>`;
+    else{
+      const D=adData(),pe=adPeople(D);
+      body=`<div class="card"><div class="sec-title">👥 ${pe.length} people</div><div class="sec-sub">${D.logs.filter(l=>l.mode!=='quiz-start').length} results · ${D.sess.length} quiz links · ${D.fzs.length} Friend Zone links</div>${adPeopleHtml(D)}</div>
+      <button class="btn btn-ghost" onclick="adminCopy()">📋 Copy all names</button>
+      <button class="btn btn-ghost" onclick="window._adFetched=0;adminTab('names')">🔄 Refresh</button>
+      <div class="ad-sm">${FB.on?'Showing data from all devices 🔥':'Shows names typed on this phone only'}</div>`;
+    }
+  }
+  if(t==='quick'){
+    const c=likCfg();
+    body=`<div class="card"><div class="sec-title">Test a pair</div>
+    <div class="input-group"><input id="adA" placeholder="Name 1"></div><div class="input-group"><input id="adB" placeholder="Name 2"></div>
+    <button class="btn btn-primary" onclick="adminPreview()">Preview score</button><div id="adPrev" class="ad-sm" style="font-size:.9rem"></div></div>
+    <div class="card"><div class="sec-title">Fixed scores</div><div class="sec-sub">This pair always gets your score (0–100) in Quick Score and Quiz.</div>
+    <div class="input-group"><input id="adOa" placeholder="Name 1"></div><div class="input-group"><input id="adOb" placeholder="Name 2"></div>
+    <div class="input-group"><input id="adOs" inputmode="numeric" placeholder="Score 0–100"></div>
+    <button class="btn btn-primary" onclick="adminAddOv()">Add</button><div style="margin-top:12px">`+
+    (c.ov.map((o,i)=>`<div class="fz-row"><span>${fzEsc(o.a)} + ${fzEsc(o.b)}</span><span><b>${o.s}%</b> <button class="ad-x" onclick="adminDelOv(${i})">✕</button></span></div>`).join('')||'<div class="ad-sm">None added</div>')+
+    `</div></div><div class="card"><div class="sec-title">Built-in pairs</div>`+
+    SPECIAL.map(p=>`<div class="fz-row"><span>${fzEsc(p[0])} + ${fzEsc(p[1])}</span><b>100%</b></div>`).join('')+ZERO_PAIRS.map(p=>`<div class="fz-row"><span>${fzEsc(p[0])} + ${fzEsc(p[1])}</span><b>0%</b></div>`).join('')+`</div>`;
+  }
+  if(t==='db'){
+    if(!FB.on)body=`<div class="card"><div class="ad-sm">Firebase not connected.</div></div>`;
+    else if(!window._adRemote)body=`<div class="card"><div class="ad-sm">Loading database…</div></div>`;
+    else{
+      const D=adData();
+      const er=window._adErr||[];
+      body=(er.length?`<div class="card"><div class="ad-sm" style="color:#ff6b6b">Could not read: <b>${fzEsc(er.join(', '))}</b>. Add read access in Firestore → Rules.</div></div>`:'')+`<div class="card"><div class="sec-title">Other collections</div><div class="ad-sm">Type a Firestore collection name to show it here (${fzEsc(adExtraCols().join(', ')||'none added')}).</div><div class="input-group"><input id="adCol" placeholder="collection name"></div><button class="btn btn-ghost" style="margin:0" onclick="adAddCol()">+ Add</button></div>`+adRecordsHtml(D)+
+      (D.root?`<details class="ad-d card"><summary>Raw JSON</summary><pre style="white-space:pre-wrap;word-break:break-all;font-size:.68rem;color:var(--muted);max-height:360px;overflow:auto">${fzEsc(JSON.stringify(D.root,null,1).slice(0,60000))}</pre></details>
+      <button class="btn btn-ghost" onclick="navigator.clipboard.writeText(JSON.stringify(window._adRoot,null,1)).then(()=>alert('✅ Copied'))">📋 Copy all JSON</button>`:'')+
+      `<button class="btn btn-ghost" onclick="window._adFetched=0;adminTab('db')">🔄 Refresh</button>`;
+    }
+  }
+  if(t==='theme'){
+    const cur=likCfg().theme;
+    body=`<div class="card"><div class="sec-title">Theme</div><div class="sec-sub">Tap to apply on the whole site</div><div class="ad-sw">`+
+    Object.keys(THEMES).map(k=>`<button class="${k===cur?'on':''}" style="background:linear-gradient(135deg,${THEMES[k].v['--bg']},${THEMES[k].v['--pink']},${THEMES[k].v['--blue']})" onclick="adminTheme('${k}')">${THEMES[k].n}</button>`).join('')+`</div></div>`;
+  }
+  if(t==='def'){
+    const c=likCfg();
+    body=`<div class="card"><div class="sec-title">Defaults</div><div class="sec-sub">Pre-filled in all forms</div>
+    <div class="input-group"><label>Default your name</label><input id="adDn" value="${fzEsc(c.defName)}"></div>
+    <div class="input-group"><label>Default WhatsApp number (Friend Zone replies)</label><input id="adDp" inputmode="numeric" value="${fzEsc(c.defPh)}"></div>
+    <button class="btn btn-primary" onclick="adminSaveDef()">Save defaults</button></div>
+    <div class="card"><div class="sec-title">🔥 Firebase</div><div class="ad-sm">${FB.on?'Connected ✅ — names, quiz links, fixed scores and theme sync across all devices.':'Not configured — add FIREBASE_CONFIG in rr.html. Data stays on this phone only.'}</div></div>
+    <div class="card"><button class="btn btn-ghost" style="margin:0" onclick="adminReset()">🗑 Clear names log</button></div>`;
+  }
+  adEl('adminIn').innerHTML=`<div class="logo-bar" style="padding-bottom:10px"><div class="logo" style="pointer-events:none">LIK 💙</div><div class="tagline">Admin</div></div>
+  <div class="ad-tabs">${tabs.map(([k,n])=>`<button class="ad-tab ${k===t?'on':''}" onclick="adminTab('${k}')">${n}</button>`).join('')}</div>${body}
+  <button class="btn btn-ghost" onclick="adminClose()">Close</button>`;
+}
+function adminCopy(){
+  const t=adPeople(adData()).map(p=>p.name).join('\n');
+  navigator.clipboard.writeText(t).then(()=>alert('✅ Copied'));
+}
+function adminPreview(){
+  const a=adEl('adA').value.trim(),b=adEl('adB').value.trim();if(!a||!b)return;
+  const chk=checkNames(a,b),ov=likOv(a,b);let r;
+  if(chk==='zero')r='0% 💀 (built-in)';
+  else if(chk==='special')r='100% 💍 (built-in)';
+  else if(ov!=null)r=ov+'% (fixed by you)';
+  else{const s1=a.toLowerCase().split('').reduce((x,c)=>x+c.charCodeAt(0),0),s2=b.toLowerCase().split('').reduce((x,c)=>x+c.charCodeAt(0),0);r=Math.min(97,Math.max(40,((s1*s2)%58)+42))+'% (Quick Score auto)';}
+  adEl('adPrev').textContent=a+' + '+b+' = '+r;
+}
+function adminAddOv(){
+  const a=adEl('adOa').value.trim().toLowerCase(),b=adEl('adOb').value.trim().toLowerCase(),sc=parseInt(adEl('adOs').value,10);
+  if(!a||!b||isNaN(sc)||sc<0||sc>100){alert('Enter both names and a score 0–100');return;}
+  const c=likCfg();c.ov=c.ov.filter(o=>!((o.a===a&&o.b===b)||(o.a===b&&o.b===a)));c.ov.push({a,b,s:sc});likSave(c);adminTab('quick');
+}
+function adminDelOv(i){const c=likCfg();c.ov.splice(i,1);likSave(c);adminTab('quick');}
+function adminTheme(k){const c=likCfg();c.theme=k;likSave(c);applyTheme(k);adminTab('theme');}
+function adminSaveDef(){const c=likCfg();c.defName=adEl('adDn').value.trim();c.defPh=adEl('adDp').value.replace(/\D/g,'');likSave(c);likPrefill();alert('✅ Saved');}
+function adminReset(){if(confirm('Clear the names log on this device?')){try{localStorage.removeItem('lik_log');}catch(e){}adminTab('names');}}
+
+// ============================================================
+// CHECK IF OPENED AS PARTNER LINK
+// ============================================================
+(function onLoad(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('fz')){try{fzView(fzDec(params.get('fz')));return;}catch(e){}}
+  if(params.get('fzid')){window._fzId=params.get('fzid');fbGet('lik_fz',window._fzId).then(d=>{if(d&&d.q)d.q=(Array.isArray(d.q)?d.q:Object.values(d.q)).map(x=>Array.isArray(x)?x:[x.q,x.a]);if(d)fzView(d);else{alert('💙 Link not found');goHome();}});return;}
+  if(params.get('partner')){
+    S.mode='quiz';
+    fbGet('lik_sessions',params.get('partner')).then(d=>{if(d){try{localStorage.setItem(params.get('partner'),JSON.stringify(d));}catch(e){}}startPartnerFlow();});
+  }
+})();
+</script>
+</body>
+</html>
+    
