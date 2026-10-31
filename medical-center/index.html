@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12303a" id="tc">
+<meta name="description" content="Book your doctor appointment quickly, choose a time slot, and manage your visits.">
+<title>Book a Doctor</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>try{if(localStorage.getItem('mcb_lite')==='1')document.documentElement.classList.add('lite')}catch(e){}</script>
+<style>
+:root{--ink:#12303a;--mut:#5d7680;--paper:#fbfdfc;--card:#fff;--line:#d7e5e2;--g:#0e8f6b;--g2:#0a6d53;--gl:#e1f5ee;--red:#d6403a;--rl:#fdeceb;--blue:#e6f1f7;--amb:#b7791f;--aml:#fdf3dc;--head:#12303a;--onhead:#fff;--onG:#fff}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'Figtree',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.5;min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.wrap.wide{max-width:1000px}
+.wrap.pb{padding-bottom:96px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);outline:none}
+input:focus,select:focus,textarea:focus,button:focus-visible{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 22%,transparent)}
+textarea{resize:vertical;min-height:84px}
+label{display:block;font-weight:600;font-size:13.5px;margin:12px 0 5px}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--g);color:var(--onG)}
+.btn:hover{background:var(--g2)}
+.btn.sec{background:var(--blue);color:var(--ink)}
+.btn.red{background:var(--rl);color:var(--red)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pad{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.head{background:var(--head);color:var(--onhead);border-radius:0 0 22px 22px;padding:22px 18px 20px;position:relative;overflow:hidden}
+.head .in{max-width:720px;margin:0 auto;position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rx{position:absolute;right:-6px;top:-30px;font-size:190px;font-weight:800;color:var(--onhead);opacity:.07;line-height:1;pointer-events:none;font-family:Georgia,serif}
+.head h1{font-size:23px;font-weight:800;letter-spacing:-.3px;cursor:default;user-select:none}
+.head p{opacity:.8;margin-top:2px;font-size:14px}
+.head a{color:inherit;font-weight:600}
+.uchip{border:0;background:rgba(255,255,255,.16);color:var(--onhead);border-radius:99px;padding:6px 12px 6px 6px;display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;flex:0 0 auto}
+.av{width:28px;height:28px;border-radius:50%;background:var(--g);color:var(--onG);display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+.av.big{width:62px;height:62px;font-size:26px}
+.banner{border-radius:12px;padding:11px 14px;margin-bottom:14px;font-weight:600}
+.banner.warn{background:var(--aml);color:#7a4f0c}
+.banner.err{background:var(--rl);color:var(--red)}
+h2{font-size:17px;font-weight:800;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13.5px}
+.steps{display:flex;gap:6px;margin:16px 0 14px}
+.stp{flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--mut)}
+.stp i{display:block;height:30px;line-height:30px;border-radius:99px;font-style:normal;font-size:14px;background:var(--blue);margin-bottom:3px}
+.stp.cur i{background:linear-gradient(90deg,var(--g) 50%,var(--gl) 50%);color:var(--onG);text-shadow:0 0 2px rgba(0,0,0,.25)}
+.stp.cur{color:var(--ink)}
+.stp.ok i{background:var(--g);color:var(--onG)}
+.stp.ok{cursor:pointer;color:var(--ink)}
+.docs{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin-top:10px}
+.doc{border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;background:var(--card);text-align:left}
+.doc b{display:block;font-size:16px}.doc span{font-size:13px;color:var(--mut)}
+.doc:hover,.doc.on{border-color:var(--g);background:var(--gl)}
+.days{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.day{border:1.5px solid var(--line);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;background:var(--card)}
+.day b{display:block;font-size:19px}.day span{display:block;font-size:13px;color:var(--mut)}.day em{display:block;margin-top:6px;font-style:normal;font-weight:700;font-size:13px;color:var(--g2)}
+.day:hover{border-color:var(--g);background:var(--gl)}
+.day.off{opacity:.5;cursor:not-allowed;background:var(--blue)}.day.off:hover{border-color:var(--line);background:var(--blue)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px;margin-top:10px}
+.slot{border:1.5px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center;font-weight:700;background:var(--card);cursor:pointer}
+.slot:hover{border-color:var(--g)}
+.slot.on{background:var(--g);border-color:var(--g);color:var(--onG)}
+.slot.full{background:var(--blue);color:var(--mut);opacity:.7;text-decoration:line-through;cursor:not-allowed}
+.slot.full small{text-decoration:none}
+.slot.blk{background:var(--rl);border-color:var(--red);color:var(--red)}
+.slot small{display:block;font-size:11px;font-weight:600;opacity:.85}
+.empty{color:var(--mut);padding:14px;text-align:center;background:var(--blue);border-radius:12px;margin-top:8px}
+.tok{font-size:54px;font-weight:800;color:var(--g);line-height:1}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.tag.pending{background:var(--aml);color:var(--amb)}.tag.confirmed{background:var(--blue);color:var(--ink)}
+.tag.done{background:var(--gl);color:var(--g2)}.tag.cancelled{background:var(--rl);color:var(--red)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:14px 0}
+.tabs button{flex:0 0 auto;border:0;background:var(--blue);padding:9px 15px;border-radius:99px;font-weight:700;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--head);color:var(--onhead)}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat div{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--mut)}
+.bk{border:1.5px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px;background:var(--card)}
+.bk .top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+.bk .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.bk a{color:var(--g2);font-weight:600;text-decoration:none}
+.kv{display:grid;grid-template-columns:100px 1fr;gap:2px 10px;font-size:14px;margin-top:6px}.kv span{color:var(--mut)}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;margin:6px 0}
+.sw input{width:20px;height:20px;accent-color:var(--g)}
+.wk{display:grid;grid-template-columns:70px 1fr 1fr;gap:6px;align-items:center;margin-top:6px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:0}
+.seg{display:flex;background:var(--blue);border-radius:12px;padding:4px;gap:4px;margin-top:8px}
+.seg button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-weight:700;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--g);color:var(--onG)}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-radius:16px;padding:18px;margin-bottom:14px;border:1.5px solid}
+.hero.ok{background:var(--gl);border-color:var(--g)}.hero.no{background:var(--rl);border-color:var(--red)}
+.hero h2{font-size:20px;margin:0}.hero p{font-size:14px;margin-top:2px}
+.ov{display:grid;grid-template-columns:1.3fr 1fr 70px;gap:4px 10px;font-size:14px;align-items:center}
+.ov .h{color:var(--mut);font-size:12.5px;font-weight:700;padding-bottom:4px;border-bottom:1.5px solid var(--line)}
+.ov .c{padding:7px 0;border-bottom:1px solid var(--line)}
+.sect{font-size:12.5px;font-weight:800;color:var(--mut);margin:18px 0 8px;letter-spacing:.2px}
+.bnav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1.5px solid var(--line);display:flex;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));z-index:50}
+.bnav button{flex:1;border:0;background:none;padding:8px;font-weight:700;color:var(--mut);cursor:pointer;border-radius:12px}
+.bnav button.on{color:var(--g2);background:var(--gl)}
+.bnav button span{display:block;font-size:20px;line-height:1.1}
+.mini{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.mini div{flex:1;min-width:70px;background:var(--blue);border-radius:10px;padding:8px;text-align:center}.mini b{display:block;font-size:18px}.mini small{color:var(--mut);font-size:12px}
+.sum{background:var(--gl);border-radius:12px;padding:12px 14px;margin-top:8px}
+.sum div{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.sum a{color:var(--g2);font-weight:700;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head);color:var(--onhead);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;max-width:90vw}
+#toast.show{opacity:1}
+.foot{text-align:center;color:var(--mut);font-size:12.5px;padding:18px}
+
+/* professional booking look */
+.head{border-radius:0 0 26px 26px;padding:26px 18px 24px;background:linear-gradient(135deg,var(--head),color-mix(in srgb,var(--head) 70%,var(--g)))}
+.head h1{font-size:22px}.head p{font-size:13.5px;letter-spacing:.2px}
+.pad{box-shadow:0 1px 2px rgba(18,48,58,.05),0 8px 24px -12px rgba(18,48,58,.15);border-color:transparent}
+.pad h2{font-size:18px}
+.stp i{height:32px;line-height:32px;box-shadow:inset 0 0 0 1px var(--line);background:var(--card)}
+.stp.ok i{box-shadow:none}.stp.cur i{box-shadow:none}
+.doc{display:flex;flex-direction:column;gap:2px;padding:15px;transition:.15s}
+.doc:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px rgba(18,48,58,.3)}
+.doc b::before{content:'⚕';display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--gl);color:var(--g2);align-items:center;justify-content:center;margin-right:9px;font-size:15px}
+.day{padding:20px 12px}.slot{padding:11px 4px}
+.seg button small{font-size:11px}
+.seg{padding:4px}.seg button.on{box-shadow:0 2px 8px -2px rgba(0,0,0,.3)}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12.5px;margin:14px 0}.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
+.tok{background:var(--gl);display:inline-block;padding:10px 22px;border-radius:14px;margin:6px 0}
+.btn{transition:.15s}.btn:active{transform:scale(.98)}
+@media(max-width:520px){.stat{grid-template-columns:repeat(2,1fr)}.ov{grid-template-columns:1.2fr 1fr 58px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== App style (Practo-like) ===== */
+body{background:color-mix(in srgb,var(--paper) 93%,var(--g))}
+.head{border-radius:0 0 30px 30px;padding:22px 18px 52px}
+.head h1{font-size:21px}.head p{font-size:13px}
+.wrap{position:relative;margin-top:-34px}
+.wrap.pb{padding-bottom:112px}
+.pad,.bk,.stat div,.hero{border:0!important;border-radius:22px;box-shadow:0 2px 12px rgba(15,40,60,.08)}
+.steps{background:var(--card);border-radius:20px;padding:12px 8px 8px;box-shadow:0 6px 20px -8px rgba(15,40,60,.25);margin-top:0}
+.stp i{width:30px;height:30px;line-height:30px;margin:0 auto 4px;border-radius:50%;background:var(--blue);box-shadow:none}
+.stp.cur i{background:var(--g);color:var(--onG);text-shadow:none}.stp.ok i{background:var(--g2)}
+.docs{grid-template-columns:1fr;gap:12px}
+.doc{display:grid;grid-template-columns:54px 1fr 22px;column-gap:14px;align-items:center;border:0;border-radius:22px;padding:16px;box-shadow:0 2px 12px rgba(15,40,60,.09)}
+.doc::before{content:'⚕';grid-row:1/3;width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--g),var(--g2));color:var(--onG);display:flex;align-items:center;justify-content:center;font-size:24px}
+.doc::after{content:'›';grid-row:1/3;grid-column:3;font-size:28px;color:var(--mut)}
+.doc b{grid-column:2;font-size:16.5px}.doc b::before{content:none!important;display:none}.doc span{grid-column:2}
+.doc:hover,.doc.on{background:var(--gl)}
+.days{gap:12px}
+.day{border:0;border-radius:22px;padding:22px 12px;box-shadow:0 2px 12px rgba(15,40,60,.09)}
+.day b{font-size:20px}.day em{display:inline-block;background:var(--gl);padding:4px 12px;border-radius:99px}
+.day.off em{background:transparent}
+.slots{grid-template-columns:repeat(3,1fr);gap:10px}
+.slot{border:0;border-radius:99px;padding:13px 4px;box-shadow:0 1px 4px rgba(15,40,60,.14)}
+.slot.on{box-shadow:0 6px 14px -4px color-mix(in srgb,var(--g) 70%,transparent)}
+.seg{background:var(--card);border-radius:20px;box-shadow:0 2px 12px rgba(15,40,60,.08);padding:5px}
+.seg button{border-radius:16px;padding:11px 6px}
+.btn{border-radius:16px;padding:14px 18px}
+input,select,textarea{border-radius:14px;padding:13px 14px}
+.bnav{position:fixed!important;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:480px;margin:0 auto;display:flex;gap:4px;background:var(--card);border-radius:26px;box-shadow:0 12px 32px -8px rgba(15,40,60,.4);padding:6px;z-index:50;border:0}
+.bnav button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 6px;border-radius:20px;font-weight:700;font-size:12px;color:var(--mut);cursor:pointer}
+.bnav button span{font-size:20px;line-height:1.2}
+.bnav button.on{background:var(--gl);color:var(--g2)}
+.tok{background:var(--gl);border-radius:20px;padding:12px 26px}
+.chat{margin-top:10px;border-radius:16px;background:var(--blue);padding:10px}.cmsgs{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.cm{max-width:82%;padding:8px 12px;border-radius:16px;font-size:14px;display:flex;flex-direction:column;word-break:break-word}.cm small{font-size:10.5px;opacity:.65;margin-top:2px}
+.cm.me{align-self:flex-end;background:var(--g);color:var(--onG);border-bottom-right-radius:5px}.cm.ad{align-self:flex-start;background:var(--card);border-bottom-left-radius:5px}
+.crow{display:flex;gap:8px;margin-top:8px}.crow input{flex:1}.bdg{background:var(--red);color:#fff;border-radius:99px;font-style:normal;font-size:11px;padding:1px 7px;margin-left:4px}
+
+/* ===== Premium polish ===== */
+:root{--sh1:0 1px 2px rgba(10,30,45,.06),0 8px 28px -10px rgba(10,30,45,.18);--sh2:0 2px 4px rgba(10,30,45,.08),0 18px 40px -14px rgba(10,30,45,.3);--grad:linear-gradient(135deg,var(--g),var(--g2))}
+body{letter-spacing:.1px;-webkit-font-smoothing:antialiased;background:radial-gradient(900px 420px at 85% -80px,color-mix(in srgb,var(--g) 14%,transparent),transparent 70%),color-mix(in srgb,var(--paper) 94%,var(--g))}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#app .wrap>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+#app .wrap>*:nth-child(2){animation-delay:.05s}#app .wrap>*:nth-child(3){animation-delay:.1s}
+@media(prefers-reduced-motion:reduce){#app .wrap>*{animation:none}}
+.head{background:radial-gradient(500px 220px at 90% -40px,rgba(255,255,255,.22),transparent 70%),radial-gradient(380px 200px at -10% 120%,color-mix(in srgb,var(--g) 60%,transparent),transparent 70%),var(--head);padding:26px 20px 60px;box-shadow:0 18px 40px -22px rgba(10,30,45,.6)}
+.head h1{font-size:23px;font-weight:800;letter-spacing:-.5px}
+.head p{opacity:.78;letter-spacing:.2px}
+.uchip{background:rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22)}
+.pad,.bk,.hero,.stat div{border:1px solid color-mix(in srgb,var(--line) 55%,transparent)!important;box-shadow:var(--sh1);border-radius:24px}
+.pad{padding:22px 20px}
+h2{font-size:20px;letter-spacing:-.4px;margin-bottom:6px}
+.sub{font-size:13.5px;line-height:1.5}
+label{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--mut);margin:16px 0 6px}
+.steps{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh2);padding:14px 8px 10px;border-radius:22px}
+.stp{font-size:11.5px;letter-spacing:.3px}
+.stp i{width:32px;height:32px;line-height:32px;font-weight:800;transition:.3s}
+.stp.cur i{background:var(--grad);box-shadow:0 0 0 5px color-mix(in srgb,var(--g) 18%,transparent),0 6px 14px -4px color-mix(in srgb,var(--g) 70%,transparent)}
+.stp.ok i{background:var(--g2)}
+.doc{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1);transition:transform .25s,box-shadow .25s,border-color .25s;padding:18px 16px}
+.doc:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:color-mix(in srgb,var(--g) 40%,transparent)}
+.doc:active{transform:scale(.985)}
+.doc::before{background:var(--grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -6px color-mix(in srgb,var(--g) 65%,transparent);border-radius:20px;width:56px;height:56px}
+.doc b{font-size:17px;letter-spacing:-.2px}
+.doc span{display:inline-block;margin-top:3px;background:var(--gl);color:var(--g2);padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;justify-self:start}
+.doc::after{content:'›';width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:var(--ink)}
+.day{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1);transition:.25s;position:relative;overflow:hidden}
+.day::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad)}
+.day.off::before{background:var(--line)}
+.day:not(.off):hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.day b{font-size:21px;letter-spacing:-.4px}
+.slot{font-size:14.5px;letter-spacing:.2px;transition:.2s;border:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.slot:hover:not(.full){transform:translateY(-2px);border-color:var(--g)}
+.slot.on{background:var(--grad);border-color:transparent}
+.slot.on::after{content:' ✓'}
+.seg{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1)}
+.seg button{transition:.25s;line-height:1.3}
+.seg button.on{background:var(--grad);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--g) 80%,transparent)}
+.btn{background:var(--grad);box-shadow:0 10px 22px -10px color-mix(in srgb,var(--g) 85%,transparent);letter-spacing:.3px;transition:transform .15s,box-shadow .25s}
+.btn:hover{box-shadow:0 14px 28px -10px color-mix(in srgb,var(--g) 90%,transparent);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:var(--blue);box-shadow:none}.btn.red{background:var(--rl);box-shadow:none}
+input,select,textarea{background:color-mix(in srgb,var(--card) 70%,var(--blue));border:1.5px solid transparent;transition:.2s}
+input:focus,select:focus,textarea:focus{background:var(--card);border-color:var(--g)}
+.bnav{background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.5);box-shadow:0 18px 40px -12px rgba(10,30,45,.45)}
+.bnav button{transition:.25s}.bnav button.on{background:var(--grad);color:var(--onG);box-shadow:0 8px 16px -8px color-mix(in srgb,var(--g) 90%,transparent)}
+.tok{background:var(--grad);color:var(--onG);font-size:50px;letter-spacing:1px;padding:14px 34px;border-radius:24px;box-shadow:0 18px 36px -16px color-mix(in srgb,var(--g) 90%,transparent)}
+.kv{padding:12px 14px;background:color-mix(in srgb,var(--blue) 55%,transparent);border-radius:16px;margin-top:12px}
+.tag{letter-spacing:.3px;text-transform:capitalize}
+.foot{opacity:.75;font-size:12.5px;padding:18px 0 4px}
+.cm.me{background:var(--grad)}
+
+/* ===== Rush UI/UX + motion upgrade v2 ===== */
+:root{
+ --motion-fast:180ms;--motion-mid:320ms;--motion-slow:620ms;
+ --ease-out:cubic-bezier(.16,1,.3,1);
+ --focus-ring:0 0 0 4px color-mix(in srgb,var(--g) 22%,transparent);
+}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{overflow-x:hidden}
+button,a,.doc,.day,.slot,.pad,.bk,.stat div,.hero,.steps,.seg,.uchip,.bnav{
+ -webkit-tap-highlight-color:transparent;
+}
+button{touch-action:manipulation}
+button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--g) 65%,white);outline-offset:3px}
+.pad,.bk,.hero,.stat div,.steps,.doc,.day,.slot,.seg,.bnav,.uchip{
+ transition:transform var(--motion-mid) var(--ease-out),box-shadow var(--motion-mid) var(--ease-out),background-color var(--motion-fast),border-color var(--motion-fast),opacity var(--motion-mid);
+}
+@keyframes pageEnter{0%{opacity:0;transform:translateY(18px) scale(.985);filter:blur(3px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes softPop{0%{opacity:0;transform:scale(.88)}70%{transform:scale(1.035)}100%{opacity:1;transform:scale(1)}}
+@keyframes glowBreathe{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--g) 0%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--g) 10%,transparent)}}
+@keyframes shimmer{0%{background-position:180% 0}100%{background-position:-180% 0}}
+@keyframes checkBounce{0%{transform:scale(.7);opacity:.5}65%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+#app .wrap>*{animation:pageEnter .55s var(--ease-out) both}
+#app .wrap>*:nth-child(2){animation-delay:55ms}
+#app .wrap>*:nth-child(3){animation-delay:100ms}
+#app .wrap>*:nth-child(4){animation-delay:145ms}
+#app .wrap>*:nth-child(5){animation-delay:190ms}
+.head{isolation:isolate}
+.head:after{content:"";position:absolute;z-index:0;width:210px;height:210px;right:-80px;bottom:-135px;border:1px solid rgba(255,255,255,.18);border-radius:50%;box-shadow:0 0 0 22px rgba(255,255,255,.035),0 0 0 48px rgba(255,255,255,.025);pointer-events:none}
+.rx{animation:softPop .9s var(--ease-out) both}
+.doc:hover,.day:not(.off):hover,.bk:hover,.stat div:hover{transform:translateY(-3px)}
+.doc.on{outline:2px solid color-mix(in srgb,var(--g) 45%,transparent);outline-offset:1px}
+.doc.on::after{content:'✓';background:var(--g);color:var(--onG);font-size:17px;font-weight:900}
+.day:not(.off):active,.doc:active,.slot:active,.bnav button:active{transform:scale(.97)}
+.stp.cur i{animation:softPop .42s var(--ease-out) both}
+.stp.ok i{animation:checkBounce .36s var(--ease-out) both}
+.slot.on{animation:checkBounce .26s var(--ease-out) both}
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.18) 45%,transparent 70%);background-size:220% 100%;opacity:0;pointer-events:none}
+.btn:hover:before{opacity:1;animation:shimmer .9s linear}
+.btn:focus-visible{box-shadow:var(--focus-ring)}
+input:focus,select:focus,textarea:focus{box-shadow:var(--focus-ring)}
+input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--mut) 78%,transparent)}
+label{line-height:1.35}
+.bnav button span{transition:transform var(--motion-mid) var(--ease-out)}
+.bnav button.on span{transform:translateY(-2px) scale(1.08)}
+.tok{animation:softPop .5s var(--ease-out) both}
+.banner{animation:pageEnter .4s var(--ease-out) both}
+.empty{border:1px dashed color-mix(in srgb,var(--g) 25%,var(--line));}
+.chat{animation:pageEnter .3s var(--ease-out) both}
+.cm{animation:pageEnter .22s var(--ease-out) both}
+.sum{border:1px solid color-mix(in srgb,var(--g) 14%,transparent)}
+/* Improve mobile reachability and prevent horizontal overflow */
+@media(max-width:520px){
+ .wrap{padding-left:14px;padding-right:14px}
+ .head{padding-left:18px;padding-right:18px}
+ .pad{padding:19px 16px}
+ .bnav{bottom:calc(10px + env(safe-area-inset-bottom,0px));left:10px;right:10px}
+ .bnav button{min-height:52px}
+ .slots{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .slot{min-width:0;font-size:13px;padding:12px 2px}
+ .row>*{min-width:0}
+ input,select,textarea{font-size:16px} /* avoids iOS zoom; harmless elsewhere */
+}
+@media(min-width:760px){
+ .wrap{padding-left:22px;padding-right:22px}
+ .docs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(hover:none){
+ .doc:hover,.day:not(.off):hover,.bk:hover,.stat div:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+/* ---- v6: today/tomorrow doctors, inbox, benefits ---- */
+.tdh{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 6px}.tdh b{font-size:16px}.tdh span{font-size:12.5px;color:var(--mut)}
+.trow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:11px 13px;margin-top:7px;cursor:pointer;color:var(--ink);font:inherit}
+.trow b{font-size:15px}.trow span{grid-column:1;font-size:12.5px;color:var(--mut)}
+.trow em{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-weight:700;font-size:12px;background:var(--gl);color:var(--g2);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.trow.off{opacity:.65;cursor:default}.trow.off em{background:var(--blue);color:var(--mut)}
+.ben{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}.ben li{display:flex;gap:10px;align-items:flex-start;font-size:14px}.ben li i{font-style:normal;font-size:18px;line-height:1.2}
+.benbox{background:var(--gl);border-radius:16px;padding:14px 16px;margin-top:14px}.benbox h3{margin:0;font-size:15px;color:var(--g2)}
+.gbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--aml);color:#7a4f0c;border-radius:14px;padding:11px 14px;margin-bottom:14px;font-weight:600;font-size:13.5px}
+.rp{border:1.5px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:var(--card)}
+.rp .new{background:var(--red);color:#fff;border-radius:99px;font-size:11px;padding:1px 8px;margin-left:6px}
+.rp img{max-width:100%;border-radius:10px;margin-top:8px;border:1px solid var(--line)}
+
+/* ===== Lite UI option (default theme stays unchanged) ===== */
+.hb{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.lt{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:var(--onhead);border-radius:99px;padding:7px 12px;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.lt.on{background:var(--onhead);color:var(--head);border-color:var(--onhead)}
+html.lite *,html.lite *::before,html.lite *::after{animation:none!important;transition:none!important;box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important}
+html.lite{scroll-behavior:auto;color-scheme:dark}
+html.lite .banner.warn,html.lite .gbar{color:#f0c27a}
+html.lite .head{border-bottom:1px solid var(--line)}
+html.lite :focus-visible{outline:2px solid var(--g)!important;outline-offset:2px}
+html.lite body{background:var(--paper)}
+html.lite .head{background:var(--head);border-radius:0;padding:14px 16px;margin:0}
+html.lite .head:after,html.lite .rx,html.lite .day::before,html.lite .btn::before,html.lite .doc::after{display:none!important}
+html.lite .head h1{font-size:19px}html.lite .head p{font-size:12.5px}
+html.lite .wrap{margin-top:0;padding-top:12px}
+html.lite .pad,html.lite .bk,html.lite .stat div,html.lite .hero,html.lite .steps,html.lite .doc,html.lite .day,html.lite .seg,html.lite .shc,html.lite .kv,html.lite .rp,html.lite .trow{border:1px solid var(--line)!important;border-radius:10px!important;background:var(--card)}
+html.lite .pad{padding:14px}
+html.lite .kv{background:var(--blue)}
+html.lite .steps{padding:8px 6px}
+html.lite .doc{grid-template-columns:34px 1fr!important;column-gap:12px;padding:11px 12px}
+html.lite .doc::before{width:34px;height:34px;border-radius:8px;font-size:15px;background:var(--g);box-shadow:none}
+html.lite .doc:hover,html.lite .day:not(.off):hover,html.lite .bk:hover,html.lite .stat div:hover,html.lite .slot:hover{transform:none!important}
+html.lite .doc.on,html.lite .doc:hover{background:var(--gl);outline:none;border-color:var(--g)!important}
+html.lite .day{padding:12px}html.lite .day b{font-size:17px}
+html.lite .day em{background:none;padding:0}
+html.lite .slot{border:1px solid var(--line)!important;border-radius:8px!important;padding:10px 2px}
+html.lite .slot.on,html.lite .slot.on::after{background:var(--g)!important;color:var(--onG);content:none}
+html.lite .btn,html.lite .seg button.on,html.lite .stp.cur i,html.lite .cm.me,html.lite .bnav button.on{background:var(--g)!important;color:var(--onG)}
+html.lite .btn{border-radius:8px;padding:11px 16px}html.lite .btn.sec{background:var(--blue)!important;color:var(--ink)}html.lite .btn.red{background:var(--rl)!important;color:var(--red)}
+html.lite .seg button.on{border-radius:8px}
+html.lite .tok{background:var(--gl);color:var(--g2);font-size:40px;padding:8px 20px;border-radius:10px}
+html.lite input,html.lite select,html.lite textarea{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+html.lite .bnav{left:0;right:0;bottom:0;max-width:none;margin:0;border-radius:0;border:0;border-top:1px solid var(--line);background:var(--card);padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px))}
+html.lite .bnav button{border-radius:8px;min-height:46px}
+html.lite .lt{background:none}html.lite .lt.on{background:var(--onhead)}
+
+/* WhatsApp-inspired messaging refresh */
+:root{--wa:#075e54;--wa2:#128c7e;--wa-soft:#e7f7f1;--wa-chat:#efeae2}
+.chat{background:var(--wa-chat)!important;border:1px solid #d9e1dc;border-radius:18px!important;padding:10px!important}
+.cmsgs{max-height:54vh!important;min-height:180px;padding:8px!important;background-color:#efeae2;background-image:radial-gradient(rgba(7,94,84,.045) .7px,transparent .7px);background-size:12px 12px;border-radius:14px}
+.cm{box-shadow:0 1px 1px rgba(0,0,0,.08);padding:9px 12px!important;max-width:86%!important;border-radius:12px!important}
+.cm.me{background:#d9fdd3!important;color:#17352d!important;border-bottom-right-radius:4px!important}
+.cm.ad{background:#fff!important;color:#202c33!important;border-bottom-left-radius:4px!important}
+.cm small{align-self:flex-end;font-size:10px!important;color:#667781!important}
+.crow{align-items:center;background:#f7f8f8;border-radius:999px;padding:5px;margin-top:8px!important}
+.crow input{border:0!important;background:#fff!important;border-radius:999px!important;box-shadow:none!important}
+.crow .btn{border-radius:50%!important;width:46px;height:46px;padding:0!important;flex:0 0 46px;font-size:0;position:relative}
+.crow .btn:after{content:"➤";font-size:20px}
+.rp{border:1px solid #e2e8e5!important;border-radius:16px!important;padding:14px!important;margin:10px 0!important;background:#fff;box-shadow:0 2px 8px rgba(20,50,45,.045)}
+.wa-head{display:flex;align-items:center;gap:12px;background:#075e54;color:#fff;padding:14px;border-radius:16px;margin-bottom:12px}
+.wa-head .av{background:#25a18e;color:#fff;width:44px;height:44px}
+.wa-head .sub{color:#d8eee8}
+.wa-row{display:flex;gap:10px;align-items:center;padding:12px 8px;border-bottom:1px solid #edf0ef}
+.wa-row:last-child{border-bottom:0}
+.wa-row .av{width:46px;height:46px;flex:0 0 46px}
+.wa-row-main{min-width:0;flex:1}
+.wa-row-main b,.wa-row-main .sub{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wa-time{font-size:11px;color:#718078;white-space:nowrap}
+.wa-section-title{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#128c7e;font-weight:800;margin:14px 0 5px}
+.tabs button{border-radius:12px!important}
+@media(max-width:520px){.cmsgs{max-height:48vh;min-height:160px}.wa-row{padding:10px 2px}}
+
+
+/* ===== WhatsApp-style inbox (v7) ===== */
+.w2av{width:46px;height:46px;flex:0 0 46px;border-radius:50%;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+.w2app{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);height:calc(100dvh - 250px);min-height:480px;border-radius:14px;overflow:hidden;border:1px solid #d1d7db;background:#fff}
+.w2side{display:flex;flex-direction:column;min-height:0;border-right:1px solid #e9edef;background:#fff}
+.w2sh,.w2title{background:#008069;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:19px}
+.w2sh span{font-size:13px;opacity:.85}
+.w2sr{padding:8px;background:#fff;border-bottom:1px solid #e9edef}
+.w2sr input{width:100%;border:0!important;border-radius:8px!important;background:#f0f2f5!important;padding:9px 12px!important;box-shadow:none!important}
+.w2rows{overflow:auto;flex:1;min-height:0}
+.w2row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 14px;border:0;border-bottom:1px solid #f0f2f5;background:#fff;cursor:pointer;color:#111b21;font:inherit}
+.w2row:hover{background:#f5f6f6}.w2row.sel{background:#f0f2f5}
+.w2rm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.w2r1,.w2r2{display:flex;justify-content:space-between;gap:8px;align-items:center;min-width:0}
+.w2r1 b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:16px}
+.w2tm{font-size:12px;color:#667781;white-space:nowrap}.w2tm.un{color:#00a884;font-weight:600}
+.w2pv{color:#667781;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.w2bd{background:#25d366;color:#fff;font-style:normal;font-size:12px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex:0 0 auto}
+.w2conv{display:flex;flex-direction:column;min-width:0;min-height:0;background:#efeae2}
+.w2welcome{margin:auto;text-align:center;color:#667781;padding:20px}.w2welcome h2{color:#41525d;margin:8px 0 4px}
+.w2top{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#008069;color:#fff}
+.w2top .w2av{width:40px;height:40px;flex-basis:40px;background:rgba(255,255,255,.22)}
+.w2ti{flex:1;min-width:0}.w2ti b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px}
+.w2ti span{display:block;font-size:12px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.w2back{display:none;border:0;background:none;color:#fff;font-size:24px;cursor:pointer;padding:0 6px}.w2back.on{display:block}
+.w2call{color:#fff;text-decoration:none;font-size:20px;padding:6px 8px}
+.w2msgs{flex:1;min-height:0;overflow:auto;padding:10px 5% 12px;display:flex;flex-direction:column;gap:2px;background-color:#efeae2;background-image:radial-gradient(rgba(11,20,26,.07) 1px,transparent 1px);background-size:14px 14px;overscroll-behavior:contain}
+.w2day{align-self:center;margin:10px 0 6px}
+.w2day span{display:block;background:#fff;color:#54656f;font-size:12px;padding:5px 12px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.w2empty{align-self:center;margin:auto;text-align:center;background:#fff8d6;color:#54656f;font-size:13px;padding:8px 14px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.w2b{position:relative;max-width:min(80%,520px);padding:6px 8px 6px 9px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13);font-size:14.5px;line-height:1.35;color:#111b21;overflow-wrap:anywhere}
+.w2b::after{content:"";display:block;clear:both}
+.w2b.me{align-self:flex-end;background:#d9fdd3}.w2b.ot{align-self:flex-start;background:#fff}
+.w2b.tl{margin-top:8px}
+.w2b.tl.me{border-top-right-radius:0}.w2b.tl.ot{border-top-left-radius:0}
+.w2b.tl::before{content:"";position:absolute;top:0;width:9px;height:13px;background:inherit}
+.w2b.tl.me::before{right:-8px;clip-path:polygon(0 0,0 100%,100% 0)}
+.w2b.tl.ot::before{left:-8px;clip-path:polygon(100% 0,100% 100%,0 0)}
+.w2tx{white-space:pre-wrap}
+.w2m{float:right;margin:7px 0 -3px 12px;font-size:11px;color:#667781;display:inline-flex;gap:3px;align-items:center;line-height:1}
+.w2t{font-style:normal;font-size:13px;letter-spacing:-4px;padding-right:4px;color:#8696a0}.w2t.rd{color:#53bdeb}
+.w2rt{display:block;color:#008069;font-size:13px;margin-bottom:3px}
+.w2img{display:block;max-width:100%;width:260px;border-radius:6px;margin:2px 0 4px}
+.w2pdf{display:flex;gap:10px;align-items:center;background:rgba(11,20,26,.06);border-radius:6px;padding:9px 10px;margin:2px 0 4px;text-decoration:none;color:#111b21}
+.w2pdf b{background:#e53935;color:#fff;font-size:11px;padding:6px 7px;border-radius:5px}
+.w2pdf span{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.w2pdf small{display:block;color:#667781;font-size:11px}
+.w2cmp{display:flex;gap:8px;align-items:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#f0f2f5}
+.w2cmp input{flex:1;min-width:0;border:0!important;border-radius:22px!important;padding:11px 16px!important;background:#fff!important;box-shadow:none!important;font-size:15px}
+.w2snd{width:44px;height:44px;flex:0 0 44px;border-radius:50%;border:0;background:#00a884;color:#fff;font-size:18px;cursor:pointer}.w2snd:disabled{opacity:.5}
+.w2clip{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+.w2full{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;background:#efeae2;max-width:720px;margin:0 auto;padding-top:env(safe-area-inset-top,0)}
+.w2plist{background:#fff;border-radius:0 0 14px 14px;overflow:hidden;border:1px solid #d1d7db;border-top:0}
+.w2title{border-radius:14px 14px 0 0;margin-top:16px}
+@media(max-width:760px){
+ .w2app{grid-template-columns:1fr;height:calc(100dvh - 215px)}
+ .w2app:not(.open) .w2conv{display:none}.w2app.open .w2side{display:none}
+ .w2back{display:block}
+ .w2b{max-width:86%}
+}
+
+/* delete for everyone */
+.w2x{position:absolute;top:1px;right:3px;border:0;background:none;color:#8696a0;font-size:15px;line-height:1;cursor:pointer;padding:2px 4px;opacity:.75}
+.w2b.me{padding-right:20px}
+.w2dl{font-style:italic;color:#667781}
+
+/* booking submit animation */
+#bkOv{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(10,30,40,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:ovIn .2s both}
+#bkOv .bx{background:var(--card,#fff);color:var(--ink,#12303a);border-radius:22px;padding:26px 32px;text-align:center;min-width:230px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:ovPop .38s cubic-bezier(.2,1.3,.4,1) both}
+.spin{width:44px;height:44px;border:4px solid var(--gl,#e1f5ee);border-top-color:var(--g,#0e8f6b);border-radius:50%;margin:0 auto 12px;animation:bkSpin .8s linear infinite}
+.ck{width:76px;height:76px;margin:0 auto 8px;display:block}
+.ck circle{fill:none;stroke:var(--g,#0e8f6b);stroke-width:3;stroke-dasharray:158;stroke-dashoffset:158;animation:ckc .6s .05s ease-out forwards}
+.ck path{fill:none;stroke:var(--g,#0e8f6b);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:ckp .35s .5s ease-out forwards}
+.cf{position:fixed;top:45%;left:50%;width:9px;height:9px;border-radius:2px;z-index:10000;pointer-events:none;animation:bkCf 1.1s ease-out forwards}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+@keyframes ovPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes bkSpin{to{transform:rotate(360deg)}}
+@keyframes ckc{to{stroke-dashoffset:0}}
+@keyframes ckp{to{stroke-dashoffset:0}}
+@keyframes bkCf{from{opacity:1;transform:translate(-50%,-50%) rotate(0)}to{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r))}}
+@media(prefers-reduced-motion:reduce){.cf{display:none}.spin{animation-duration:2s}}
+
+/* reviews */
+.starpick{display:flex;gap:2px;justify-content:center;margin:8px 0}
+.starpick button{border:0;background:none;font-size:38px;line-height:1;color:#cfd8dc;cursor:pointer;padding:2px 3px;transition:transform .15s}
+.starpick button.on{color:#f5b301}.starpick button:active{transform:scale(1.25)}
+.rsum{display:flex;gap:16px;align-items:center}
+.rsum .big{font-size:46px;font-weight:800;line-height:1;text-align:center}
+.rsum .big small{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-top:4px}
+.rbars{flex:1}.rbar{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:3px 0}
+.rbar i{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden}.rbar i b{display:block;height:100%;background:#f5b301;border-radius:6px}
+.stv{color:#f5b301;letter-spacing:1px}
+.rvc{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--card,#fff)}
+.rvc .rh{display:flex;gap:10px;align-items:center}.rvc .rh .m{flex:1;min-width:0}
+
+/* developer badge */
+.crown{position:relative;display:inline-block;margin-top:16px;flex:0 0 auto}
+.crown::before{content:"👑";position:absolute;top:-19px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:20px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.dvt{display:inline-block;background:#f5b301;color:#3a2a00;border-radius:99px;padding:1px 9px;font-size:11px;font-weight:800;margin-left:7px;vertical-align:middle}
+.rvc.dev,.pad.dev,.li.dev{border:1.5px solid #f5b301;background:linear-gradient(135deg,rgba(245,179,1,.14),transparent)}
+.li.dev{border-radius:12px;padding:6px 10px}
+
+/* ads (booking page only) */
+.adh{max-width:720px;margin:0 auto;padding:10px 16px 0}
+#adBot{margin-top:-86px;padding-bottom:120px;position:relative;z-index:1}
+.adw{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.adl{position:absolute;top:6px;right:8px;z-index:2;font-size:10px;font-weight:700;letter-spacing:.4px;color:var(--mut);background:var(--blue);border-radius:99px;padding:1px 8px}
+.adc{display:none;align-items:center;gap:12px;padding:12px;color:inherit;text-decoration:none}
+.adc.on{display:flex}
+.adc img{width:76px;height:76px;object-fit:cover;border-radius:12px;flex:none}
+.adc b{display:block;font-size:15px}.adc span{display:block;font-size:13px;color:var(--mut)}
+.adc em{display:inline-block;margin-top:6px;font-style:normal;font-weight:700;font-size:13px;background:var(--g);color:#fff;padding:5px 12px;border-radius:99px}
+.adw iframe{display:block;width:100%;border:0}
+.adw ins{display:block;min-height:50px}
+</style>
+</head>
+<body>
+<script>
+/* debug banner: shows JS / Firebase errors on screen instead of a white page */
+(function(){
+  function show(m){try{var d=document.getElementById('dbgErr');if(!d){d=document.createElement('div');d.id='dbgErr';d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99999;background:#b71c1c;color:#fff;font:12px/1.4 monospace;padding:8px 10px;white-space:pre-wrap;max-height:45vh;overflow:auto';d.onclick=function(){d.remove()};(document.body||document.documentElement).appendChild(d)}d.textContent+=m+'\n(tap to close)\n'}catch(e){}}
+  window.addEventListener('error',function(e){show('JS error: '+e.message+' @ line '+e.lineno)});
+  window.addEventListener('unhandledrejection',function(e){show('Promise error: '+(e.reason&&(e.reason.stack||e.reason.message)||e.reason))});
+  window.fbErr=function(e){show('Firebase error: '+(e&&e.code||'')+' '+(e&&e.message||e)+'\n=> usually Firestore RULES blocking read/write')};
+})();
+</script>
+
+<div id="adTop" class="adh" style="display:none"></div>
+<div id="app"><div class="wrap"><p class="sub">Loading…</p></div></div>
+<div id="adBot" class="adh" style="display:none"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* Firebase config: config.js, else one saved by the dev page, else the built-in project. */
+const BAKED_CONFIG={apiKey:"AIzaSyC5KCiRWBawHCRlwVpVyD_71jyp_u0bhwk",authDomain:"medical-center-b9e5f.firebaseapp.com",projectId:"medical-center-b9e5f",storageBucket:"medical-center-b9e5f.firebasestorage.app",messagingSenderId:"485817737930",appId:"1:485817737930:web:6745c7c9354b5fde018a33",measurementId:"G-6J7GQ15RJ0"};
+const FIREBASE_CONFIG=(()=>{if(window.MCB_CONFIG)return window.MCB_CONFIG;try{const c=JSON.parse(localStorage.getItem('mcb_fbconfig'));if(c&&c.projectId)return c}catch(e){}return BAKED_CONFIG})();
+const THEMES={"mint": {"n": "Mint Pharmacy", "v": {"--ink": "#12303a", "--mut": "#5d7680", "--paper": "#fbfdfc", "--card": "#ffffff", "--line": "#d7e5e2", "--g": "#0e8f6b", "--g2": "#0a6d53", "--gl": "#e1f5ee", "--blue": "#e6f1f7", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#12303a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "ocean": {"n": "Ocean Blue", "v": {"--ink": "#0f2a44", "--mut": "#5d7680", "--paper": "#fafcff", "--card": "#ffffff", "--line": "#d3e1f0", "--g": "#1565c0", "--g2": "#0d47a1", "--gl": "#e3f0ff", "--blue": "#e8f1fa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#0f2a44", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "royal": {"n": "Royal Purple", "v": {"--ink": "#2a1b4d", "--mut": "#5d7680", "--paper": "#fcfbff", "--card": "#ffffff", "--line": "#e0d8f2", "--g": "#6a3fd0", "--g2": "#5129ae", "--gl": "#efe8ff", "--blue": "#f0ebfa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#2a1b4d", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "sunset": {"n": "Sunset Orange", "v": {"--ink": "#3b2013", "--mut": "#5d7680", "--paper": "#fffdfb", "--card": "#ffffff", "--line": "#f0dccb", "--g": "#d9620f", "--g2": "#b34c08", "--gl": "#fff0e1", "--blue": "#fbefe3", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3b2013", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "rose": {"n": "Rose Care", "v": {"--ink": "#3d1a2a", "--mut": "#5d7680", "--paper": "#fffcfd", "--card": "#ffffff", "--line": "#f1d6e1", "--g": "#d6336c", "--g2": "#b02556", "--gl": "#ffe8f0", "--blue": "#fbeaf1", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3d1a2a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "forest": {"n": "Forest Green", "v": {"--ink": "#14301f", "--mut": "#5d7680", "--paper": "#fbfdfb", "--card": "#ffffff", "--line": "#d3e4d7", "--g": "#2f8f46", "--g2": "#226b34", "--gl": "#e4f5e8", "--blue": "#e8f2ea", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#14301f", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "graphite": {"n": "Graphite", "v": {"--ink": "#1f2933", "--mut": "#5d7680", "--paper": "#fafbfc", "--card": "#ffffff", "--line": "#d9dfe5", "--g": "#3a4a5a", "--g2": "#27323d", "--gl": "#e8edf1", "--blue": "#eef1f4", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#1f2933", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "midnight": {"n": "Midnight (dark)", "v": {"--ink": "#e6f2f0", "--mut": "#8fa9ae", "--paper": "#0e1a1f", "--card": "#15262d", "--line": "#27414a", "--g": "#2fc89b", "--g2": "#25a67f", "--gl": "#11332b", "--blue": "#1a3340", "--red": "#ff8a80", "--rl": "#3a1a1a", "--amb": "#f0b429", "--aml": "#3a2e10", "--head": "#0b2a33", "--onhead": "#e6f2f0", "--onG": "#06231b"}}};
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pYmd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const t2m=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+const m2t=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const f12=t=>{if(!t||!/^\d{1,2}:\d{2}$/.test(t))return 'Time pending';let[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${pad(m)} ${ap}`};
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DNF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const uid=()=>Math.random().toString(36).slice(2,9);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const nice=ds=>{const d=pYmd(ds);return `${DN[d.getDay()]}, ${d.getDate()} ${MN[d.getMonth()]}`};
+const niceDT=ts=>{const d=new Date(ts);return `${d.getDate()} ${MN[d.getMonth()]} ${d.getFullYear()}`};
+const todayS=()=>ymd(new Date());
+const tomS=()=>{const n=new Date();return ymd(new Date(n.getFullYear(),n.getMonth(),n.getDate()+1))};
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2300)}
+function normPhone(p){let d=String(p).replace(/[^\d+]/g,'');if(d.startsWith('+94'))d='0'+d.slice(3);else if(d.startsWith('94')&&d.length===11)d='0'+d.slice(2);d=d.replace(/\D/g,'');return /^\d{9,12}$/.test(d)?d:''}
+async function hashPw(id,pw){
+  const t='mcb|'+id+'|'+pw;
+  if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=5381;for(const c of t)h=((h<<5)+h+c.charCodeAt(0))|0;return 'x'+h;
+}
+function applyTheme(id,ac){
+  const t=THEMES[id]||THEMES.mint;if(!t)return;
+  const rs=document.documentElement.style;
+  for(const k in t.v)rs.setProperty(k,t.v[k]);
+  if(ac&&/^#[0-9a-f]{6}$/i.test(ac)){rs.setProperty('--g',ac);rs.setProperty('--g2',`color-mix(in srgb, ${ac} 78%, black)`);rs.setProperty('--gl',`color-mix(in srgb, ${ac} 14%, var(--card))`)}
+  if(document.documentElement.classList.contains('lite')){
+    const D={'--ink':'#e8f1ef','--mut':'#9ab0ab','--paper':'#0f1719','--card':'#172226','--line':'#2a3a3f','--blue':'#1f2d32','--red':'#ff7a72','--rl':'#3a1f20','--amb':'#f0b552','--aml':'#3a2f17','--head':'#0a1214','--onhead':'#ffffff','--onG':'#ffffff','--g2':'color-mix(in srgb, var(--g) 55%, white)','--gl':'color-mix(in srgb, var(--g) 24%, var(--card))'};
+    for(const k in D)rs.setProperty(k,D[k]);
+  }
+  const m=document.getElementById('tc');if(m)m.content=document.documentElement.classList.contains('lite')?'#0a1214':t.v['--head'];
+}
+
+/* ---------- defaults ---------- */
+function newDoctor(name,spec,id){
+  const days={};for(let i=0;i<7;i++)days[i]={on:true,start:'09:00',end:'13:00',non:true,nstart:'18:00',nend:'21:00'};
+  return{id:id||uid(),name:name||'Dr. New Doctor',spec:spec||'General Physician',active:true,slotMin:15,perSlot:1,breakOn:false,breakStart:'11:00',breakEnd:'11:30',days};
+}
+function mkDoc(id,name,spec,nDays,o){
+  o=o||{};const lab=!!o.lab,mWd=lab?[0,1,2,3,4,5,6]:[],nWd=lab?[]:nDays;
+  const m={on:lab,start:o.start||'07:00',end:o.end||'11:00',gap:o.gap||10,wd:[0,1,2,3,4,5,6].map(i=>mWd.includes(i))};
+  const n={on:!lab,start:'18:00',end:'21:00',gap:15,wd:[0,1,2,3,4,5,6].map(i=>nWd.includes(i))};
+  const days={};for(let i=0;i<7;i++)days[i]={on:m.on&&m.wd[i],start:m.start,end:m.end,gap:m.gap,non:n.on&&n.wd[i],nstart:n.start,nend:n.end,ngap:n.gap};
+  return{id,name,spec,active:true,lab,slotMin:15,perSlot:lab?5:1,breakOn:false,breakStart:'11:00',breakEnd:'11:30',days,m,n};
+}
+function defDoctors(){return[
+  mkDoc('fazna','Dr. Fazna  (M.B.B.S)','M.B.B.S',[1,2]),
+  mkDoc('habeeb','Dr. Habeeb Ahemmed  (M.B.B.S)','M.B.B.S',[5,0]),
+  mkDoc('ruswan','Dr. Ruswan  (M.B.B.S)','M.B.B.S',[3,6]),
+  mkDoc('lab','Lab Check / Report','Blood · Urine tests',[],{lab:true})]}
+function ensureLab(S){if(S.doctors.some(d=>d.lab))return false;S.doctors.push(mkDoc('lab','Lab Check / Report','Blood · Urine tests',[],{lab:true}));return true}
+function migrateV5(S){
+  if(S.v5)return false;
+  S.doctors=S.doctors.filter(d=>!(d.id==='d1'&&d.name==='Dr. Example'));
+  defDoctors().forEach(d=>{if(!S.doctors.some(x=>x.id===d.id))S.doctors.push(d)});
+  S.v5=1;return true;
+}
+const DEF={
+  labTests:['Urine test','Blood test','Blood + Urine'],
+  clinicName:'City Medical Center & Pharmacy',phone:'',notice:'',theme:'mint',accent:'',footer:'',maintenance:false,maintenanceMsg:'We are updating the system. Please check back soon.',allowSignup:true,nicMode:'off',
+  bookingOpen:true,closedMsg:'Booking is closed right now. Please try again later.',
+  tomorrowMode:'auto',tomorrowFrom:'17:00',
+  autoClose:{on:false,closeDay:5,closeTime:'23:00',openDay:6,openTime:'06:00'},
+  cutoffMin:15,maxPerPhone:2,password:'admin123',
+  closedDates:[],specials:[],blockedSlots:[],doctors:defDoctors(),v5:1
+};
+
+/* ---------- storage layer (Firebase or local demo) ---------- */
+const DEV_KEYS=['clinicName','footer','theme','accent','maintenance','maintenanceMsg','allowSignup','nicMode','ads'];
+function makeStore(){
+  if(FIREBASE_CONFIG&&typeof firebase!=='undefined'){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const db=firebase.firestore(),sref=db.collection('meta').doc('settings'),U_=db.collection('users');
+    return{mode:'Firebase',
+      init(onS,onB){
+        sref.onSnapshot(s=>{if(!s.exists){if(!s.metadata.fromCache)sref.set(DEF,{merge:true});return}onS(s.data())},fbErr);
+        db.collection('bookings').onSnapshot(q=>onB(q.docs.map(d=>({...d.data(),id:d.id}))),fbErr);
+      },
+      saveSettings:s=>{const o={...s};DEV_KEYS.forEach(k=>delete o[k]);return sref.set(o,{merge:true})},
+      addBooking:b=>db.collection('bookings').add(b).then(r=>r.id),
+      updateBooking:(id,p)=>db.collection('bookings').doc(id).update(p),
+      deleteBooking:id=>db.collection('bookings').doc(id).delete(),
+      getUser:id=>U_.doc(id).get().then(d=>d.exists?{...d.data(),id:d.id}:null),
+      findByUsername:n=>U_.where('usernameLower','==',n).limit(1).get().then(q=>q.empty?null:{...q.docs[0].data(),id:q.docs[0].id}),
+      saveUser:u=>U_.doc(u.id).set(u),
+      deleteUser:id=>U_.doc(id).delete(),
+      onReviews:cb=>db.collection('reviews').onSnapshot(q=>{window.RV_ERR='';cb(q.docs.map(d=>({...d.data(),id:d.id})))},e=>{window.RV_ERR=(e&&e.code)||'error';console.warn('reviews',e);if(typeof softRender==='function')softRender()}),
+      saveReview:r=>db.collection('reviews').doc(r.id).set(r),
+      deleteReview:id=>db.collection('reviews').doc(id).delete(),
+      onUsers:cb=>U_.onSnapshot(q=>cb(q.docs.map(d=>({...d.data(),id:d.id}))),fbErr)};
+  }
+  const K='mcb_settings',KB='mcb_bookings',KU='mcb_users';let cbB,cbU,cbR;const rr=()=>{try{return JSON.parse(localStorage.getItem('mcb_reviews'))||[]}catch(e){return[]}};
+  const rs=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(e){return null}};
+  const rb=()=>{try{return JSON.parse(localStorage.getItem(KB))||[]}catch(e){return[]}};
+  const ru=()=>{try{return JSON.parse(localStorage.getItem(KU))||[]}catch(e){return[]}};
+  const wb=a=>localStorage.setItem(KB,JSON.stringify(a));
+  const wu=a=>{localStorage.setItem(KU,JSON.stringify(a));cbU&&cbU(a)};
+  return{mode:'Demo (this device only)',
+    init(onS,onB){cbB=onB;onS(rs()||clone(DEF));onB(rb());addEventListener('storage',()=>{onS(rs()||clone(DEF));onB(rb())})},
+    saveSettings:s=>{localStorage.setItem(K,JSON.stringify(s));return Promise.resolve()},
+    addBooking:b=>{const id=uid(),a=rb();a.push({...b,id});wb(a);cbB(a);return Promise.resolve(id)},
+    updateBooking:(id,p)=>{const a=rb().map(x=>x.id===id?{...x,...p}:x);wb(a);cbB(a);return Promise.resolve()},
+    deleteBooking:id=>{const a=rb().filter(x=>x.id!==id);wb(a);cbB(a);return Promise.resolve()},
+    getUser:id=>Promise.resolve(ru().find(u=>u.id===id)||null),
+    findByUsername:n=>Promise.resolve(ru().find(u=>u.usernameLower===n)||null),
+    saveUser:u=>{wu([...ru().filter(x=>x.id!==u.id),u]);return Promise.resolve()},
+    deleteUser:id=>{wu(ru().filter(x=>x.id!==id));return Promise.resolve()},
+    onReviews:cb=>{cbR=cb;cb(rr())},
+    saveReview:r=>{const a=[...rr().filter(x=>x.id!==r.id),r];localStorage.setItem('mcb_reviews',JSON.stringify(a));cbR&&cbR(a);return Promise.resolve()},
+    deleteReview:id=>{const a=rr().filter(x=>x.id!==id);localStorage.setItem('mcb_reviews',JSON.stringify(a));cbR&&cbR(a);return Promise.resolve()},
+    onUsers:cb=>{cbU=cb;cb(ru())}};
+}
+const Store=makeStore();
+let R=[];
+let S=null,B=[],USERS=[];
+let saveT;
+const saveSoon=()=>{clearTimeout(saveT);saveT=setTimeout(()=>Store.saveSettings(S),500)};
+const saveNow=()=>{clearTimeout(saveT);return Store.saveSettings(S)};
+
+/* ---------- schedule logic ---------- */
+const getDoc=id=>S.doctors.find(d=>d.id===id);
+function autoClosed(now){
+  now=now||new Date();const a=S.autoClose;if(!a||!a.on)return null;
+  const cur=now.getDay()*1440+now.getHours()*60+now.getMinutes();
+  const c=a.closeDay*1440+t2m(a.closeTime),o=a.openDay*1440+t2m(a.openTime);
+  const inside=c<=o?(cur>=c&&cur<o):(cur>=c||cur<o);
+  return inside?`Auto-closed. Reopens ${DNF[a.openDay]} ${f12(a.openTime)}`:null;
+}
+function tomorrowState(){
+  const m=S.tomorrowMode||'auto';if(m==='off')return'hide';if(m==='on')return'open';
+  const n=new Date();return n.getHours()*60+n.getMinutes()>=t2m(S.tomorrowFrom||'17:00')?'open':'wait';
+}
+function dayInfo0(doc,ds){
+  if(!S.bookingOpen)return{open:false,reason:S.closedMsg};
+  const ac=autoClosed();if(ac)return{open:false,reason:ac};
+  if(!doc||!doc.active)return{open:false,reason:'Doctor not available'};
+  const cd=S.closedDates.find(c=>c.date===ds&&(c.doc==='all'||c.doc===doc.id));
+  if(cd)return{open:false,reason:cd.reason||'Closed'};
+  const w=doc.days[pYmd(ds).getDay()];let sh=[];
+  if(w){if(w.on)sh.push({k:'m',l:doc.lab?'Lab':'Morning',start:w.start,end:w.end,gap:w.gap});if(w.non)sh.push({k:'n',l:'Evening',start:w.nstart||'18:00',end:w.nend||'21:00',gap:w.ngap})}
+  S.specials.filter(c=>c.date===ds&&(c.doc==='all'||c.doc===doc.id)).forEach(sp=>{
+    if(sp.off){sh=sh.filter(y=>y.k!==sp.sh);return}
+    if(!sp.sh){sh=[{k:'m',l:'Special hours',start:sp.start,end:sp.end}];return}
+    const o={k:sp.sh,l:sp.sh==='n'?'Evening':'Morning',start:sp.start,end:sp.end,gap:sp.gap},x=sh.findIndex(y=>y.k===o.k);x>=0?sh[x]=o:sh.push(o)});
+  sh.sort((a,b)=>a.k==='m'?-1:1);
+  if(sh.length)return{open:true,shifts:sh,start:sh[0].start,end:sh[sh.length-1].end};
+  return{open:false,reason:'Day off'};
+}
+const reqOn=d=>!d.lab&&(d.optReq===true||(d.optReq===undefined&&d.reqMode===true));
+const slotsOn=d=>!!d.lab||!(d.optSlots===false||(d.optSlots===undefined&&d.reqMode===true));
+function dayInfo(doc,ds){
+  const i=dayInfo0(doc,ds);
+  if(!reqOn(doc))return i;
+  if(i.open)return slotsOn(doc)?{...i,req:true}:{open:true,req:true,reqOnly:true,shifts:[],start:'',end:''};
+  return i;
+}
+function genTimes(doc,info){
+  const out=[];
+  (info.shifts||[{start:info.start,end:info.end}]).forEach(sh=>{const step=Math.max(5,+(sh.gap||doc.slotMin)||15);
+    for(let m=t2m(sh.start);m+step<=t2m(sh.end);m+=step){
+      if(doc.breakOn&&m>=t2m(doc.breakStart)&&m<t2m(doc.breakEnd))continue;
+      out.push(m2t(m));
+    }
+  });
+  return out;
+}
+const takenP=(doc,ds,t)=>B.filter(b=>b.docId===doc.id&&b.date===ds&&b.time===t&&b.status==='pending').length;
+const taken=(doc,ds,t)=>B.filter(b=>b.docId===doc.id&&b.date===ds&&b.time===t&&b.status!=='cancelled').length;
+function avail(doc,ds){
+  const info=dayInfo(doc,ds);if(!info.open)return[];
+  const now=new Date(),today=ymd(now),nm=now.getHours()*60+now.getMinutes();
+  return genTimes(doc,info).map(t=>{
+    if(S.blockedSlots.includes(`${ds}|${doc.id}|${t}`))return null;
+    const past=ds===today&&t2m(t)<nm+(+S.cutoffMin||0);
+    const n=taken(doc,ds,t),pend=takenP(doc,ds,t);const sh=info.shifts.find(x=>t2m(t)>=t2m(x.start)&&t2m(t)<t2m(x.end));return{t,n,sh:sh?sh.k:'m',full:n>=doc.perSlot||(pend>=1&&!doc.lab),pend,past};
+  }).filter(Boolean);
+}
+const freeCount=(doc,ds)=>avail(doc,ds).filter(s=>!s.full&&!s.past).length;
+
+/* ---------- root ---------- */
+const app=document.getElementById('app');
+let authed=sessionStorage.getItem('mcb_auth')==='1';
+let U=null,uReady=false;
+const P={kind:'',test:'',doc:'',date:'',time:'',name:'',phone:'',problem:'',done:null};
+const W={shift:'',step:0,view:'book',auth:'login',open:''};
+const A={tab:'bookings',date:todayS(),doc:'all',status:'all',q:'',edit:'',blkDoc:'',blkDate:todayS(),uq:'',uopen:''};
+function render(){
+  if(!S)return;
+  app.innerHTML=viewPatient();
+  
+}
+function typing(){const a=document.activeElement;return a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&app.contains(a)}
+const bkSig=b=>[b.id,b.status,b.date,b.time,b.docName,b.name,b.phone,b.problem,b.token,(b.chat||[]).length,(b.chat||[]).filter(m=>m.d).length,(b.reports||[]).length,(b.reports||[]).filter(r=>r.d).length,b.chatSeenU,b.chatSeenA,b.reportSeenU];
+let _sig='',_pend=false,lastAct=0;
+['pointerdown','keydown','touchmove','wheel'].forEach(e=>addEventListener(e,()=>{lastAct=Date.now()},{passive:true}));
+function softRender(){
+  if(!S||!window._ready)return;
+  if(typing()){_pend=true;return}
+  const sig=JSON.stringify([S,window.RV_ERR||'',R.map(r=>[r.id,r.stars,r.text,r.at]),(B||[]).map(bkSig),(W.view==='book'&&!P.done&&W.step>0)?Math.floor(Date.now()/60000):0]);
+  if(sig===_sig)return;
+  _sig=sig;_pend=false;
+  const y=window.scrollY,ds=[...app.querySelectorAll('details')].map(d=>d.open);
+  render();
+  app.querySelectorAll('details').forEach((d,i)=>{if(ds[i])d.open=true});
+  window.scrollTo(0,y);
+}
+addEventListener('focusout',()=>setTimeout(()=>{if(_pend&&!typing())softRender()},300));
+Store.init(s=>{S={...clone(DEF),...s};migrateV5(S);ensureLab(S);applyTheme(S.theme,S.accent);softRender()},b=>{B=b;if(S){if(typing())refreshChat();softRender()}else refreshChat()});
+Store.onReviews(r=>{R=r;softRender()});
+
+
+(async()=>{const id=localStorage.getItem('mcb_sess');if(id){try{U=await Store.getUser(id)}catch(e){}if(!U)localStorage.removeItem('mcb_sess')}uReady=true;render()})();
+setInterval(()=>{if(S&&Date.now()-lastAct>8000)softRender()},20000);
+
+const bkOf=u=>B.filter(b=>b.userId===u.id);
+
+
+/* ============================================================
+   PATIENT
+   ============================================================ */
+function viewPatient(){
+  if(!uReady)return`<div class="wrap"><p class="sub">Loading…</p></div>`;
+  if(S&&U&&!U.guest&&!S.maintenance&&W.view==='inbox'&&W.chatOpen)return waPatientFull();
+  let h=`<div class="head"><div class="in"><div><h1 onclick="logoTap()">${esc(S.clinicName)}</h1><p>${S.phone?`Call <a href="tel:${esc(S.phone)}">${esc(S.phone)}</a>`:'Book your doctor visit'}</p></div><div class="hb"><button class="lt ${LITE()?'on':''}" onclick="toggleLite()" aria-pressed="${LITE()}" title="Lightweight UI">⚡ Lite${LITE()?' · On':''}</button>${U?`<button class="uchip" onclick="go('me')"><span class="av">${esc(U.username[0].toUpperCase())}</span>${esc(U.username)}</button>`:''}</div></div></div><div class="wrap pb">`;
+  if(S.notice)h+=`<div class="banner warn" style="margin-top:14px">${esc(S.notice)}</div>`;
+  const ac=autoClosed();
+  if(!S.bookingOpen)h+=`<div class="banner err" style="margin-top:14px">${esc(S.closedMsg)}</div>`;
+  else if(ac)h+=`<div class="banner err" style="margin-top:14px">${esc(ac)}</div>`;
+  h+=S.maintenance?`<div class="pad" style="margin-top:16px;text-align:center"><div class="tok" style="font-size:40px">🛠</div><h2 style="margin-top:8px">Under maintenance</h2><p class="sub" style="margin-top:4px">${esc(S.maintenanceMsg)}</p></div>`:!U?viewAuth():W.view==='me'?viewMe():W.view==='inbox'?viewInbox():W.view==='reviews'?viewReviews():viewBook();
+  h+=`<div class="foot">${esc(S.footer||S.clinicName)}<div style="margin-top:6px">Powered by : <a href="https://rusthicrush.github.io/Rush2" target="_blank" rel="noopener" style="color:var(--g2);font-weight:700;text-decoration:none">Rush Environment</a></div></div></div>`;
+  if(U&&!S.maintenance){const ib=inboxCount(U);h+=`<div class="bnav"><button class="${W.view==='book'?'on':''}" onclick="go('book')"><span>📅</span>Book</button><button class="${W.view==='inbox'?'on':''}" onclick="go('inbox')"><span>📥</span>Inbox${ib?` <em class="bdg">${ib}</em>`:''}</button><button class="${W.view==='reviews'?'on':''}" onclick="go('reviews')"><span>⭐</span>Reviews</button><button class="${W.view==='me'?'on':''}" onclick="go('me')"><span>☺</span>Me</button></div>`}
+  return h;
+}
+let taps=0,tapT;
+function logoTap(){taps++;clearTimeout(tapT);tapT=setTimeout(()=>taps=0,1500);if(taps>=5){taps=0;location.href='medical-admin.html'}}
+
+/* ----- auth ----- */
+function viewAuth(){
+  const canSu=S.allowSignup!==false,su=W.auth==='signup'&&canSu;
+  return`<div class="pad" style="margin-top:16px"><h2 style="font-size:20px">${su?'Create your account':'Welcome back'}</h2><p class="sub">${su?'Sign up once, then book in a few taps.':'Log in to book and see your visits.'}</p>
+  ${canSu?`<div class="seg"><button class="${su?'':'on'}" onclick="W.auth='login';render()">Log in</button><button class="${su?'on':''}" onclick="W.auth='signup';render()">Sign up</button></div>`:'<p class="sub" style="margin-top:8px">New sign ups are closed right now.</p>'}
+  ${su?`<label>Username</label><input id="a_u" autocomplete="username" placeholder="e.g. nimal88" autocapitalize="none">
+  <label>Phone number</label><input id="a_p" type="tel" inputmode="tel" autocomplete="tel" placeholder="07X XXX XXXX">${(S.nicMode||'off')!=='off'?`<label>NIC number${S.nicMode==='optional'?' (optional)':''}</label><input id="a_n" autocapitalize="characters" placeholder="e.g. 901234567V or 199012345678">`:''}`
+  :`<label>Username or phone number</label><input id="a_u" autocomplete="username" autocapitalize="none">`}
+  <label>Password</label><input id="a_w" type="password" autocomplete="${su?'new-password':'current-password'}" onkeydown="if(event.key==='Enter')${su?'doSignup()':'doLogin()'}">
+  <button class="btn" style="width:100%;margin-top:16px;padding:14px" onclick="${su?'doSignup()':'doLogin()'}">${su?'Create account':'Log in'}</button>
+  ${benBox("Why log in?")}<div class="or"><span>or</span></div><button class="btn sec" style="width:100%;padding:13px" onclick="startGuest()">Skip &amp; continue as guest</button></div>`;
+}
+function startSession(u){U=u;localStorage.setItem('mcb_sess',u.id);W.view='book';W.step=0;P.kind='';P.name='';P.phone='';render();window.scrollTo(0,0)}
+async function doSignup(){
+  if(S.allowSignup===false)return toast('Sign-ups are closed');
+  const un=document.getElementById('a_u').value.trim(),ph=normPhone(document.getElementById('a_p').value),pw=document.getElementById('a_w').value;
+  if(!/^[A-Za-z0-9_.]{3,20}$/.test(un))return toast('Username: 3-20 letters, numbers, _ or .');
+  if(!ph)return toast('Enter a valid phone number');
+  if(pw.length<4)return toast('Password needs at least 4 characters');
+  const nm=S.nicMode||'off',nic=nm==='off'?'':((document.getElementById('a_n')||{value:''}).value.trim().toUpperCase());
+  if(nm==='required'&&!nic)return toast('Enter your NIC number');
+  if(nic&&!/^(\d{9}[VX]|\d{12})$/.test(nic))return toast('NIC is not valid');
+  try{
+    if(await Store.getUser(ph))return toast('This phone is already registered. Log in.');
+    if(await Store.findByUsername(un.toLowerCase()))return toast('Username already taken');
+    const u={id:ph,username:un,usernameLower:un.toLowerCase(),phone:ph,passHash:await hashPw(ph,pw),created:Date.now(),...(nic?{nic}:{})};
+    await Store.saveUser(u);startSession(u);toast('Account created');
+  }catch(e){toast('Could not sign up. Check connection.')}
+}
+async function doLogin(){
+  const id=document.getElementById('a_u').value.trim(),pw=document.getElementById('a_w').value;
+  if(!id||!pw)return toast('Enter username/phone and password');
+  try{
+    const ph=normPhone(id);let u=null;
+    if(ph)u=await Store.getUser(ph);
+    if(!u)u=await Store.findByUsername(id.toLowerCase());
+    if(!u||u.passHash!==await hashPw(u.id,pw))return toast('Wrong username or password');
+    startSession(u);toast('Welcome '+u.username);
+  }catch(e){toast('Could not log in. Check connection.')}
+}
+function startGuest(){let g=localStorage.getItem('mcb_gid');if(!g){g='guest-'+uid();localStorage.setItem('mcb_gid',g)}U={id:g,username:'Guest',phone:'',created:Date.now(),guest:true};W.view='book';W.step=0;P.kind='';P.name='';P.phone='';render();window.scrollTo(0,0)}
+function LITE(){return document.documentElement.classList.contains('lite')}
+function toggleLite(){const on=!LITE();document.documentElement.classList.toggle('lite',on);try{localStorage.setItem('mcb_lite',on?'1':'0')}catch(e){}if(S)applyTheme(S.theme,S.accent);render();toast(on?'Lite UI on':'Default theme')}
+function logoutUser(){U=null;localStorage.removeItem('mcb_sess');W.view='book';W.auth='login';P.done=null;render();window.scrollTo(0,0)}
+
+/* ----- booking wizard ----- */
+function viewBook(){
+  const act=S.doctors.filter(d=>d.active);
+  if(P.done){
+    const b=P.done;
+    return`<div class="pad" style="margin-top:16px;text-align:center"><svg class="ck" viewBox="0 0 52 52"><circle cx="26" cy="26" r="25"/><path d="M14 27l8 8 16-17"/></svg><p class="sub">Booking received</p><div class="tok">#${b.token}</div>
+    <h2 style="margin-top:8px">${esc(b.docName)}</h2><p>${nice(b.date)} · ${b.req&&!b.time?'⏳ Time will be sent to you':f12(b.time)}</p>${b.shift?`<p class="sub">${esc(b.shift)} shift</p>`:''}
+    <p class="sub" style="margin-top:8px">${esc(b.name)} · ${esc(b.phone)}</p><p class="sub">${esc(b.problem)}</p>
+    ${b.req?`<p class="sub" style="margin-top:10px">Your request was sent to the admin. They will give you a time and message you on WhatsApp (${esc(b.wa)}).</p>`:`<p class="sub" style="margin-top:10px">Please arrive 10 minutes early and show this number.</p>`}
+    <div class="row" style="margin-top:14px"><button class="btn" onclick="P.done=null;P.kind='';W.step=0;render()">Book another</button><button class="btn sec" onclick="P.done=null;W.view='me';render()">See in Me</button></div></div>`;
+  }
+  if(!act.length)return`<div class="empty" style="margin-top:16px">No doctors are available right now.</div>`;
+  if(!P.kind||W.step<1)W.step=0;
+  const lab=P.kind==='lab';let doc=getDoc(P.doc);
+  if(W.step>=2&&(!doc||!doc.active||!P.date||!!doc.lab!==lab))W.step=1;
+  if(W.step>=2&&P.time&&P.date&&P.time!=='REQ'){const c=avail(doc,P.date).find(x=>x.t===P.time);if(!c||c.full||c.past){P.time='';W.step=2}}
+  if(W.step>=3&&!P.time)W.step=2;
+  if(W.step===3&&!lab)W.step=4;
+  if(W.step>=4&&lab&&!P.test)W.step=3;
+  if(W.step===0){
+    return(U.guest?guestBar():'')+`<div class="pad" style="margin-top:16px"><h2>What do you need?</h2><p class="sub">Choose one to start.</p><div class="docs">
+    ${act.some(d=>!d.lab)?`<button class="doc" onclick="pickKind('doc')"><b>Book a Doctor</b><span>Today &amp; tomorrow doctors</span></button>`:''}
+    ${act.some(d=>d.lab)?`<button class="doc" onclick="pickKind('lab')"><b>🧪 Lab Test / Report</b><span>Blood · Urine</span></button>`:''}</div></div>`;
+  }
+  const ST=lab?[[1,'Day'],[2,'Time'],[3,'Test'],[4,'Details']]:[[1,'Doctor'],[2,'Time'],[4,'Details']];
+  let h=`<div class="steps">${ST.map(([n,l],i)=>`<div class="stp ${W.step===n?'cur':''} ${W.step>n?'ok':''}" ${W.step>n?`onclick="goStep(${n})"`:''}><i>${W.step>n?'✓':i+1}</i>${l}</div>`).join('')}</div>`;
+  const back=`<button class="btn sec sm" style="margin-bottom:10px" onclick="goStep(${W.step===4?(lab?3:2):W.step-1})">‹ Back</button>`;
+  if(W.step===1){
+    h+=(U.guest?guestBar():'')+viewTeam(lab,back);
+  }else if(W.step===2&&stepMode(doc)==='req'){
+    h+=reqPanel(doc,back,stepSwitch(doc));
+  }else if(W.step===2){
+    const all=avail(doc,P.date),inf=dayInfo(doc,P.date),shs=inf.shifts||[];
+    if(!shs.find(x=>x.k===W.shift))W.shift=(shs.find(x=>all.some(a=>a.sh===x.k&&!a.full&&!a.past))||shs[0]||{}).k||'';
+    const sl=all.filter(a=>a.sh===W.shift);
+    h+=`<div class="pad">${back}${stepSwitch(doc)}<h2>Pick a time</h2><p class="sub">${esc(doc.name)} · ${nice(P.date)}</p>
+    <div class="seg">${shs.map(x=>{const f=all.filter(a=>a.sh===x.k&&!a.full&&!a.past).length;return`<button class="${W.shift===x.k?'on':''}" onclick="W.shift='${x.k}';P.time='';render()">${x.k==='n'?'🌙':'☀'} ${x.l}<small style="display:block;font-weight:600;opacity:.8">${f12(x.start)} – ${f12(x.end)} · ${f} free</small></button>`}).join('')}</div><div class="slots">`;
+    sl.forEach(s=>{const dis=s.full||s.past;h+=`<button class="slot ${dis?'full':''} ${P.time===s.t?'on':''}" ${dis?'disabled':`onclick="pickTime('${s.t}')"`}>${f12(s.t)}${dis?`<small>${s.past?'Time out':(s.pend&&!doc.lab?'Reserved':'Booked')}</small>`:''}</button>`});
+    h+=`</div>${sl.length?'':'<div class="empty">No times available on this day.</div>'}</div>`;
+  }else if(W.step===3){
+    h+=`<div class="pad">${back}<h2>Test method</h2><p class="sub">${esc(doc.name)} · ${nice(P.date)} · ${f12(P.time)}</p><div class="docs">${labTestList().map(([t,i])=>`<button class="doc ${P.test===t?'on':''}" onclick="pickTest('${t}')"><b>${i} ${t}</b></button>`).join('')}</div></div>`;
+  }else{
+    if(!P.name&&!U.guest)P.name=U.username;if(!P.phone)P.phone=U.phone;
+    h+=`<div class="pad">${back}<h2>${lab?'Your details':'Patient details'}</h2>
+    <div class="sum"><div><span>${lab?'Lab':'Doctor'}</span><a onclick="goStep(1)">${esc(doc.name)}</a></div><div><span>Day</span><a onclick="goStep(1)">${nice(P.date)}</a></div><div><span>Time</span><a onclick="goStep(2)">${(P.time==='REQ')?'Admin gives your time':f12(P.time)+(W.shift==='n'?' · Evening':' · Morning')}</a></div>${lab?`<div><span>Test</span><a onclick="goStep(3)">${esc(P.test)}</a></div>`:''}</div>
+    <label>Patient name</label><input value="${esc(P.name)}" oninput="P.name=this.value" autocomplete="name">
+    <label>Phone number</label><input type="tel" inputmode="tel" value="${esc(P.phone)}" oninput="P.phone=this.value">
+    ${(P.time==='REQ')?`<label>WhatsApp number (required · admin sends your time here)</label><input type="tel" inputmode="tel" value="${esc(P.wa||P.phone)}" oninput="P.wa=this.value" placeholder="07X XXX XXXX" autocomplete="tel">`:''}
+    ${lab?'':`<label>Patient problem</label><textarea oninput="P.problem=this.value" placeholder="Describe the problem briefly">${esc(P.problem)}</textarea>`}
+    <button class="btn" style="width:100%;margin-top:16px;padding:14px" onclick="submitBooking()">${(P.time==='REQ')?'Send request':'Confirm booking'}</button></div>`;
+  }
+  return h;
+}
+function labTestList(){return((S.labTests&&S.labTests.length)?S.labTests:['Urine test','Blood test','Blood + Urine']).map(t=>[t,/urine/i.test(t)&&/blood/i.test(t)?'🧪':/urine/i.test(t)?'🧫':/blood/i.test(t)?'🩸':'🧪'])}
+function goStep(n){if(n<=2)P.time='';if(n<=1){P.date='';P.doc='';P.test=''}if(n<=0)P.kind='';W.step=n;render();window.scrollTo(0,0)}
+function pickKind(k){P.kind=k;P.doc='';P.date='';P.time='';P.test='';W.step=1;render();window.scrollTo(0,0)}
+function pickReq(){P.time='REQ';W.step=P.kind==='lab'?3:4;render();window.scrollTo(0,0)}
+function stepMode(doc){const inf=dayInfo(doc,P.date),hs=!!(inf.shifts&&inf.shifts.length),hr=!!inf.req;if(hr&&!hs)return'req';if(!hr)return'slots';return W.opt==='req'?'req':'slots'}
+function stepSwitch(doc){const inf=dayInfo(doc,P.date);if(!(inf.req&&inf.shifts&&inf.shifts.length))return'';const m=stepMode(doc);return`<div class="seg" style="margin-bottom:12px"><button class="${m==='slots'?'on':''}" onclick="W.opt='slots';render()">⏱ Pick a time</button><button class="${m==='req'?'on':''}" onclick="W.opt='req';render()">📩 Request a time</button></div>`}
+function reqPanel(doc,back,sw){
+  const i0=dayInfo0(doc,P.date),hasM=!!(i0.shifts&&i0.shifts.some(z=>z.k==='m')),pf=hasM?['Evening','Morning']:['Evening'],cur=pf.includes(P.pref)?P.pref:'Evening';P.pref=cur;
+  return`<div class="pad">${back}${sw||''}<h2>📩 Request a time</h2><p class="sub">${esc(doc.name)} · ${nice(P.date)}</p>
+  <p style="margin-top:10px">There is no fixed time table here. Send your request and the admin will give you a time, then message you on WhatsApp.</p>
+  <label>Preferred time</label><div class="seg">${pf.map(x=>`<button class="${cur===x?'on':''}" onclick="P.pref='${x}';render()">${x}</button>`).join('')}</div>
+  <button class="btn" style="width:100%;margin-top:16px;padding:14px" onclick="pickReq()">Continue</button></div>`;
+}
+function pickTime(t){P.time=t;W.step=P.kind==='lab'?3:4;render();window.scrollTo(0,0)}
+function pickTest(t){P.test=t;W.step=4;render();window.scrollTo(0,0)}
+function bkOverlay(st,msg,title){
+  let o=document.getElementById('bkOv');
+  if(!st){if(o)o.remove();return}
+  if(!o){o=document.createElement('div');o.id='bkOv';document.body.appendChild(o)}
+  o.innerHTML=st==='load'?`<div class="bx"><div class="spin"></div><b>Booking…</b></div>`:`<div class="bx"><svg class="ck" viewBox="0 0 52 52"><circle cx="26" cy="26" r="25"/><path d="M14 27l8 8 16-17"/></svg><b>${esc(title||'Booking confirmed!')}</b><div class="sub" style="margin-top:4px">${esc(msg||'')}</div></div>`;
+}
+function bkConfetti(){const c=['#0e8f6b','#f5b301','#e4572e','#2e86de','#a55eea'];for(let i=0;i<28;i++){const e=document.createElement('i');e.className='cf';const a=Math.random()*Math.PI*2,d=90+Math.random()*140;e.style.cssText=`background:${c[i%5]};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-40}px;--r:${Math.round(Math.random()*540)}deg`;document.body.appendChild(e);setTimeout(()=>e.remove(),1200)}}
+async function submitBooking(){
+  const doc=getDoc(P.doc),lab=!!doc.lab,name=P.name.trim(),phone=normPhone(P.phone),problem=lab?P.test:P.problem.trim();
+  if(!name)return toast('Enter patient name');
+  if(!phone)return toast('Enter a valid phone number');
+  if(!problem)return toast(lab?'Choose a test':'Describe the problem');
+  const rq=!!(P.time==='REQ'),wa=rq?normPhone(P.wa||P.phone):'';
+  if(rq&&!wa)return toast('Enter a valid WhatsApp number');
+  const s=rq?{sh:'m'}:avail(doc,P.date).find(x=>x.t===P.time);
+  if(!rq&&(!s||s.full||s.past)){P.time='';W.step=2;render();return toast('That time is no longer available. Pick another.')}
+  const cnt=B.filter(b=>(b.phone===phone||b.userId===U.id)&&b.date===P.date&&b.status!=='cancelled').length;
+  if(cnt>=S.maxPerPhone)return toast(`Max ${S.maxPerPhone} bookings per day`);
+  const token=B.filter(b=>b.docId===doc.id&&b.date===P.date).length+1;
+  const sk=rq?'':(s.sh==='n'?'Evening':'Morning');const b={shift:sk,docId:doc.id,docName:doc.name,date:P.date,time:rq?'':P.time,name,phone,problem,status:'pending',token,created:Date.now(),userId:U.id,userName:U.username};
+  if(rq){b.req=true;b.wa=wa;b.pref=P.pref||'Evening'}
+  if(window._bkBusy)return;window._bkBusy=1;bkOverlay('load');
+  try{
+    const id=await Store.addBooking(b);
+    bkOverlay('ok','#'+token+' · '+doc.name,rq?'Request sent!':'');bkConfetti();
+    await new Promise(r=>setTimeout(r,1400));
+    bkOverlay(0);
+    P.done={...b,id};P.time='';P.date='';P.problem='';P.test='';P.kind='';P.pref='';P.wa='';W.step=0;render();window.scrollTo(0,0);
+  }catch(e){bkOverlay(0);toast('Booking failed. Check connection.')}
+  window._bkBusy=0;
+}
+
+/* ----- Reviews ----- */
+const DEV_ID='0727676806';
+const isDev=r=>r.id===DEV_ID;
+const rvSort=(a,b)=>(isDev(b)-isDev(a))||(b.at-a.at);
+const avHtml=r=>isDev(r)?`<span class="crown"><span class="av">R</span></span>`:`<span class="av">${esc((r.username||'?')[0].toUpperCase())}</span>`;
+const devCard=()=>`<div class="pad dev" style="margin-top:16px"><div style="display:flex;gap:12px;align-items:center"><span class="crown"><span class="av big">R</span></span><div><b style="font-size:17px">Rusthi</b><span class="dvt">Developer</span><div class="sub"><a href="tel:${DEV_ID}" style="color:inherit">${DEV_ID}</a></div></div></div></div>`;
+const starsTx=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+function rvTouch(){if(!W.rvTouched){const m=R.find(r=>r.id===U.id);W.rvText=m?m.text:'';W.rvStars=m?m.stars:0;W.rvTouched=1}}
+function setStars(n){rvTouch();W.rvStars=n;render()}
+async function submitReview(){
+  rvTouch();const stars=W.rvStars|0,text=(W.rvText||'').trim().slice(0,300),mine=R.find(r=>r.id===U.id);
+  if(stars<1)return toast('Tap the stars to rate');
+  const r={id:U.id,username:U.username,stars,text,at:Date.now()};
+  try{await Store.saveReview(r);R=[...R.filter(x=>x.id!==r.id),r];W.rvTouched=0;render();toast(mine?'Review updated ⭐':'Thanks for your review ⭐')}
+  catch(e){toast(e&&e.code==='permission-denied'?'Blocked by Firestore rules (reviews)':'Could not save. Check connection.')}
+}
+async function deleteMyReview(){
+  if(!confirm('Delete your review?'))return;
+  try{await Store.deleteReview(U.id);R=R.filter(x=>x.id!==U.id);W.rvTouched=0;render();toast('Review deleted')}catch(e){toast('Could not delete. Check connection.')}
+}
+function viewReviews(){
+  if(U.guest)return`<div class="pad" style="margin-top:16px;text-align:center"><div style="font-size:38px">⭐</div><h2>Reviews are for members</h2><p class="sub">Log in to read and write ratings &amp; reviews.</p>${benList()}<div class="row" style="margin-top:14px"><button class="btn" onclick="U=null;W.auth='login';render()">Log in</button><button class="btn sec" onclick="U=null;W.auth='signup';render()">Sign up</button></div></div>`;
+  const n=R.length,avg=n?R.reduce((a,r)=>a+r.stars,0)/n:0,d=[0,0,0,0,0,0];R.forEach(r=>d[r.stars]++);
+  const mine=R.find(r=>r.id===U.id),st=W.rvTouched?(W.rvStars|0):(mine?mine.stars:0),tx=W.rvTouched?(W.rvText||''):(mine?mine.text:'');
+  let h=(window.RV_ERR?`<div class="banner err" style="margin-top:14px">Reviews are not saving yet. In Firebase → Firestore → Rules, allow the <b>reviews</b> collection (error: ${esc(window.RV_ERR)}).</div>`:'')+devCard()+`<div class="pad"><h2>⭐ Ratings &amp; reviews</h2>`;
+  h+=n?`<div class="rsum" style="margin-top:10px"><div class="big">${avg.toFixed(1)}<div class="stv" style="font-size:16px">${starsTx(Math.round(avg))}</div><small>${n} review${n>1?'s':''}</small></div><div class="rbars">${[5,4,3,2,1].map(k=>`<div class="rbar"><span>${k}★</span><i><b style="width:${Math.round(d[k]/n*100)}%"></b></i><span>${d[k]}</span></div>`).join('')}</div></div>`:`<p class="sub" style="margin-top:6px">No reviews yet. Be the first to rate us!</p>`;
+  h+=`</div><div class="pad"><h2>${mine?'Your review':'Rate your experience'}</h2><div class="starpick">${[1,2,3,4,5].map(k=>`<button class="${k<=st?'on':''}" onclick="setStars(${k})" aria-label="${k} star">★</button>`).join('')}</div>
+  <textarea id="rv_t" maxlength="300" rows="3" placeholder="Write a few words (optional)" oninput="rvTouch();W.rvText=this.value" style="width:100%">${esc(tx)}</textarea>
+  <div class="row" style="margin-top:10px"><button class="btn" style="flex:1" onclick="submitReview()">${mine?'Update review':'Submit review'}</button>${mine?`<button class="btn red" onclick="deleteMyReview()">Delete</button>`:''}</div></div>`;
+  if(n){h+=`<div class="pad"><h2>All reviews</h2>`+[...R].sort(rvSort).map(r=>`<div class="rvc${isDev(r)?' dev':''}"><div class="rh">${avHtml(r)}<div class="m"><b>${esc(isDev(r)?'Rusthi':r.username)}</b>${isDev(r)?'<span class="dvt">Developer</span>':''}${r.id===U.id?' (You)':''}<div class="sub">${niceDT(r.at)}</div></div><span class="stv">${starsTx(r.stars)}</span></div>${r.text?`<p style="margin-top:8px;white-space:pre-wrap;overflow-wrap:anywhere">${esc(r.text)}</p>`:''}</div>`).join('')+`</div>`}
+  return h;
+}
+
+/* ----- Me ----- */
+function viewMe(){
+  if(W.chat){const cb=B.find(x=>x.id===W.chat);if(cb&&(cb.chatSeenU||0)<(cb.chat||[]).length)Store.updateBooking(cb.id,{chatSeenU:cb.chat.length})}
+  const my=bkOf(U).sort((a,b)=>b.created-a.created),c=s=>my.filter(b=>b.status===s).length;
+  if(U.guest){let g=`<div class="pad" style="margin-top:16px"><h2>Guest mode</h2><p class="sub">You are using the app without an account.</p>${benList()}<div class="row" style="margin-top:12px"><button class="btn" onclick="U=null;W.auth='signup';render()">Sign up</button><button class="btn sec" onclick="U=null;W.auth='login';render()">Log in</button></div></div><div class="pad"><h2>My bookings</h2>`;
+    if(!my.length)g+=`<div class="empty">No bookings yet.</div>`;
+    my.forEach(b=>{g+=`<div class="bk" style="margin-top:10px"><div class="top"><b>#${b.token} · ${esc(b.docName)}</b><span class="tag ${b.status}">${b.status}</span></div><div class="kv"><span>When</span><b>${nice(b.date)} · ${b.req&&!b.time?'⏳ Waiting for admin to give a time':f12(b.time)}${b.shift?' · '+esc(b.shift):''}</b><span>Patient</span><span style="color:inherit">${esc(b.name)}</span></div>${b.status==='pending'?`<div class="acts"><button class="btn red sm" onclick="cancelMine('${b.id}')">Cancel booking</button></div>`:''}</div>`});
+    return g+`</div>`}
+  let h=`<div class="pad" style="margin-top:16px"><div style="display:flex;gap:14px;align-items:center"><span class="av big">${esc(U.username[0].toUpperCase())}</span><div><h2 style="font-size:20px;margin:0">${esc(U.username)}</h2><p class="sub">Member since ${niceDT(U.created)}</p></div></div>
+  <div class="kv"><span>Username</span><b>${esc(U.username)}</b><span>Phone</span><b>${esc(U.phone)}</b><span>Joined</span><b>${niceDT(U.created)}</b></div>
+  <div class="mini"><div><b>${my.length}</b><small>Total</small></div><div><b>${c('pending')+c('confirmed')}</b><small>Upcoming</small></div><div><b>${c('done')}</b><small>Done</small></div><div><b>${c('cancelled')}</b><small>Cancelled</small></div></div></div>`;
+  h+=`<div class="pad"><h2>My bookings</h2>`;
+  if(!my.length)h+=`<div class="empty">No bookings yet. Tap Book to start.</div>`;
+  my.forEach(b=>{h+=`<div class="bk" style="margin-top:10px"><div class="top"><b>#${b.token} · ${esc(b.docName)}</b><span class="tag ${b.status}">${b.status}</span></div>
+    <div class="kv"><span>When</span><b>${nice(b.date)} · ${b.req&&!b.time?'⏳ Waiting for admin to give a time':f12(b.time)}${b.shift?' · '+esc(b.shift):''}</b><span>Patient</span><span style="color:inherit">${esc(b.name)}</span><span>Phone</span><span style="color:inherit">${esc(b.phone)}</span><span>Problem</span><span style="color:inherit">${esc(b.problem)}</span><span>Booked on</span><span style="color:inherit">${niceDT(b.created)}</span></div>
+    <div class="acts">${b.status==='pending'?`<button class="btn red sm" onclick="cancelMine('${b.id}')">Cancel booking</button>`:''}</div></div>`});
+  h+=`</div><div class="pad"><h2>Edit account</h2><label>Username</label><input id="m_u" value="${esc(U.username)}" autocapitalize="none"><button class="btn sm" style="margin-top:10px" onclick="saveUsername()">Save username</button>
+  <label style="margin-top:18px">Change password</label><input id="m_o" type="password" placeholder="Current password"><input id="m_n" type="password" placeholder="New password" style="margin-top:8px">
+  <button class="btn sm" style="margin-top:10px" onclick="changePw()">Change password</button></div>
+  <button class="btn red" style="width:100%" onclick="logoutUser()">Log out</button>`;
+  return h;
+}
+function cancelMine(id){if(confirm('Cancel this booking?'))Store.updateBooking(id,{status:'cancelled'})}
+async function saveUsername(){
+  const un=document.getElementById('m_u').value.trim();
+  if(!/^[A-Za-z0-9_.]{3,20}$/.test(un))return toast('Username: 3-20 letters, numbers, _ or .');
+  try{
+    const f=await Store.findByUsername(un.toLowerCase());if(f&&f.id!==U.id)return toast('Username already taken');
+    U={...U,username:un,usernameLower:un.toLowerCase()};await Store.saveUser(U);P.name='';render();toast('Username saved');
+  }catch(e){toast('Could not save')}
+}
+async function changePw(){
+  const o=document.getElementById('m_o').value,n=document.getElementById('m_n').value;
+  if(n.length<4)return toast('New password needs at least 4 characters');
+  try{
+    if(U.passHash!==await hashPw(U.id,o))return toast('Current password is wrong');
+    U={...U,passHash:await hashPw(U.id,n)};await Store.saveUser(U);render();toast('Password changed');
+  }catch(e){toast('Could not save')}
+}
+
+
+
+
+
+/* ============================================================
+   v6 : TODAY / TOMORROW DOCTORS · INBOX · GUEST BENEFITS
+   ============================================================ */
+function go(v){if(W.view!==v)W.fresh={};if(v==='reviews')W.rvTouched=0;W.chatOpen=false;W.view=v;render();window.scrollTo(0,0)}
+function quick(id,ds){P.doc=id;P.date=ds;P.time='';W.step=2;render();window.scrollTo(0,0)}
+function viewTeam(lab,back){
+  const ts=tomorrowState(),g=!S.bookingOpen?S.closedMsg:autoClosed();
+  const cols=[{ds:todayS(),l:'Today',ok:true},{ds:tomS(),l:'Tomorrow',ok:ts==='open',note:ts==='hide'?'Not open yet':'Booking opens '+f12(S.tomorrowFrom||'17:00')}];
+  let h=`<div class="pad">${back||''}<h2>${lab?'🧪 Lab test':'👨‍⚕️ Choose your doctor'}</h2><p class="sub">${lab?'Pick today or tomorrow.':'Today and tomorrow doctors — tap one to book.'}</p>`;
+  const nowM=new Date().getHours()*60+new Date().getMinutes();const over=new Set();
+  cols.forEach(c=>{
+    let L=S.doctors.filter(d=>d.active&&!!d.lab===lab).map(d=>({d,i:dayInfo(d,c.ds)})).filter(x=>x.i.open);
+    if(c.ds===todayS()){const n0=L.length;L=L.filter(x=>{if(x.i.req)return true;const o=x.i.shifts.every(z=>t2m(z.end)<=nowM)||(!freeCount(x.d,c.ds)&&avail(x.d,c.ds).some(a=>a.past));if(o)over.add(x.d.id);return!o});if(n0&&!L.length)return}
+    h+=`<div class="tdh"><b>${c.l}</b><span>${nice(c.ds)}</span></div>`;
+    if(!L.length){h+=`<div class="empty">${esc(g||(lab?'No lab on this day.':'No doctors on this day.'))}</div>`;return}
+    L.forEach(x=>{
+      const free=freeCount(x.d,c.ds),rq=!!x.i.req,ok=c.ok||(c.ds!==todayS()&&over.has(x.d.id)&&ts!=='hide'),can=ok&&(free>0||rq);
+      const sh=x.i.reqOnly?'📩 Send a request · admin gives your time':x.i.shifts.map(z=>`${z.k==='n'?'🌙':'☀'} ${f12(z.start)} – ${f12(z.end)}`).join('  ·  ')+(x.i.req?'  ·  📩 Request':'');
+      const tag=!ok?c.note:x.i.reqOnly?'Request':free?`${free} left`:(rq?'Request':'Full');
+      h+=`<button class="trow ${can?'':'off'}" ${can?`onclick="quick('${x.d.id}','${c.ds}')"`:'disabled'}><b>${x.d.lab?'🧪 ':''}${esc(x.d.name)}</b><span>${sh}</span><em>${esc(tag)}</em></button>`;
+    });
+  });
+  return h+`</div>`;
+}
+function benList(){const BEN=[['📥','<b>Inbox</b> — receive your lab reports &amp; results from the clinic right in the app'],['📱','Your bookings &amp; history are <b>saved on any phone</b> — not just this one'],['⚡','Name &amp; phone <b>auto-filled</b> — book faster next time'],['🔔','<b>Unread alerts</b> when the clinic sends you something']];
+return `<ul class="ben">${BEN.map(b=>`<li><i>${b[0]}</i><span>${b[1]}</span></li>`).join('')}</ul>`}
+function benBox(t){return `<div class="benbox"><h3>${t}</h3>${benList()}<p class="sub" style="margin-top:10px">Guests can still book, but need an account to receive lab reports.</p></div>`}
+function guestBar(){return `<div class="gbar"><span>🔒 Guest mode — log in to receive lab reports and sync bookings.</span><span style="display:flex;gap:6px"><button class="btn sm" onclick="U=null;W.auth='login';render()">Log in</button><button class="btn sec sm" onclick="U=null;W.auth='signup';render()">Sign up</button></span></div>`}
+
+function unreadR(b){return Math.max(0,(b.reports||[]).length-(b.reportSeenU||0))}
+const reportHtml=(b,r,isNew)=>r.d?'':`<div class="rp"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><b>🧪 ${esc(r.t||'Report')}${isNew?'<span class="new">NEW</span>':''}</b><small class="sub">${niceDT(r.at)}</small></div><div class="sub">${esc(b.docName)} · ${nice(b.date)} · ${esc(b.name)}</div>${r.m?`<p style="margin:8px 0 0;white-space:pre-wrap">${esc(r.m)}</p>`:''}${r.file&&String(r.file).startsWith('data:')?(r.ft==='application/pdf'?`<p style="margin-top:8px"><a href="${esc(r.file)}" download="${esc(r.fn||'report.pdf')}">📎 Download PDF report</a></p>`:`<img src="${esc(r.file)}" alt="report"><p style="margin-top:6px"><a href="${esc(r.file)}" download="${esc(r.fn||'report.jpg')}">⬇ Save image</a></p>`):''}</div>`;
+function viewInboxOld(){
+  if(U.guest)return`<div class="pad" style="margin-top:16px"><div style="font-size:38px">🔒</div><h2>Inbox is for members</h2><p class="sub">Log in to receive lab reports from the clinic.</p>${benList()}<div class="row" style="margin-top:14px"><button class="btn" onclick="U=null;W.auth='login';render()">Log in</button><button class="btn sec" onclick="U=null;W.auth='signup';render()">Sign up</button></div></div>`;
+  const my=bkOf(U);W.fresh=W.fresh||{};
+  const toMark=my.filter(b=>unreadR(b)>0);
+  toMark.forEach(b=>{if(W.fresh[b.id]===undefined)W.fresh[b.id]=b.reportSeenU||0});
+  if(toMark.length)setTimeout(()=>toMark.forEach(b=>Store.updateBooking(b.id,{reportSeenU:(b.reports||[]).length})),0);
+  const reps=[];my.forEach(b=>(b.reports||[]).forEach((r,i)=>reps.push({b,r,i})));
+  reps.sort((a,b)=>b.r.at-a.r.at);
+  let h=`<div class="wa-head"><span class="av">✚</span><div><b style="font-size:18px">Lab Reports</b><div class="sub">Reports and results from the clinic</div></div></div><div class="pad"><h2>🧪 Lab reports &amp; results</h2>`;
+  if(!reps.length)h+=`<div class="empty">No reports yet. Reports sent by the clinic will appear here.</div>`;
+  reps.forEach(x=>{h+=reportHtml(x.b,x.r,W.fresh[x.b.id]!==undefined&&x.i>=W.fresh[x.b.id])});
+  h+=`</div>`;
+  return h;
+}
+
+const WA_SIDE='u';
+const waSrc=()=>U?bkOf(U):[];
+const waCur=()=>(U&&!U.guest&&W.view==='inbox'&&W.chatOpen)?U.id:'';
+const waGet=k=>{if(!k||!U)return null;const g=waGroups(waSrc())[0];return g||{key:U.id,bs:[],items:[],last:null,latest:null,at:0}};
+const WA_EMPTY=g=>g.latest?'No messages yet. Say hello 👋':'Book an appointment to start chatting with the clinic.';
+function waPatientFull(){
+  const g=waGet(U.id);
+  return`<div class="w2full"><div class="w2top"><button class="w2back on" onclick="W.chatOpen=false;render()" aria-label="Back">←</button><span class="w2av">✚</span><div class="w2ti"><b>${esc(S.clinicName)}</b><span>Clinic · lab reports &amp; messages</span></div>${S.phone?`<a class="w2call" href="tel:${esc(S.phone)}" aria-label="Call">📞</a>`:''}</div><div class="w2msgs" id="w2msgs">${waMsgsHtml(g,'u',WA_EMPTY(g))}</div>${waComposer(!!g.latest,false)}</div>`;
+}
+function inboxCount(u){return u.guest?0:waUnread(waGroups(bkOf(u))[0]||{bs:[]},'u')}
+function viewInbox(){
+  if(U.guest)return viewInboxOld();
+  const g=waGet(U.id),l=g.last,n=waUnread(g,'u');let pv='Tap to chat with the clinic';
+  if(l){
+    const mine=l.k==='m'&&l.m.f==='u';
+    pv=(mine?waTick(l,'u')+' ':'')+((l.k==='r'?l.r:l.m).d?'🚫 Message deleted':l.k==='r'?'🧪 '+esc(l.r.t||'Report')+(l.r.file?' 📎':''):esc(l.m.t));
+  }
+  return`<div class="w2title"><b>Chats</b></div><div class="w2plist"><button class="w2row" onclick="W.chatOpen=true;render()"><span class="w2av">✚</span><span class="w2rm"><span class="w2r1"><b>${esc(S.clinicName)}</b><span class="w2tm${n?' un':''}">${waListTime(g.at)}</span></span><span class="w2r2"><span class="w2pv">${pv}</span>${n?`<em class="w2bd">${n}</em>`:''}</span></span></button></div><p class="sub" style="text-align:center;margin-top:12px">Your lab reports and clinic messages arrive in this chat.</p>`;
+}
+
+/* ================= WhatsApp-style inbox core (shared) ================= */
+const WAD={};
+const waKey=b=>(b.userId&&!String(b.userId).startsWith('guest-'))?String(b.userId):'ph:'+String(b.phone||'').replace(/\D/g,'');
+function waItems(g){
+  const it=[];
+  g.bs.forEach(b=>{
+    (b.chat||[]).forEach((m,i)=>it.push({k:'m',m,b,i,at:m.at||0}));
+    (b.reports||[]).forEach((r,i)=>it.push({k:'r',r,b,i,at:r.at||0}));
+  });
+  return it.sort((a,b)=>a.at-b.at);
+}
+function waGroups(list){
+  const m={};
+  list.forEach(b=>{const k=waKey(b);(m[k]=m[k]||{key:k,bs:[]}).bs.push(b)});
+  return Object.values(m).map(g=>{
+    g.bs.sort((a,b)=>(a.created||0)-(b.created||0));
+    g.items=waItems(g);g.last=g.items[g.items.length-1]||null;g.latest=g.bs[g.bs.length-1];
+    g.at=g.last?g.last.at:(g.latest.created||0);return g;
+  }).sort((a,b)=>b.at-a.at);
+}
+const waUnread=(g,side)=>g.bs.reduce((n,b)=>side==='a'
+  ?n+(b.chat||[]).slice(b.chatSeenA||0).filter(m=>m.f==='u'&&!m.d).length
+  :n+(b.chat||[]).slice(b.chatSeenU||0).filter(m=>m.f==='a'&&!m.d).length+(b.reports||[]).slice(b.reportSeenU||0).filter(r=>!r.d).length,0);
+const waSame=(a,b)=>a.toDateString()===b.toDateString();
+function waListTime(ts){
+  if(!ts)return'';const d=new Date(ts),n=new Date(),y=new Date(n);y.setDate(n.getDate()-1);
+  if(waSame(d,n))return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  if(waSame(d,y))return'Yesterday';
+  return d.toLocaleDateString([],{day:'numeric',month:'short',year:'2-digit'});
+}
+function waDay(ts){
+  const d=new Date(ts),n=new Date(),y=new Date(n);y.setDate(n.getDate()-1);
+  if(waSame(d,n))return'Today';if(waSame(d,y))return'Yesterday';
+  return d.toLocaleDateString([],{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function waTick(it,side){
+  if(it.k==='m'?it.m.d:it.r.d)return'';
+  let mine=false,rd=false;
+  if(it.k==='m'){mine=it.m.f===side;rd=side==='a'?it.i<(it.b.chatSeenU||0):it.i<(it.b.chatSeenA||0)}
+  else if(side==='a'){mine=true;rd=it.i<(it.b.reportSeenU||0)}
+  return mine?`<i class="w2t${rd?' rd':''}">${rd?'✓✓':'✓'}</i>`:'';
+}
+function waBubble(it,side,tail){
+  const tm=new Date(it.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  const own=it.k==='m'?it.m.f===side:side==='a',dead=it.k==='m'?it.m.d:it.r.d;
+  if(dead)return`<div class="w2b ${own?'me':'ot'}${tail?' tl':''}"><span class="w2tx w2dl">🚫 ${own?'You deleted this message':'This message was deleted'}</span><span class="w2m">${tm}</span></div>`;
+  const xb=own?`<button class="w2x" title="Delete for everyone" onclick="waDel('${it.b.id}','${it.k}',${it.i})">⌄</button>`:'';
+  if(it.k==='m'){
+    const me=it.m.f===side;
+    return`<div class="w2b ${me?'me':'ot'}${tail?' tl':''}">${xb}<span class="w2tx">${esc(it.m.t)}</span><span class="w2m">${tm}${waTick(it,side)}</span></div>`;
+  }
+  const r=it.r,me=side==='a';let a='';
+  if(r.file&&String(r.file).startsWith('data:')){
+    a=r.ft==='application/pdf'
+      ?`<a class="w2pdf" href="${esc(r.file)}" download="${esc(r.fn||'report.pdf')}"><b>PDF</b><span>${esc(r.fn||'report.pdf')}<small>Tap to download</small></span></a>`
+      :`<a href="${esc(r.file)}" download="${esc(r.fn||'report.jpg')}"><img class="w2img" src="${esc(r.file)}" alt="report"></a>`;
+  }
+  return`<div class="w2b ${me?'me':'ot'}${tail?' tl':''}">${xb}${r.t?`<b class="w2rt">🧪 ${esc(r.t)}</b>`:''}${a}${r.m?`<span class="w2tx">${esc(r.m)}</span>`:''}<span class="w2m">${tm}${waTick(it,side)}</span></div>`;
+}
+function waDel(bid,k,i){
+  const g=waGet(waCur());if(!g)return;const b=g.bs.find(x=>x.id===bid);if(!b)return;
+  if(!confirm('Delete this message for everyone?'))return;
+  if(k==='m'){const c=(b.chat||[]).map((m,j)=>j===i?{f:m.f,at:m.at,d:1}:m);b.chat=c;Promise.resolve(Store.updateBooking(b.id,{chat:c})).catch(()=>toast('Delete failed. Check connection.'))}
+  else{const r=(b.reports||[]).map((x,j)=>j===i?{at:x.at,d:1}:x);b.reports=r;Promise.resolve(Store.updateBooking(b.id,{reports:r})).catch(()=>toast('Delete failed. Check connection.'))}
+  waPaint();if(typeof waRowsPaint==='function')waRowsPaint();toast('Deleted for everyone');
+}
+function waMsgsHtml(g,side,empty){
+  const items=waItems(g);
+  if(!items.length)return`<div class="w2empty">${empty}</div>`;
+  let h='',day='',prev='';
+  items.forEach(it=>{
+    const d=new Date(it.at).toDateString(),who=it.k==='r'?'a':it.m.f;
+    if(d!==day){day=d;prev='';h+=`<div class="w2day"><span>${waDay(it.at)}</span></div>`}
+    h+=waBubble(it,side,who!==prev);prev=who;
+  });
+  return h;
+}
+function waComposer(canSend,attach){
+  const k=waCur();
+  return`<div class="w2cmp">${attach?`<label class="w2clip" title="Attach report (photo / PDF)">📎<input type="file" accept="image/*,application/pdf" hidden onchange="waAttach(this)"></label>`:''}<input id="w2in" maxlength="500" autocomplete="off" placeholder="${canSend?'Type a message':'Chat unavailable'}" value="${esc(WAD[k]||'')}" oninput="WAD[waCur()]=this.value" onkeydown="if(event.key==='Enter')waSend()" ${canSend?'':'disabled'}><button class="w2snd" onclick="waSend()" aria-label="Send" ${canSend?'':'disabled'}>➤</button></div>`;
+}
+function waSeen(g){
+  g.bs.forEach(b=>{
+    const p={},n=(b.chat||[]).length,r=(b.reports||[]).length;
+    if(WA_SIDE==='a'){if((b.chatSeenA||0)<n){p.chatSeenA=n;b.chatSeenA=n}}
+    else{
+      if((b.chatSeenU||0)<n){p.chatSeenU=n;b.chatSeenU=n}
+      if((b.reportSeenU||0)<r){p.reportSeenU=r;b.reportSeenU=r}
+    }
+    if(Object.keys(p).length)Promise.resolve(Store.updateBooking(b.id,p)).catch(()=>{});
+  });
+}
+function waPaint(force){
+  const m=document.getElementById('w2msgs');if(!m)return;
+  const g=waGet(waCur());if(!g)return;
+  const near=force||m.scrollHeight-m.scrollTop-m.clientHeight<90;
+  m.innerHTML=waMsgsHtml(g,WA_SIDE,WA_EMPTY(g));
+  if(near)m.scrollTop=m.scrollHeight;
+}
+function waRefresh(){
+  waPaint();
+  if(typeof waRowsPaint==='function')waRowsPaint();
+  const g=waGet(waCur());if(g&&!document.hidden)waSeen(g);
+}
+function refreshChat(){waRefresh()}
+function waSend(){
+  const k=waCur(),g=waGet(k),i=document.getElementById('w2in');if(!g||!i)return;
+  const t=i.value.trim();if(!t)return;
+  const b=g.latest;if(!b)return toast('Book an appointment first to chat with the clinic');
+  const c=[...(b.chat||[]),{f:WA_SIDE,t,at:Date.now()}];
+  if(JSON.stringify(c).length>800000)return toast('Chat is too large for this booking');
+  b.chat=c;const p={chat:c};p[WA_SIDE==='a'?'chatSeenA':'chatSeenU']=c.length;
+  WAD[k]='';i.value='';waPaint(true);if(typeof waRowsPaint==='function')waRowsPaint();
+  Promise.resolve(Store.updateBooking(b.id,p)).catch(()=>toast('Failed to send. Check connection.'));
+  i.focus();
+}
+
+/* ===== Ads: booking page only (controlled from the developer page) ===== */
+const AD_ST={top:{sig:'',tm:null},bottom:{sig:'',tm:null}};
+const adUrl=u=>/^https:\/\//i.test(String(u||'').trim());
+function adBlocks(pos){
+  const a=S&&S.ads;if(!a||!a.on)return[];const out=[],t=todayS(),c=a.custom||{};
+  if((c.pos==='bottom'?'bottom':'top')===pos){
+    const it=(c.items||[]).filter(x=>x&&x.on!==false&&(x.title||x.img)&&(!x.from||x.from<=t)&&(!x.to||x.to>=t)&&(!x.link||adUrl(x.link))&&(!x.img||adUrl(x.img)));
+    if(it.length)out.push({k:'c',it,r:Math.max(3,+c.rotate||6)});
+  }
+  const g=a.adsense||{};
+  if(g.on&&(g.pos==='top'?'top':'bottom')===pos&&/^ca-pub-\d{10,20}$/.test(g.client||'')&&/^\d{6,15}$/.test(g.slot||''))out.push({k:'g',client:g.client,slot:g.slot});
+  const o=a.other||{};
+  if(o.on&&(o.pos==='top'?'top':'bottom')===pos&&String(o.html||'').trim())out.push({k:'o',html:String(o.html),h:Math.min(600,Math.max(50,+o.h||100))});
+  return out;
+}
+function adBuild(el,pos,blocks){
+  const st=AD_ST[pos];clearInterval(st.tm);st.tm=null;let h='',push=false;
+  blocks.forEach(b=>{
+    if(b.k==='c'){
+      h+=`<div class="adw"><span class="adl">Ad</span>`+b.it.map((x,n)=>{
+        const inner=(x.img?`<img src="${esc(x.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:'')+`<div><b>${esc(x.title)}</b>`+(x.text?`<span>${esc(x.text)}</span>`:'')+(x.btn?`<em>${esc(x.btn)}</em>`:'')+`</div>`;
+        return x.link?`<a class="adc${n?'':' on'}" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer sponsored">${inner}</a>`:`<div class="adc${n?'':' on'}">${inner}</div>`;
+      }).join('')+`</div>`;
+    }else if(b.k==='g'){
+      h+=`<div class="adw"><span class="adl">Ad</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(b.client)}" data-ad-slot="${esc(b.slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`;push=b.client;
+    }else{
+      const doc='<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0">'+b.html;
+      h+=`<div class="adw"><span class="adl">Ad</span><iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" style="height:${b.h}px" srcdoc="${esc(doc)}"></iframe></div>`;
+    }
+  });
+  el.innerHTML=h;
+  const cb=blocks.find(b=>b.k==='c');
+  if(cb&&cb.it.length>1){const cards=[...el.querySelectorAll('.adc')];let n=0;st.tm=setInterval(()=>{cards[n].classList.remove('on');n=(n+1)%cards.length;cards[n].classList.add('on')},cb.r*1000)}
+  if(push){try{
+    if(!window._adsLoaded){window._adsLoaded=push;const s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(push);document.head.appendChild(s)}
+    (window.adsbygoogle=window.adsbygoogle||[]).push({});
+  }catch(e){}}
+}
+function adSync(){
+  const show=!!(S&&U&&!S.maintenance&&W.view==='book');
+  ['top','bottom'].forEach(pos=>{
+    const el=document.getElementById(pos==='top'?'adTop':'adBot');if(!el)return;
+    const blocks=adBlocks(pos),sg=JSON.stringify(blocks),st=AD_ST[pos];
+    if(!blocks.length){if(st.sig){clearInterval(st.tm);el.innerHTML='';st.sig=''}el.style.display='none';return}
+    if(!show){el.style.display='none';if(st.sig&&st.sig!==sg){clearInterval(st.tm);el.innerHTML='';st.sig=''}return}
+    el.style.display='';
+    if(st.sig!==sg||!el.firstChild){adBuild(el,pos,blocks);st.sig=sg}
+  });
+}
+const _render=render;
+render=function(){
+  const m0=document.getElementById('w2msgs'),k0=window._w2k||'';
+  const near=!m0||m0.scrollHeight-m0.scrollTop-m0.clientHeight<90,st=m0?m0.scrollTop:0;
+  _render();
+  try{adSync()}catch(e){}
+  const m=document.getElementById('w2msgs'),k=waCur();
+  if(m){if(near||k!==k0||!m0)m.scrollTop=m.scrollHeight;else m.scrollTop=st}
+  window._w2k=m?k:'';
+  const g=m&&waGet(k);if(g&&!document.hidden)waSeen(g);
+};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){const g=waGet(waCur());if(g)waSeen(g)}});
+window._ready=true;softRender();
+</script>
+</body>
+</html>

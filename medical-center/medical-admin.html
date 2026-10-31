@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12303a" id="tc">
+<title>Admin - Medical Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12303a;--mut:#5d7680;--paper:#fbfdfc;--card:#fff;--line:#d7e5e2;--g:#0e8f6b;--g2:#0a6d53;--gl:#e1f5ee;--red:#d6403a;--rl:#fdeceb;--blue:#e6f1f7;--amb:#b7791f;--aml:#fdf3dc;--head:#12303a;--onhead:#fff;--onG:#fff}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'Figtree',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.5;min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.wrap.wide{max-width:1000px}
+.wrap.pb{padding-bottom:96px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);outline:none}
+input:focus,select:focus,textarea:focus,button:focus-visible{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 22%,transparent)}
+textarea{resize:vertical;min-height:84px}
+label{display:block;font-weight:600;font-size:13.5px;margin:12px 0 5px}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--g);color:var(--onG)}
+.btn:hover{background:var(--g2)}
+.btn.sec{background:var(--blue);color:var(--ink)}
+.btn.red{background:var(--rl);color:var(--red)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pad{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.head{background:var(--head);color:var(--onhead);border-radius:0 0 22px 22px;padding:22px 18px 20px;position:relative;overflow:hidden}
+.head .in{max-width:720px;margin:0 auto;position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rx{position:absolute;right:-6px;top:-30px;font-size:190px;font-weight:800;color:var(--onhead);opacity:.07;line-height:1;pointer-events:none;font-family:Georgia,serif}
+.head h1{font-size:23px;font-weight:800;letter-spacing:-.3px;cursor:default;user-select:none}
+.head p{opacity:.8;margin-top:2px;font-size:14px}
+.head a{color:inherit;font-weight:600}
+.uchip{border:0;background:rgba(255,255,255,.16);color:var(--onhead);border-radius:99px;padding:6px 12px 6px 6px;display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;flex:0 0 auto}
+.av{width:28px;height:28px;border-radius:50%;background:var(--g);color:var(--onG);display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+.av.big{width:62px;height:62px;font-size:26px}
+.banner{border-radius:12px;padding:11px 14px;margin-bottom:14px;font-weight:600}
+.banner.warn{background:var(--aml);color:#7a4f0c}
+.banner.err{background:var(--rl);color:var(--red)}
+h2{font-size:17px;font-weight:800;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13.5px}
+.steps{display:flex;gap:6px;margin:16px 0 14px}
+.stp{flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--mut)}
+.stp i{display:block;height:30px;line-height:30px;border-radius:99px;font-style:normal;font-size:14px;background:var(--blue);margin-bottom:3px}
+.stp.cur i{background:linear-gradient(90deg,var(--g) 50%,var(--gl) 50%);color:var(--onG);text-shadow:0 0 2px rgba(0,0,0,.25)}
+.stp.cur{color:var(--ink)}
+.stp.ok i{background:var(--g);color:var(--onG)}
+.stp.ok{cursor:pointer;color:var(--ink)}
+.docs{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin-top:10px}
+.doc{border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;background:var(--card);text-align:left}
+.doc b{display:block;font-size:16px}.doc span{font-size:13px;color:var(--mut)}
+.doc:hover,.doc.on{border-color:var(--g);background:var(--gl)}
+.days{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.day{border:1.5px solid var(--line);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;background:var(--card)}
+.day b{display:block;font-size:19px}.day span{display:block;font-size:13px;color:var(--mut)}.day em{display:block;margin-top:6px;font-style:normal;font-weight:700;font-size:13px;color:var(--g2)}
+.day:hover{border-color:var(--g);background:var(--gl)}
+.day.off{opacity:.5;cursor:not-allowed;background:var(--blue)}.day.off:hover{border-color:var(--line);background:var(--blue)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px;margin-top:10px}
+.slot{border:1.5px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center;font-weight:700;background:var(--card);cursor:pointer}
+.slot:hover{border-color:var(--g)}
+.slot.on{background:var(--g);border-color:var(--g);color:var(--onG)}
+.slot.full{background:var(--blue);color:var(--mut);opacity:.7;text-decoration:line-through;cursor:not-allowed}
+.slot.full small{text-decoration:none}
+.slot.blk{background:var(--rl);border-color:var(--red);color:var(--red)}
+.slot small{display:block;font-size:11px;font-weight:600;opacity:.85}
+.empty{color:var(--mut);padding:14px;text-align:center;background:var(--blue);border-radius:12px;margin-top:8px}
+.tok{font-size:54px;font-weight:800;color:var(--g);line-height:1}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.tag.pending{background:var(--aml);color:var(--amb)}.tag.confirmed{background:var(--blue);color:var(--ink)}
+.tag.done{background:var(--gl);color:var(--g2)}.tag.cancelled{background:var(--rl);color:var(--red)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:14px 0}
+.tabs button{flex:0 0 auto;border:0;background:var(--blue);padding:9px 15px;border-radius:99px;font-weight:700;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--head);color:var(--onhead)}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat div{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--mut)}
+.bk{border:1.5px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px;background:var(--card)}
+.bk .top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+.bk .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.bk a{color:var(--g2);font-weight:600;text-decoration:none}
+.kv{display:grid;grid-template-columns:100px 1fr;gap:2px 10px;font-size:14px;margin-top:6px}.kv span{color:var(--mut)}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;margin:6px 0}
+.sw input{width:20px;height:20px;accent-color:var(--g)}
+.sm2{cursor:pointer;font-weight:800;font-size:17px}details>summary+*{margin-top:10px}
+.shc{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:12px;background:var(--card)}.shc.off{opacity:.65;background:var(--blue)}.shh{display:flex;justify-content:space-between;align-items:center}
+.dchips{display:flex;gap:6px;flex-wrap:wrap}.dchips button{flex:1;min-width:44px;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:9px 0;font-weight:700;cursor:pointer}.dchips button.on{background:var(--g);border-color:var(--g);color:var(--onG)}
+.wk{display:grid;grid-template-columns:110px 1fr 1fr;gap:6px;align-items:center;margin-top:6px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:0}
+.seg{display:flex;background:var(--blue);border-radius:12px;padding:4px;gap:4px;margin-top:8px}
+.seg button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-weight:700;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--g);color:var(--onG)}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-radius:16px;padding:18px;margin-bottom:14px;border:1.5px solid}
+.hero.ok{background:var(--gl);border-color:var(--g)}.hero.no{background:var(--rl);border-color:var(--red)}
+.hero h2{font-size:20px;margin:0}.hero p{font-size:14px;margin-top:2px}
+.ov{display:grid;grid-template-columns:1.3fr 1fr 70px;gap:4px 10px;font-size:14px;align-items:center}
+.ov .h{color:var(--mut);font-size:12.5px;font-weight:700;padding-bottom:4px;border-bottom:1.5px solid var(--line)}
+.ov .c{padding:7px 0;border-bottom:1px solid var(--line)}
+.sect{font-size:12.5px;font-weight:800;color:var(--mut);margin:18px 0 8px;letter-spacing:.2px}
+.bnav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1.5px solid var(--line);display:flex;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));z-index:50}
+.bnav button{flex:1;border:0;background:none;padding:8px;font-weight:700;color:var(--mut);cursor:pointer;border-radius:12px}
+.bnav button.on{color:var(--g2);background:var(--gl)}
+.bnav button span{display:block;font-size:20px;line-height:1.1}
+.mini{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.mini div{flex:1;min-width:70px;background:var(--blue);border-radius:10px;padding:8px;text-align:center}.mini b{display:block;font-size:18px}.mini small{color:var(--mut);font-size:12px}
+.sum{background:var(--gl);border-radius:12px;padding:12px 14px;margin-top:8px}
+.sum div{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.sum a{color:var(--g2);font-weight:700;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head);color:var(--onhead);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;max-width:90vw}
+#toast.show{opacity:1}
+.foot{text-align:center;color:var(--mut);font-size:12.5px;padding:18px}
+@media(max-width:520px){.stat{grid-template-columns:repeat(2,1fr)}.ov{grid-template-columns:1.2fr 1fr 58px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.chat{margin-top:10px;border-radius:16px;background:var(--blue);padding:10px}.cmsgs{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.cm{max-width:82%;padding:8px 12px;border-radius:16px;font-size:14px;display:flex;flex-direction:column;word-break:break-word}.cm small{font-size:10.5px;opacity:.65;margin-top:2px}
+.cm.me{align-self:flex-end;background:var(--g);color:var(--onG);border-bottom-right-radius:5px}.cm.ad{align-self:flex-start;background:var(--card);border-bottom-left-radius:5px}
+.crow{display:flex;gap:8px;margin-top:8px}.crow input{flex:1}.bdg{background:var(--red);color:#fff;border-radius:99px;font-style:normal;font-size:11px;padding:1px 7px;margin-left:4px}
+/* professional booking look */
+.head{border-radius:0 0 26px 26px;padding:26px 18px 24px;background:linear-gradient(135deg,var(--head),color-mix(in srgb,var(--head) 70%,var(--g)))}
+.head h1{font-size:22px}.head p{font-size:13.5px;letter-spacing:.2px}
+.pad{box-shadow:0 1px 2px rgba(18,48,58,.05),0 8px 24px -12px rgba(18,48,58,.15);border-color:transparent}
+.pad h2{font-size:18px}
+.stp i{height:32px;line-height:32px;box-shadow:inset 0 0 0 1px var(--line);background:var(--card)}
+.stp.ok i{box-shadow:none}.stp.cur i{box-shadow:none}
+.doc{display:flex;flex-direction:column;gap:2px;padding:15px;transition:.15s}
+.doc:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px rgba(18,48,58,.3)}
+.doc b::before{content:'⚕';display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--gl);color:var(--g2);align-items:center;justify-content:center;margin-right:9px;font-size:15px}
+.day{padding:20px 12px}.slot{padding:11px 4px}
+.seg button small{font-size:11px}
+.seg{padding:4px}.seg button.on{box-shadow:0 2px 8px -2px rgba(0,0,0,.3)}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12.5px;margin:14px 0}.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
+.tok{background:var(--gl);display:inline-block;padding:10px 22px;border-radius:14px;margin:6px 0}
+.btn{transition:.15s}.btn:active{transform:scale(.98)}
+@media(max-width:520px){.stat{grid-template-columns:repeat(2,1fr)}.ov{grid-template-columns:1.2fr 1fr 58px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== App style (Practo-like) ===== */
+body{background:color-mix(in srgb,var(--paper) 93%,var(--g))}
+.head{border-radius:0 0 30px 30px;padding:22px 18px 52px}
+.head h1{font-size:21px}.head p{font-size:13px}
+.wrap{position:relative;margin-top:-34px}
+.wrap.pb{padding-bottom:112px}
+.pad,.bk,.stat div,.hero{border:0!important;border-radius:22px;box-shadow:0 2px 12px rgba(15,40,60,.08)}
+.steps{background:var(--card);border-radius:20px;padding:12px 8px 8px;box-shadow:0 6px 20px -8px rgba(15,40,60,.25);margin-top:0}
+.stp i{width:30px;height:30px;line-height:30px;margin:0 auto 4px;border-radius:50%;background:var(--blue);box-shadow:none}
+.stp.cur i{background:var(--g);color:var(--onG);text-shadow:none}.stp.ok i{background:var(--g2)}
+.docs{grid-template-columns:1fr;gap:12px}
+.doc{display:grid;grid-template-columns:54px 1fr 22px;column-gap:14px;align-items:center;border:0;border-radius:22px;padding:16px;box-shadow:0 2px 12px rgba(15,40,60,.09)}
+.doc::before{content:'⚕';grid-row:1/3;width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--g),var(--g2));color:var(--onG);display:flex;align-items:center;justify-content:center;font-size:24px}
+.doc::after{content:'›';grid-row:1/3;grid-column:3;font-size:28px;color:var(--mut)}
+.doc b{grid-column:2;font-size:16.5px}.doc b::before{content:none!important;display:none}.doc span{grid-column:2}
+.doc:hover,.doc.on{background:var(--gl)}
+.days{gap:12px}
+.day{border:0;border-radius:22px;padding:22px 12px;box-shadow:0 2px 12px rgba(15,40,60,.09)}
+.day b{font-size:20px}.day em{display:inline-block;background:var(--gl);padding:4px 12px;border-radius:99px}
+.day.off em{background:transparent}
+.slots{grid-template-columns:repeat(3,1fr);gap:10px}
+.slot{border:0;border-radius:99px;padding:13px 4px;box-shadow:0 1px 4px rgba(15,40,60,.14)}
+.slot.on{box-shadow:0 6px 14px -4px color-mix(in srgb,var(--g) 70%,transparent)}
+.seg{background:var(--card);border-radius:20px;box-shadow:0 2px 12px rgba(15,40,60,.08);padding:5px}
+.seg button{border-radius:16px;padding:11px 6px}
+.btn{border-radius:16px;padding:14px 18px}
+input,select,textarea{border-radius:14px;padding:13px 14px}
+.bnav{position:fixed!important;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:480px;margin:0 auto;display:flex;gap:4px;background:var(--card);border-radius:26px;box-shadow:0 12px 32px -8px rgba(15,40,60,.4);padding:6px;z-index:50;border:0}
+.bnav button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 6px;border-radius:20px;font-weight:700;font-size:12px;color:var(--mut);cursor:pointer}
+.bnav button span{font-size:20px;line-height:1.2}
+.bnav button.on{background:var(--gl);color:var(--g2)}
+.tok{background:var(--gl);border-radius:20px;padding:12px 26px}
+.chat{margin-top:10px;border-radius:16px;background:var(--blue);padding:10px}.cmsgs{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.cm{max-width:82%;padding:8px 12px;border-radius:16px;font-size:14px;display:flex;flex-direction:column;word-break:break-word}.cm small{font-size:10.5px;opacity:.65;margin-top:2px}
+.cm.me{align-self:flex-end;background:var(--g);color:var(--onG);border-bottom-right-radius:5px}.cm.ad{align-self:flex-start;background:var(--card);border-bottom-left-radius:5px}
+.crow{display:flex;gap:8px;margin-top:8px}.crow input{flex:1}.bdg{background:var(--red);color:#fff;border-radius:99px;font-style:normal;font-size:11px;padding:1px 7px;margin-left:4px}
+
+/* ===== Premium polish ===== */
+:root{--sh1:0 1px 2px rgba(10,30,45,.06),0 8px 28px -10px rgba(10,30,45,.18);--sh2:0 2px 4px rgba(10,30,45,.08),0 18px 40px -14px rgba(10,30,45,.3);--grad:linear-gradient(135deg,var(--g),var(--g2))}
+body{letter-spacing:.1px;-webkit-font-smoothing:antialiased;background:radial-gradient(900px 420px at 85% -80px,color-mix(in srgb,var(--g) 14%,transparent),transparent 70%),color-mix(in srgb,var(--paper) 94%,var(--g))}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#app .wrap>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+#app .wrap>*:nth-child(2){animation-delay:.05s}#app .wrap>*:nth-child(3){animation-delay:.1s}
+@media(prefers-reduced-motion:reduce){#app .wrap>*{animation:none}}
+.head{background:radial-gradient(500px 220px at 90% -40px,rgba(255,255,255,.22),transparent 70%),radial-gradient(380px 200px at -10% 120%,color-mix(in srgb,var(--g) 60%,transparent),transparent 70%),var(--head);padding:26px 20px 60px;box-shadow:0 18px 40px -22px rgba(10,30,45,.6)}
+.head h1{font-size:23px;font-weight:800;letter-spacing:-.5px}
+.head p{opacity:.78;letter-spacing:.2px}
+.uchip{background:rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22)}
+.pad,.bk,.hero,.stat div{border:1px solid color-mix(in srgb,var(--line) 55%,transparent)!important;box-shadow:var(--sh1);border-radius:24px}
+.pad{padding:22px 20px}
+h2{font-size:20px;letter-spacing:-.4px;margin-bottom:6px}
+.sub{font-size:13.5px;line-height:1.5}
+label{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--mut);margin:16px 0 6px}
+.steps{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh2);padding:14px 8px 10px;border-radius:22px}
+.stp{font-size:11.5px;letter-spacing:.3px}
+.stp i{width:32px;height:32px;line-height:32px;font-weight:800;transition:.3s}
+.stp.cur i{background:var(--grad);box-shadow:0 0 0 5px color-mix(in srgb,var(--g) 18%,transparent),0 6px 14px -4px color-mix(in srgb,var(--g) 70%,transparent)}
+.stp.ok i{background:var(--g2)}
+.doc{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1);transition:transform .25s,box-shadow .25s,border-color .25s;padding:18px 16px}
+.doc:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:color-mix(in srgb,var(--g) 40%,transparent)}
+.doc:active{transform:scale(.985)}
+.doc::before{background:var(--grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -6px color-mix(in srgb,var(--g) 65%,transparent);border-radius:20px;width:56px;height:56px}
+.doc b{font-size:17px;letter-spacing:-.2px}
+.doc span{display:inline-block;margin-top:3px;background:var(--gl);color:var(--g2);padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;justify-self:start}
+.doc::after{content:'›';width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:var(--ink)}
+.day{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1);transition:.25s;position:relative;overflow:hidden}
+.day::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad)}
+.day.off::before{background:var(--line)}
+.day:not(.off):hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.day b{font-size:21px;letter-spacing:-.4px}
+.slot{font-size:14.5px;letter-spacing:.2px;transition:.2s;border:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.slot:hover:not(.full){transform:translateY(-2px);border-color:var(--g)}
+.slot.on{background:var(--grad);border-color:transparent}
+.slot.on::after{content:' ✓'}
+.seg{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);box-shadow:var(--sh1)}
+.seg button{transition:.25s;line-height:1.3}
+.seg button.on{background:var(--grad);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--g) 80%,transparent)}
+.btn{background:var(--grad);box-shadow:0 10px 22px -10px color-mix(in srgb,var(--g) 85%,transparent);letter-spacing:.3px;transition:transform .15s,box-shadow .25s}
+.btn:hover{box-shadow:0 14px 28px -10px color-mix(in srgb,var(--g) 90%,transparent);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:var(--blue);box-shadow:none}.btn.red{background:var(--rl);box-shadow:none}
+input,select,textarea{background:color-mix(in srgb,var(--card) 70%,var(--blue));border:1.5px solid transparent;transition:.2s}
+input:focus,select:focus,textarea:focus{background:var(--card);border-color:var(--g)}
+.bnav{background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.5);box-shadow:0 18px 40px -12px rgba(10,30,45,.45)}
+.bnav button{transition:.25s}.bnav button.on{background:var(--grad);color:var(--onG);box-shadow:0 8px 16px -8px color-mix(in srgb,var(--g) 90%,transparent)}
+.tok{background:var(--grad);color:var(--onG);font-size:50px;letter-spacing:1px;padding:14px 34px;border-radius:24px;box-shadow:0 18px 36px -16px color-mix(in srgb,var(--g) 90%,transparent)}
+.kv{padding:12px 14px;background:color-mix(in srgb,var(--blue) 55%,transparent);border-radius:16px;margin-top:12px}
+.tag{letter-spacing:.3px;text-transform:capitalize}
+.foot{opacity:.75;font-size:12.5px;padding:18px 0 4px}
+.cm.me{background:var(--grad)}
+
+/* ===== Rush UI/UX + motion upgrade v2 ===== */
+:root{
+ --motion-fast:180ms;--motion-mid:320ms;--motion-slow:620ms;
+ --ease-out:cubic-bezier(.16,1,.3,1);
+ --focus-ring:0 0 0 4px color-mix(in srgb,var(--g) 22%,transparent);
+}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{overflow-x:hidden}
+button,a,.doc,.day,.slot,.pad,.bk,.stat div,.hero,.steps,.seg,.uchip,.bnav{
+ -webkit-tap-highlight-color:transparent;
+}
+button{touch-action:manipulation}
+button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--g) 65%,white);outline-offset:3px}
+.pad,.bk,.hero,.stat div,.steps,.doc,.day,.slot,.seg,.bnav,.uchip{
+ transition:transform var(--motion-mid) var(--ease-out),box-shadow var(--motion-mid) var(--ease-out),background-color var(--motion-fast),border-color var(--motion-fast),opacity var(--motion-mid);
+}
+@keyframes pageEnter{0%{opacity:0;transform:translateY(18px) scale(.985);filter:blur(3px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes softPop{0%{opacity:0;transform:scale(.88)}70%{transform:scale(1.035)}100%{opacity:1;transform:scale(1)}}
+@keyframes glowBreathe{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--g) 0%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--g) 10%,transparent)}}
+@keyframes shimmer{0%{background-position:180% 0}100%{background-position:-180% 0}}
+@keyframes checkBounce{0%{transform:scale(.7);opacity:.5}65%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+#app .wrap>*{animation:pageEnter .55s var(--ease-out) both}
+#app .wrap>*:nth-child(2){animation-delay:55ms}
+#app .wrap>*:nth-child(3){animation-delay:100ms}
+#app .wrap>*:nth-child(4){animation-delay:145ms}
+#app .wrap>*:nth-child(5){animation-delay:190ms}
+.head{isolation:isolate}
+.head:after{content:"";position:absolute;z-index:0;width:210px;height:210px;right:-80px;bottom:-135px;border:1px solid rgba(255,255,255,.18);border-radius:50%;box-shadow:0 0 0 22px rgba(255,255,255,.035),0 0 0 48px rgba(255,255,255,.025);pointer-events:none}
+.rx{animation:softPop .9s var(--ease-out) both}
+.doc:hover,.day:not(.off):hover,.bk:hover,.stat div:hover{transform:translateY(-3px)}
+.doc.on{outline:2px solid color-mix(in srgb,var(--g) 45%,transparent);outline-offset:1px}
+.doc.on::after{content:'✓';background:var(--g);color:var(--onG);font-size:17px;font-weight:900}
+.day:not(.off):active,.doc:active,.slot:active,.bnav button:active{transform:scale(.97)}
+.stp.cur i{animation:softPop .42s var(--ease-out) both}
+.stp.ok i{animation:checkBounce .36s var(--ease-out) both}
+.slot.on{animation:checkBounce .26s var(--ease-out) both}
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.18) 45%,transparent 70%);background-size:220% 100%;opacity:0;pointer-events:none}
+.btn:hover:before{opacity:1;animation:shimmer .9s linear}
+.btn:focus-visible{box-shadow:var(--focus-ring)}
+input:focus,select:focus,textarea:focus{box-shadow:var(--focus-ring)}
+input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--mut) 78%,transparent)}
+label{line-height:1.35}
+.bnav button span{transition:transform var(--motion-mid) var(--ease-out)}
+.bnav button.on span{transform:translateY(-2px) scale(1.08)}
+.tok{animation:softPop .5s var(--ease-out) both}
+.banner{animation:pageEnter .4s var(--ease-out) both}
+.empty{border:1px dashed color-mix(in srgb,var(--g) 25%,var(--line));}
+.chat{animation:pageEnter .3s var(--ease-out) both}
+.cm{animation:pageEnter .22s var(--ease-out) both}
+.sum{border:1px solid color-mix(in srgb,var(--g) 14%,transparent)}
+/* Improve mobile reachability and prevent horizontal overflow */
+@media(max-width:520px){
+ .wrap{padding-left:14px;padding-right:14px}
+ .head{padding-left:18px;padding-right:18px}
+ .pad{padding:19px 16px}
+ .bnav{bottom:calc(10px + env(safe-area-inset-bottom,0px));left:10px;right:10px}
+ .bnav button{min-height:52px}
+ .slots{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .slot{min-width:0;font-size:13px;padding:12px 2px}
+ .row>*{min-width:0}
+ input,select,textarea{font-size:16px} /* avoids iOS zoom; harmless elsewhere */
+}
+@media(min-width:760px){
+ .wrap{padding-left:22px;padding-right:22px}
+ .docs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(hover:none){
+ .doc:hover,.day:not(.off):hover,.bk:hover,.stat div:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+
+/* ===== Admin: same look as patient app ===== */
+.head .in{max-width:1000px;align-items:center}
+.head .hb{display:flex;gap:8px;flex:0 0 auto}
+.head .btn.sec{background:rgba(255,255,255,.16);color:var(--onhead);box-shadow:none;border:1px solid rgba(255,255,255,.22)}
+.head .btn.red{background:rgba(214,64,58,.92);color:#fff;box-shadow:none}
+.head .btn{border-radius:99px}
+.tabs{background:var(--card);padding:6px;border-radius:22px;box-shadow:var(--sh1);gap:4px;margin:0 0 14px}
+.tabs button{flex:1 0 auto;background:transparent;border-radius:17px;padding:12px 16px;transition:.25s var(--ease-out)}
+.tabs button.on{background:var(--grad);color:var(--onG);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--g) 80%,transparent)}
+.stat{gap:12px}.stat div{padding:16px 10px}.stat b{font-size:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.shc{border:1px solid color-mix(in srgb,var(--line) 55%,transparent);border-radius:20px;box-shadow:var(--sh1);padding:15px 16px}
+.dchips button{border:0;background:var(--blue);border-radius:12px;padding:11px 0;transition:.2s}
+.dchips button.on{background:var(--grad);color:var(--onG)}
+.li{padding:12px 0}
+.rp{border-radius:18px}
+@media(max-width:520px){.head .in{flex-wrap:wrap}.tabs button{padding:11px 14px}}
+
+/* WhatsApp-style users */
+.wal{padding:0!important;overflow:hidden}
+.war{display:flex;gap:13px;align-items:center;width:100%;padding:13px 16px;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;color:var(--ink)}
+.war:last-child{border-bottom:0}.war:hover{background:var(--gl)}
+.war .av{width:50px;height:50px;font-size:20px;flex:0 0 auto}
+.war .mid{flex:1;min-width:0}.war .mid b{display:block;font-size:16px}
+.war .pv{display:block;font-size:13.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.war .rt{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:12px;color:var(--mut);flex:0 0 auto}
+.war .bdg{margin:0;background:#25d366;color:#fff}
+.wacts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.wacts a,.wacts button{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:74px;padding:11px 8px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--g2);font-weight:700;font-size:12.5px;text-decoration:none;cursor:pointer}
+.wacts span{font-size:21px;line-height:1}.wacts a.wg{color:#128c4a}.wacts a.wg span{color:#25d366}.wacts .rd{color:var(--red)}
+.wacts a:hover,.wacts button:hover{background:var(--gl)}
+
+/* WhatsApp-inspired messaging refresh */
+:root{--wa:#075e54;--wa2:#128c7e;--wa-soft:#e7f7f1;--wa-chat:#efeae2}
+.chat{background:var(--wa-chat)!important;border:1px solid #d9e1dc;border-radius:18px!important;padding:10px!important}
+.cmsgs{max-height:54vh!important;min-height:180px;padding:8px!important;background-color:#efeae2;background-image:radial-gradient(rgba(7,94,84,.045) .7px,transparent .7px);background-size:12px 12px;border-radius:14px}
+.cm{box-shadow:0 1px 1px rgba(0,0,0,.08);padding:9px 12px!important;max-width:86%!important;border-radius:12px!important}
+.cm.me{background:#d9fdd3!important;color:#17352d!important;border-bottom-right-radius:4px!important}
+.cm.ad{background:#fff!important;color:#202c33!important;border-bottom-left-radius:4px!important}
+.cm small{align-self:flex-end;font-size:10px!important;color:#667781!important}
+.crow{align-items:center;background:#f7f8f8;border-radius:999px;padding:5px;margin-top:8px!important}
+.crow input{border:0!important;background:#fff!important;border-radius:999px!important;box-shadow:none!important}
+.crow .btn{border-radius:50%!important;width:46px;height:46px;padding:0!important;flex:0 0 46px;font-size:0;position:relative}
+.crow .btn:after{content:"➤";font-size:20px}
+.rp{border:1px solid #e2e8e5!important;border-radius:16px!important;padding:14px!important;margin:10px 0!important;background:#fff;box-shadow:0 2px 8px rgba(20,50,45,.045)}
+.wa-head{display:flex;align-items:center;gap:12px;background:#075e54;color:#fff;padding:14px;border-radius:16px;margin-bottom:12px}
+.wa-head .av{background:#25a18e;color:#fff;width:44px;height:44px}
+.wa-head .sub{color:#d8eee8}
+.wa-row{display:flex;gap:10px;align-items:center;padding:12px 8px;border-bottom:1px solid #edf0ef}
+.wa-row:last-child{border-bottom:0}
+.wa-row .av{width:46px;height:46px;flex:0 0 46px}
+.wa-row-main{min-width:0;flex:1}
+.wa-row-main b,.wa-row-main .sub{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wa-time{font-size:11px;color:#718078;white-space:nowrap}
+.wa-section-title{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#128c7e;font-weight:800;margin:14px 0 5px}
+.tabs button{border-radius:12px!important}
+@media(max-width:520px){.cmsgs{max-height:48vh;min-height:160px}.wa-row{padding:10px 2px}}
+
+
+.wa-layout{display:grid;grid-template-columns:minmax(230px,36%) minmax(0,1fr);gap:0;border:1px solid #d8e2df;border-radius:14px;overflow:hidden;background:#fff;min-height:480px}
+.wa-sidebar{border-right:1px solid #d8e2df;min-width:0;background:#fff}.wa-sidebar .pad{padding:10px}.wa-row{width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid #edf0ef;cursor:pointer}.wa-row.wa-selected{background:#e7f4f1}.wa-row-side{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.wa-conversation{min-width:0;background:#efeae2;display:flex;flex-direction:column}.wa-chat-top{display:flex;align-items:center;gap:10px;padding:12px;background:#f7f9f8;border-bottom:1px solid #d8e2df}.wa-chat-top>div{flex:1;min-width:0}.wa-chat-meta{padding:6px 12px;text-align:center;font-size:12px;color:#64736e;background:#f7f9f8}.wa-conversation .chat{margin:0;padding:10px;border-radius:0;background:transparent;display:flex;flex-direction:column;flex:1}.wa-conversation .cmsgs{flex:1;max-height:none!important;min-height:280px}.wa-conversation .crow{background:#f7f9f8;padding:8px;border-radius:24px}.wa-welcome{margin:auto;text-align:center;padding:24px}.wa-welcome h2{margin:8px 0}.wa-row-main{display:block}.wa-row-main .sub{font-size:12px}
+@media(max-width:650px){.wa-layout{grid-template-columns:1fr;min-height:0}.wa-sidebar{border-right:0;border-bottom:1px solid #d8e2df;max-height:260px;overflow:auto}.wa-conversation .cmsgs{min-height:240px;max-height:45vh!important}.wa-chat-top{gap:8px}}
+
+
+/* ===== WhatsApp-style inbox (v7) ===== */
+.w2av{width:46px;height:46px;flex:0 0 46px;border-radius:50%;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+.w2app{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);height:calc(100dvh - 250px);min-height:480px;border-radius:14px;overflow:hidden;border:1px solid #d1d7db;background:#fff}
+.w2side{display:flex;flex-direction:column;min-height:0;border-right:1px solid #e9edef;background:#fff}
+.w2sh,.w2title{background:#008069;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:19px}
+.w2sh span{font-size:13px;opacity:.85}
+.w2sr{padding:8px;background:#fff;border-bottom:1px solid #e9edef}
+.w2sr input{width:100%;border:0!important;border-radius:8px!important;background:#f0f2f5!important;padding:9px 12px!important;box-shadow:none!important}
+.w2rows{overflow:auto;flex:1;min-height:0}
+.w2row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 14px;border:0;border-bottom:1px solid #f0f2f5;background:#fff;cursor:pointer;color:#111b21;font:inherit}
+.w2row:hover{background:#f5f6f6}.w2row.sel{background:#f0f2f5}
+.w2rm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.w2r1,.w2r2{display:flex;justify-content:space-between;gap:8px;align-items:center;min-width:0}
+.w2r1 b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:16px}
+.w2tm{font-size:12px;color:#667781;white-space:nowrap}.w2tm.un{color:#00a884;font-weight:600}
+.w2pv{color:#667781;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.w2bd{background:#25d366;color:#fff;font-style:normal;font-size:12px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex:0 0 auto}
+.w2conv{display:flex;flex-direction:column;min-width:0;min-height:0;background:#efeae2}
+.w2welcome{margin:auto;text-align:center;color:#667781;padding:20px}.w2welcome h2{color:#41525d;margin:8px 0 4px}
+.w2top{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#008069;color:#fff}
+.w2top .w2av{width:40px;height:40px;flex-basis:40px;background:rgba(255,255,255,.22)}
+.w2ti{flex:1;min-width:0}.w2ti b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px}
+.w2ti span{display:block;font-size:12px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.w2back{display:none;border:0;background:none;color:#fff;font-size:24px;cursor:pointer;padding:0 6px}.w2back.on{display:block}
+.w2call{color:#fff;text-decoration:none;font-size:20px;padding:6px 8px}
+.w2msgs{flex:1;min-height:0;overflow:auto;padding:10px 5% 12px;display:flex;flex-direction:column;gap:2px;background-color:#efeae2;background-image:radial-gradient(rgba(11,20,26,.07) 1px,transparent 1px);background-size:14px 14px;overscroll-behavior:contain}
+.w2day{align-self:center;margin:10px 0 6px}
+.w2day span{display:block;background:#fff;color:#54656f;font-size:12px;padding:5px 12px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.w2empty{align-self:center;margin:auto;text-align:center;background:#fff8d6;color:#54656f;font-size:13px;padding:8px 14px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.w2b{position:relative;max-width:min(80%,520px);padding:6px 8px 6px 9px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13);font-size:14.5px;line-height:1.35;color:#111b21;overflow-wrap:anywhere}
+.w2b::after{content:"";display:block;clear:both}
+.w2b.me{align-self:flex-end;background:#d9fdd3}.w2b.ot{align-self:flex-start;background:#fff}
+.w2b.tl{margin-top:8px}
+.w2b.tl.me{border-top-right-radius:0}.w2b.tl.ot{border-top-left-radius:0}
+.w2b.tl::before{content:"";position:absolute;top:0;width:9px;height:13px;background:inherit}
+.w2b.tl.me::before{right:-8px;clip-path:polygon(0 0,0 100%,100% 0)}
+.w2b.tl.ot::before{left:-8px;clip-path:polygon(100% 0,100% 100%,0 0)}
+.w2tx{white-space:pre-wrap}
+.w2m{float:right;margin:7px 0 -3px 12px;font-size:11px;color:#667781;display:inline-flex;gap:3px;align-items:center;line-height:1}
+.w2t{font-style:normal;font-size:13px;letter-spacing:-4px;padding-right:4px;color:#8696a0}.w2t.rd{color:#53bdeb}
+.w2rt{display:block;color:#008069;font-size:13px;margin-bottom:3px}
+.w2img{display:block;max-width:100%;width:260px;border-radius:6px;margin:2px 0 4px}
+.w2pdf{display:flex;gap:10px;align-items:center;background:rgba(11,20,26,.06);border-radius:6px;padding:9px 10px;margin:2px 0 4px;text-decoration:none;color:#111b21}
+.w2pdf b{background:#e53935;color:#fff;font-size:11px;padding:6px 7px;border-radius:5px}
+.w2pdf span{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.w2pdf small{display:block;color:#667781;font-size:11px}
+.w2cmp{display:flex;gap:8px;align-items:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#f0f2f5}
+.w2cmp input{flex:1;min-width:0;border:0!important;border-radius:22px!important;padding:11px 16px!important;background:#fff!important;box-shadow:none!important;font-size:15px}
+.w2snd{width:44px;height:44px;flex:0 0 44px;border-radius:50%;border:0;background:#00a884;color:#fff;font-size:18px;cursor:pointer}.w2snd:disabled{opacity:.5}
+.w2clip{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+.w2full{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;background:#efeae2;max-width:720px;margin:0 auto;padding-top:env(safe-area-inset-top,0)}
+.w2plist{background:#fff;border-radius:0 0 14px 14px;overflow:hidden;border:1px solid #d1d7db;border-top:0}
+.w2title{border-radius:14px 14px 0 0;margin-top:16px}
+@media(max-width:760px){
+ .w2app{grid-template-columns:1fr;height:calc(100dvh - 215px)}
+ .w2app:not(.open) .w2conv{display:none}.w2app.open .w2side{display:none}
+ .w2back{display:block}
+ .w2b{max-width:86%}
+}
+
+.labt{width:100%;border-collapse:collapse;min-width:430px}.labt th{font-size:12px;text-align:left;color:var(--mut);padding:4px}
+.labt td{padding:5px 4px}.labt input[type=time],.labt input[type=number]{padding:8px 6px;min-width:0;width:100%}
+.labt input[type=checkbox]{width:20px;height:20px}.labt tr.off td{opacity:.55}.labt tr.off td:first-child,.labt tr.off td:nth-child(2){opacity:1}
+
+/* delete for everyone */
+.w2x{position:absolute;top:1px;right:3px;border:0;background:none;color:#8696a0;font-size:15px;line-height:1;cursor:pointer;padding:2px 4px;opacity:.75}
+.w2b.me{padding-right:20px}
+.w2dl{font-style:italic;color:#667781}
+
+/* reviews tab */
+.rsum{display:flex;gap:16px;align-items:center;margin-top:10px}
+.rsum .big{font-size:46px;font-weight:800;line-height:1;text-align:center}
+.rsum .big small{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-top:4px}
+.rbars{flex:1}.rbar{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:3px 0}
+.rbar i{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden}.rbar i b{display:block;height:100%;background:#f5b301;border-radius:6px}
+.stv{color:#f5b301;letter-spacing:1px}
+
+/* developer badge */
+.crown{position:relative;display:inline-block;margin-top:16px;flex:0 0 auto}
+.crown::before{content:"👑";position:absolute;top:-19px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:20px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.dvt{display:inline-block;background:#f5b301;color:#3a2a00;border-radius:99px;padding:1px 9px;font-size:11px;font-weight:800;margin-left:7px;vertical-align:middle}
+.rvc.dev,.pad.dev,.li.dev{border:1.5px solid #f5b301;background:linear-gradient(135deg,rgba(245,179,1,.14),transparent)}
+.li.dev{border-radius:12px;padding:6px 10px}
+</style>
+</head>
+<body>
+<script>
+/* debug banner: shows JS / Firebase errors on screen instead of a white page */
+(function(){
+  function show(m){try{var d=document.getElementById('dbgErr');if(!d){d=document.createElement('div');d.id='dbgErr';d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99999;background:#b71c1c;color:#fff;font:12px/1.4 monospace;padding:8px 10px;white-space:pre-wrap;max-height:45vh;overflow:auto';d.onclick=function(){d.remove()};(document.body||document.documentElement).appendChild(d)}d.textContent+=m+'\n(tap to close)\n'}catch(e){}}
+  window.addEventListener('error',function(e){show('JS error: '+e.message+' @ line '+e.lineno)});
+  window.addEventListener('unhandledrejection',function(e){show('Promise error: '+(e.reason&&(e.reason.stack||e.reason.message)||e.reason))});
+  window.fbErr=function(e){show('Firebase error: '+(e&&e.code||'')+' '+(e&&e.message||e)+'\n=> usually Firestore RULES blocking read/write')};
+})();
+</script>
+
+<div id="app"><div class="wrap"><p class="sub">Loading…</p></div></div>
+<div id="toast"></div>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* Firebase config: config.js, else one saved by the dev page, else the built-in project. */
+const BAKED_CONFIG={apiKey:"AIzaSyC5KCiRWBawHCRlwVpVyD_71jyp_u0bhwk",authDomain:"medical-center-b9e5f.firebaseapp.com",projectId:"medical-center-b9e5f",storageBucket:"medical-center-b9e5f.firebasestorage.app",messagingSenderId:"485817737930",appId:"1:485817737930:web:6745c7c9354b5fde018a33",measurementId:"G-6J7GQ15RJ0"};
+const FIREBASE_CONFIG=(()=>{if(window.MCB_CONFIG)return window.MCB_CONFIG;try{const c=JSON.parse(localStorage.getItem('mcb_fbconfig'));if(c&&c.projectId)return c}catch(e){}return BAKED_CONFIG})();
+const THEMES={"mint": {"n": "Mint Pharmacy", "v": {"--ink": "#12303a", "--mut": "#5d7680", "--paper": "#fbfdfc", "--card": "#ffffff", "--line": "#d7e5e2", "--g": "#0e8f6b", "--g2": "#0a6d53", "--gl": "#e1f5ee", "--blue": "#e6f1f7", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#12303a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "ocean": {"n": "Ocean Blue", "v": {"--ink": "#0f2a44", "--mut": "#5d7680", "--paper": "#fafcff", "--card": "#ffffff", "--line": "#d3e1f0", "--g": "#1565c0", "--g2": "#0d47a1", "--gl": "#e3f0ff", "--blue": "#e8f1fa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#0f2a44", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "royal": {"n": "Royal Purple", "v": {"--ink": "#2a1b4d", "--mut": "#5d7680", "--paper": "#fcfbff", "--card": "#ffffff", "--line": "#e0d8f2", "--g": "#6a3fd0", "--g2": "#5129ae", "--gl": "#efe8ff", "--blue": "#f0ebfa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#2a1b4d", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "sunset": {"n": "Sunset Orange", "v": {"--ink": "#3b2013", "--mut": "#5d7680", "--paper": "#fffdfb", "--card": "#ffffff", "--line": "#f0dccb", "--g": "#d9620f", "--g2": "#b34c08", "--gl": "#fff0e1", "--blue": "#fbefe3", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3b2013", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "rose": {"n": "Rose Care", "v": {"--ink": "#3d1a2a", "--mut": "#5d7680", "--paper": "#fffcfd", "--card": "#ffffff", "--line": "#f1d6e1", "--g": "#d6336c", "--g2": "#b02556", "--gl": "#ffe8f0", "--blue": "#fbeaf1", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3d1a2a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "forest": {"n": "Forest Green", "v": {"--ink": "#14301f", "--mut": "#5d7680", "--paper": "#fbfdfb", "--card": "#ffffff", "--line": "#d3e4d7", "--g": "#2f8f46", "--g2": "#226b34", "--gl": "#e4f5e8", "--blue": "#e8f2ea", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#14301f", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "graphite": {"n": "Graphite", "v": {"--ink": "#1f2933", "--mut": "#5d7680", "--paper": "#fafbfc", "--card": "#ffffff", "--line": "#d9dfe5", "--g": "#3a4a5a", "--g2": "#27323d", "--gl": "#e8edf1", "--blue": "#eef1f4", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#1f2933", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "midnight": {"n": "Midnight (dark)", "v": {"--ink": "#e6f2f0", "--mut": "#8fa9ae", "--paper": "#0e1a1f", "--card": "#15262d", "--line": "#27414a", "--g": "#2fc89b", "--g2": "#25a67f", "--gl": "#11332b", "--blue": "#1a3340", "--red": "#ff8a80", "--rl": "#3a1a1a", "--amb": "#f0b429", "--aml": "#3a2e10", "--head": "#0b2a33", "--onhead": "#e6f2f0", "--onG": "#06231b"}}};
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pYmd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const t2m=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+const m2t=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const f12=t=>{if(!t||!/^\d{1,2}:\d{2}$/.test(t))return 'Time pending';let[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${pad(m)} ${ap}`};
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DNF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const uid=()=>Math.random().toString(36).slice(2,9);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const nice=ds=>{const d=pYmd(ds);return `${DN[d.getDay()]}, ${d.getDate()} ${MN[d.getMonth()]}`};
+const niceDT=ts=>{const d=new Date(ts);return `${d.getDate()} ${MN[d.getMonth()]} ${d.getFullYear()}`};
+const todayS=()=>ymd(new Date());
+const tomS=()=>{const n=new Date();return ymd(new Date(n.getFullYear(),n.getMonth(),n.getDate()+1))};
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2300)}
+function normPhone(p){let d=String(p).replace(/[^\d+]/g,'');if(d.startsWith('+94'))d='0'+d.slice(3);else if(d.startsWith('94')&&d.length===11)d='0'+d.slice(2);d=d.replace(/\D/g,'');return /^\d{9,12}$/.test(d)?d:''}
+async function hashPw(id,pw){
+  const t='mcb|'+id+'|'+pw;
+  if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=5381;for(const c of t)h=((h<<5)+h+c.charCodeAt(0))|0;return 'x'+h;
+}
+function applyTheme(id,ac){
+  const t=THEMES[id]||THEMES.mint;if(!t)return;
+  const rs=document.documentElement.style;
+  for(const k in t.v)rs.setProperty(k,t.v[k]);
+  if(ac&&/^#[0-9a-f]{6}$/i.test(ac)){rs.setProperty('--g',ac);rs.setProperty('--g2',`color-mix(in srgb, ${ac} 78%, black)`);rs.setProperty('--gl',`color-mix(in srgb, ${ac} 14%, var(--card))`)}
+  const m=document.getElementById('tc');if(m)m.content=t.v['--head'];
+}
+
+/* ---------- defaults ---------- */
+function newDoctor(name,spec,id){
+  const days={};for(let i=0;i<7;i++)days[i]={on:true,start:'09:00',end:'13:00',non:true,nstart:'18:00',nend:'21:00'};
+  return{id:id||uid(),name:name||'Dr. New Doctor',spec:spec||'General Physician',active:true,slotMin:15,perSlot:1,breakOn:false,breakStart:'11:00',breakEnd:'11:30',days};
+}
+function mkDoc(id,name,spec,nDays,o){
+  o=o||{};const lab=!!o.lab,mWd=lab?[0,1,2,3,4,5,6]:[],nWd=lab?[]:nDays;
+  const m={on:lab,start:o.start||'07:00',end:o.end||'11:00',gap:o.gap||10,wd:[0,1,2,3,4,5,6].map(i=>mWd.includes(i))};
+  const n={on:!lab,start:'18:00',end:'21:00',gap:15,wd:[0,1,2,3,4,5,6].map(i=>nWd.includes(i))};
+  const days={};for(let i=0;i<7;i++)days[i]={on:m.on&&m.wd[i],start:m.start,end:m.end,gap:m.gap,non:n.on&&n.wd[i],nstart:n.start,nend:n.end,ngap:n.gap};
+  return{id,name,spec,active:true,lab,slotMin:15,perSlot:lab?5:1,breakOn:false,breakStart:'11:00',breakEnd:'11:30',days,m,n};
+}
+function defDoctors(){return[
+  mkDoc('fazna','Dr. Fazna  (M.B.B.S)','M.B.B.S',[1,2]),
+  mkDoc('habeeb','Dr. Habeeb Ahemmed  (M.B.B.S)','M.B.B.S',[5,0]),
+  mkDoc('ruswan','Dr. Ruswan  (M.B.B.S)','M.B.B.S',[3,6]),
+  mkDoc('lab','Lab Check / Report','Blood · Urine tests',[],{lab:true})]}
+function ensureLab(S){if(S.doctors.some(d=>d.lab))return false;S.doctors.push(mkDoc('lab','Lab Check / Report','Blood · Urine tests',[],{lab:true}));return true}
+function migrateV5(S){
+  if(S.v5)return false;
+  S.doctors=S.doctors.filter(d=>!(d.id==='d1'&&d.name==='Dr. Example'));
+  defDoctors().forEach(d=>{if(!S.doctors.some(x=>x.id===d.id))S.doctors.push(d)});
+  S.v5=1;return true;
+}
+const DEF={
+  labTests:['Urine test','Blood test','Blood + Urine'],
+  clinicName:'City Medical Center & Pharmacy',phone:'',notice:'',theme:'mint',accent:'',footer:'',maintenance:false,maintenanceMsg:'We are updating the system. Please check back soon.',allowSignup:true,nicMode:'off',
+  bookingOpen:true,closedMsg:'Booking is closed right now. Please try again later.',
+  tomorrowMode:'auto',tomorrowFrom:'17:00',
+  autoClose:{on:false,closeDay:5,closeTime:'23:00',openDay:6,openTime:'06:00'},
+  cutoffMin:15,maxPerPhone:2,password:'admin123',labPassword:'lab123',
+  closedDates:[],specials:[],blockedSlots:[],doctors:defDoctors(),v5:1
+};
+
+/* ---------- storage layer (Firebase or local demo) ---------- */
+const DEV_KEYS=['clinicName','footer','theme','accent','maintenance','maintenanceMsg','allowSignup','nicMode','ads'];
+function makeStore(){
+  if(FIREBASE_CONFIG&&typeof firebase!=='undefined'){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const db=firebase.firestore(),sref=db.collection('meta').doc('settings'),U_=db.collection('users');
+    return{mode:'Firebase',
+      init(onS,onB){
+        sref.onSnapshot(s=>{if(!s.exists){if(!s.metadata.fromCache)sref.set(DEF,{merge:true});return}onS(s.data())},fbErr);
+        db.collection('bookings').onSnapshot(q=>onB(q.docs.map(d=>({...d.data(),id:d.id}))),fbErr);
+      },
+      patchSettings:p=>sref.set(p,{merge:true}),
+      saveSettings:s=>{const o={...s};DEV_KEYS.forEach(k=>delete o[k]);return sref.set(o,{merge:true})},
+      addBooking:b=>db.collection('bookings').add(b).then(r=>r.id),
+      updateBooking:(id,p)=>db.collection('bookings').doc(id).update(p),
+      deleteBooking:id=>db.collection('bookings').doc(id).delete(),
+      getUser:id=>U_.doc(id).get().then(d=>d.exists?{...d.data(),id:d.id}:null),
+      findByUsername:n=>U_.where('usernameLower','==',n).limit(1).get().then(q=>q.empty?null:{...q.docs[0].data(),id:q.docs[0].id}),
+      saveUser:u=>U_.doc(u.id).set(u),
+      deleteUser:id=>U_.doc(id).delete(),
+      onReviews:cb=>db.collection('reviews').onSnapshot(q=>{window.RV_ERR='';cb(q.docs.map(d=>({...d.data(),id:d.id})))},e=>{window.RV_ERR=(e&&e.code)||'error';console.warn('reviews',e);if(typeof softRender==='function')softRender()}),
+      saveReview:r=>db.collection('reviews').doc(r.id).set(r),
+      deleteReview:id=>db.collection('reviews').doc(id).delete(),
+      onUsers:cb=>U_.onSnapshot(q=>cb(q.docs.map(d=>({...d.data(),id:d.id}))),fbErr)};
+  }
+  const K='mcb_settings',KB='mcb_bookings',KU='mcb_users';let cbB,cbU,cbR;const rr=()=>{try{return JSON.parse(localStorage.getItem('mcb_reviews'))||[]}catch(e){return[]}};
+  const rs=()=>{try{return JSON.parse(localStorage.getItem(K))}catch(e){return null}};
+  const rb=()=>{try{return JSON.parse(localStorage.getItem(KB))||[]}catch(e){return[]}};
+  const ru=()=>{try{return JSON.parse(localStorage.getItem(KU))||[]}catch(e){return[]}};
+  const wb=a=>localStorage.setItem(KB,JSON.stringify(a));
+  const wu=a=>{localStorage.setItem(KU,JSON.stringify(a));cbU&&cbU(a)};
+  return{mode:'Demo (this device only)',
+    init(onS,onB){cbB=onB;onS(rs()||clone(DEF));onB(rb());addEventListener('storage',()=>{onS(rs()||clone(DEF));onB(rb())})},
+    patchSettings:p=>{localStorage.setItem(K,JSON.stringify({...(rs()||clone(DEF)),...p}));return Promise.resolve()},
+    saveSettings:s=>{localStorage.setItem(K,JSON.stringify(s));return Promise.resolve()},
+    addBooking:b=>{const id=uid(),a=rb();a.push({...b,id});wb(a);cbB(a);return Promise.resolve(id)},
+    updateBooking:(id,p)=>{const a=rb().map(x=>x.id===id?{...x,...p}:x);wb(a);cbB(a);return Promise.resolve()},
+    deleteBooking:id=>{const a=rb().filter(x=>x.id!==id);wb(a);cbB(a);return Promise.resolve()},
+    getUser:id=>Promise.resolve(ru().find(u=>u.id===id)||null),
+    findByUsername:n=>Promise.resolve(ru().find(u=>u.usernameLower===n)||null),
+    saveUser:u=>{wu([...ru().filter(x=>x.id!==u.id),u]);return Promise.resolve()},
+    deleteUser:id=>{wu(ru().filter(x=>x.id!==id));return Promise.resolve()},
+    onReviews:cb=>{cbR=cb;cb(rr())},
+    saveReview:r=>{const a=[...rr().filter(x=>x.id!==r.id),r];localStorage.setItem('mcb_reviews',JSON.stringify(a));cbR&&cbR(a);return Promise.resolve()},
+    deleteReview:id=>{const a=rr().filter(x=>x.id!==id);localStorage.setItem('mcb_reviews',JSON.stringify(a));cbR&&cbR(a);return Promise.resolve()},
+    onUsers:cb=>{cbU=cb;cb(ru())}};
+}
+const Store=makeStore();
+let R=[];
+let S=null,B=[],USERS=[];
+let saveT;
+const saveSoon=()=>{clearTimeout(saveT);saveT=setTimeout(()=>Store.saveSettings(S),500)};
+const saveNow=()=>{clearTimeout(saveT);return Store.saveSettings(S)};
+
+/* ---------- schedule logic ---------- */
+const getDoc=id=>S.doctors.find(d=>d.id===id);
+function autoClosed(now){
+  now=now||new Date();const a=S.autoClose;if(!a||!a.on)return null;
+  const cur=now.getDay()*1440+now.getHours()*60+now.getMinutes();
+  const c=a.closeDay*1440+t2m(a.closeTime),o=a.openDay*1440+t2m(a.openTime);
+  const inside=c<=o?(cur>=c&&cur<o):(cur>=c||cur<o);
+  return inside?`Auto-closed. Reopens ${DNF[a.openDay]} ${f12(a.openTime)}`:null;
+}
+function tomorrowState(){
+  const m=S.tomorrowMode||'auto';if(m==='off')return'hide';if(m==='on')return'open';
+  const n=new Date();return n.getHours()*60+n.getMinutes()>=t2m(S.tomorrowFrom||'17:00')?'open':'wait';
+}
+function dayInfo0(doc,ds){
+  if(!S.bookingOpen)return{open:false,reason:S.closedMsg};
+  const ac=autoClosed();if(ac)return{open:false,reason:ac};
+  if(!doc||!doc.active)return{open:false,reason:'Doctor not available'};
+  const cd=S.closedDates.find(c=>c.date===ds&&(c.doc==='all'||c.doc===doc.id));
+  if(cd)return{open:false,reason:cd.reason||'Closed'};
+  const w=doc.days[pYmd(ds).getDay()];let sh=[];
+  if(w){if(w.on)sh.push({k:'m',l:doc.lab?'Lab':'Morning',start:w.start,end:w.end,gap:w.gap});if(w.non)sh.push({k:'n',l:'Evening',start:w.nstart||'18:00',end:w.nend||'21:00',gap:w.ngap})}
+  S.specials.filter(c=>c.date===ds&&(c.doc==='all'||c.doc===doc.id)).forEach(sp=>{
+    if(sp.off){sh=sh.filter(y=>y.k!==sp.sh);return}
+    if(!sp.sh){sh=[{k:'m',l:'Special hours',start:sp.start,end:sp.end}];return}
+    const o={k:sp.sh,l:sp.sh==='n'?'Evening':'Morning',start:sp.start,end:sp.end,gap:sp.gap},x=sh.findIndex(y=>y.k===o.k);x>=0?sh[x]=o:sh.push(o)});
+  sh.sort((a,b)=>a.k==='m'?-1:1);
+  if(sh.length)return{open:true,shifts:sh,start:sh[0].start,end:sh[sh.length-1].end};
+  return{open:false,reason:'Day off'};
+}
+const reqOn=d=>!d.lab&&(d.optReq===true||(d.optReq===undefined&&d.reqMode===true));
+const slotsOn=d=>!!d.lab||!(d.optSlots===false||(d.optSlots===undefined&&d.reqMode===true));
+function dayInfo(doc,ds){
+  const i=dayInfo0(doc,ds);
+  if(!reqOn(doc))return i;
+  if(i.open)return slotsOn(doc)?{...i,req:true}:{open:true,req:true,reqOnly:true,shifts:[],start:'',end:''};
+  return i;
+}
+function genTimes(doc,info){
+  const out=[];
+  (info.shifts||[{start:info.start,end:info.end}]).forEach(sh=>{const step=Math.max(5,+(sh.gap||doc.slotMin)||15);
+    for(let m=t2m(sh.start);m+step<=t2m(sh.end);m+=step){
+      if(doc.breakOn&&m>=t2m(doc.breakStart)&&m<t2m(doc.breakEnd))continue;
+      out.push(m2t(m));
+    }
+  });
+  return out;
+}
+const takenP=(doc,ds,t)=>B.filter(b=>b.docId===doc.id&&b.date===ds&&b.time===t&&b.status==='pending').length;
+const taken=(doc,ds,t)=>B.filter(b=>b.docId===doc.id&&b.date===ds&&b.time===t&&b.status!=='cancelled').length;
+function avail(doc,ds){
+  const info=dayInfo(doc,ds);if(!info.open)return[];
+  const now=new Date(),today=ymd(now),nm=now.getHours()*60+now.getMinutes();
+  return genTimes(doc,info).map(t=>{
+    if(S.blockedSlots.includes(`${ds}|${doc.id}|${t}`))return null;
+    const past=ds===today&&t2m(t)<nm+(+S.cutoffMin||0);
+    const n=taken(doc,ds,t),pend=takenP(doc,ds,t);return{t,n,full:n>=doc.perSlot||(pend>=1&&!doc.lab),pend,past};
+  }).filter(Boolean);
+}
+const freeCount=(doc,ds)=>avail(doc,ds).filter(s=>!s.full&&!s.past).length;
+
+/* ---------- root ---------- */
+const app=document.getElementById('app');
+const LAB_MODE=false;
+const AUTH_KEY=LAB_MODE?'mcb_lab_auth':'mcb_auth';
+let authed=sessionStorage.getItem(AUTH_KEY)==='1';
+let U=null,uReady=false;
+const P={doc:'',date:'',time:'',name:'',phone:'',problem:'',done:null};
+const W={step:1,view:'book',auth:'login',open:''};
+const A={tab:LAB_MODE?'lab':'bookings',date:todayS(),doc:'all',status:'all',q:'',edit:'',blkDoc:'',blkDate:todayS(),uq:'',uopen:''};
+function render(){
+  if(!S)return;
+  
+  app.innerHTML=authed?viewAdmin():viewLogin();
+}
+function typing(){const a=document.activeElement;return a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&app.contains(a)}
+const bkSig=b=>[b.id,b.status,b.date,b.time,b.docName,b.name,b.phone,b.problem,b.token,(b.chat||[]).length,(b.chat||[]).filter(m=>m.d).length,(b.reports||[]).length,(b.reports||[]).filter(r=>r.d).length,b.chatSeenU,b.chatSeenA,b.reportSeenU];
+let _sig='',_pend=false,lastAct=0;
+['pointerdown','keydown','touchmove','wheel'].forEach(e=>addEventListener(e,()=>{lastAct=Date.now()},{passive:true}));
+function softRender(){
+  if(!S||!window._ready)return;
+  if(typing()){_pend=true;return}
+  const sig=JSON.stringify([S,window.RV_ERR||'',R.map(r=>[r.id,r.stars,r.text,r.at]),(B||[]).map(bkSig),(USERS||[]).map(u=>[u.id,u.username,u.phone,u.nic||'',u.created])]);
+  if(sig===_sig)return;
+  _sig=sig;_pend=false;
+  const y=window.scrollY,ds=[...app.querySelectorAll('details')].map(d=>d.open);
+  render();
+  app.querySelectorAll('details').forEach((d,i)=>{if(ds[i])d.open=true});
+  window.scrollTo(0,y);
+}
+addEventListener('focusout',()=>setTimeout(()=>{if(_pend&&!typing())softRender()},300));
+Store.init(s=>{S={...clone(DEF),...s};applyTheme(S.theme,S.accent);{const m1=migrateV5(S),m2=ensureLab(S);if(m1||m2)saveNow()}if(!S.v4){const T=[true,true,true,true,true,true,true];S.doctors.forEach(d=>{ensureShifts(d);d.m.wd=T.slice();d.n.wd=T.slice();syncDays(d)});S.tomorrowMode='on';S.v4=1;saveNow()}softRender()},b=>{B=b;checkNewBookings(b);if(S){if(typing())refreshChat();softRender()}else refreshChat()});
+Store.onUsers(u=>{USERS=u;if(S)softRender()});
+Store.onReviews(r=>{R=r;softRender()});
+function delReview(id){if(confirm('Delete this review?'))Store.deleteReview(id)}
+
+const bkOf=u=>B.filter(b=>b.userId===u.id);
+
+
+
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+function viewLogin(){
+  return`<div class="head"><div class="rx">+</div><div class="in"><div><h1>${LAB_MODE?'Lab Admin':'Admin'}</h1><p>${esc(S.clinicName)}</p></div></div></div><div class="wrap"><div class="pad"><h2>${LAB_MODE?'Lab login':'Admin login'}</h2><p class="sub">${LAB_MODE?'Enter the lab password to manage lab bookings':'Enter your password to manage bookings'}</p>
+  <label>Password</label><input id="pw" type="password" onkeydown="if(event.key==='Enter')login()">
+  <button class="btn" style="width:100%;margin-top:14px" onclick="login()">Log in</button>
+  <p class="sub" style="margin-top:12px"><a href="https://shopping-srilanka.github.io/Medical_center/" style="color:var(--g2)">Back to booking page</a></p></div></div>`;
+}
+/* ---- new booking alerts (sound + vibrate + popup + browser notification) ---- */
+let _seen=null;const _title0=document.title;
+function unlockAudio(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=window._ac||(window._ac=new C());if(c.state==='suspended')c.resume()}catch(e){}}
+['pointerdown','keydown','touchstart'].forEach(e=>addEventListener(e,unlockAudio,{passive:true}));
+function beep(){try{unlockAudio();const c=window._ac;if(!c)return;[0,.28,.56].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain(),st=c.currentTime+t;o.type='sine';o.frequency.value=i===2?1175:880;g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.5,st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+.24);o.connect(g);g.connect(c.destination);o.start(st);o.stop(st+.26)})}catch(e){}}
+function notifOn(){return 'Notification' in window&&Notification.permission==='granted'}
+function notifBtnLabel(){return notifOn()?'🔔 On':'🔕 Off'}
+try{navigator.permissions&&navigator.permissions.query({name:'notifications'}).then(p=>{p.onchange=()=>render()})}catch(e){}
+function enableNotif(){
+  unlockAudio();beep();
+  if('Notification' in window&&Notification.permission==='default'){Notification.requestPermission().then(()=>{render();toast('Notifications enabled')})}
+  else if(!('Notification' in window)){toast('This browser does not support notifications. Sound alerts still work.')}
+  else if(Notification.permission==='denied'){toast('Notifications are OFF (blocked). Allow them in browser Site settings.')}
+  else toast('Notifications are ON 🔔');
+}
+function notifyNew(list){
+  const n=list.length,b=list[0],lab=typeof labDoc==='function'&&labDoc()&&b.docId===labDoc().id;
+  const msg=n===1?`New ${b.req?'time request':(lab?'lab ':'')+'booking'}: ${b.name} · ${nice(b.date)}${b.time?' '+f12(b.time):' · needs a time'}`:`${n} new bookings`;
+  beep();try{navigator.vibrate&&navigator.vibrate([250,120,250,120,250])}catch(e){}
+  const t=document.getElementById('toast');t.textContent='🔔 '+msg;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',7000);
+  try{if('Notification' in window&&Notification.permission==='granted')new Notification(S.clinicName||'New booking',{body:msg,tag:'newbk'})}catch(e){}
+  document.title='('+n+') New booking';
+}
+addEventListener('focus',()=>{document.title=_title0});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)document.title=_title0});
+function checkNewBookings(b){
+  try{
+    if(!S||!Array.isArray(b))return;
+    const mine=LAB_MODE?b.filter(x=>labDoc()&&x.docId===labDoc().id):b;
+    if(_seen===null){_seen=new Set(mine.map(x=>x.id));return}
+    const fresh=mine.filter(x=>!_seen.has(x.id)&&x.status!=='cancelled');
+    mine.forEach(x=>_seen.add(x.id));
+    if(fresh.length&&authed){fresh.sort((a,c)=>(c.created||0)-(a.created||0));notifyNew(fresh)}
+  }catch(e){}
+}
+/* ---- auto-ask notification permission after admin opens/logs in ---- */
+let _nAsk=0,_nBusy=false;
+function askNotifOnce(){
+  try{
+    if(!authed||_nBusy||_nAsk>=3||!('Notification' in window)||Notification.permission!=='default')return;
+    _nBusy=true;_nAsk++;
+    const done=()=>{_nBusy=false;render()};
+    const p=Notification.requestPermission(r=>done());
+    if(p&&p.then)p.then(done).catch(()=>{_nBusy=false});
+  }catch(e){_nBusy=false}
+}
+['pointerdown','keydown'].forEach(e=>addEventListener(e,askNotifOnce,{passive:true}));
+setTimeout(askNotifOnce,1500);
+function login(){const v=document.getElementById('pw').value,ok=LAB_MODE?v===(S.labPassword||'lab123'):v===S.password;if(ok){authed=true;sessionStorage.setItem(AUTH_KEY,'1');askNotifOnce();render()}else toast('Wrong password')}
+function logout(){authed=false;sessionStorage.removeItem(AUTH_KEY);render()}
+function setTab(t){A.tab=t;render()}
+function viewAdmin(){
+  const tabs=[['bookings','Bookings'+(()=>{const n=B.reduce((x,b)=>x+unreadA(b),0);return n?' ('+n+')':''})()],['lab','🧪 Lab'],['inbox','💬 Inbox'+(()=>{const n=B.reduce((x,b)=>x+unreadA(b),0);return n?' ('+n+')':''})()],['doctors','Doctors'],['time','Hours'],['users','Users ('+USERS.length+')'],['reviews','⭐ Reviews ('+R.length+')'],['settings','Settings']];
+  if(LAB_MODE){tabs.length=0;tabs.push(['lab','🧪 Lab'],['bookings','Lab bookings'])}
+  let h=`<div class="head"><div class="rx">+</div><div class="in"><div><h1>${LAB_MODE?'Lab Admin':'Admin'}</h1><p>${esc(S.clinicName)} · Storage: ${Store.mode}</p></div><div class="hb"><button class="btn sec sm" onclick="location.href='https://shopping-srilanka.github.io/Medical_center/'">View site</button><button class="btn ${notifOn()?'':'red '}sm" onclick="enableNotif()">${notifBtnLabel()}</button><button class="btn red sm" onclick="logout()">Log out</button></div></div></div><div class="wrap wide pb">`;
+  if(S.maintenance)h+=`<div class="banner err">Maintenance mode is ON. Patients cannot book. (Set from the developer page.)</div>`;
+  h+=`<div class="tabs">${tabs.map(([k,l])=>`<button class="${A.tab===k?'on':''}" onclick="setTab('${k}')">${l}</button>`).join('')}</div>`;
+  h+={bookings:tabBookings,lab:tabLab,inbox:tabInbox,doctors:tabDoctors,time:tabTime,users:tabUsers,reviews:tabReviews,settings:tabSettings}[A.tab]();
+  return h+`</div>`;
+}
+
+/* ----- WhatsApp-style Admin Inbox (v7): see core below ----- */
+
+/* ----- v7: LAB settings + weekly schedule table ----- */
+const labDoc=()=>S.doctors.find(d=>d.lab);
+function labDay(i,k,v,re){
+  const d=labDoc();if(!d)return;const w=d.days[i];
+  if(k==='start'||k==='end'){const s=k==='start'?v:w.start,e=k==='end'?v:w.end;if(t2m(e)<=t2m(s)){toast('End time must be after start');return render()}}
+  if(k==='gap'){v=Math.max(5,+v||10)}
+  w[k]=v;w.non=false;saveSoon();if(re)render();
+}
+function labCopy(i){
+  const d=labDoc();if(!d)return;const s=d.days[i];
+  for(let j=0;j<7;j++){const w=d.days[j];w.start=s.start;w.end=s.end;w.gap=s.gap||10;w.on=s.on;w.non=false}
+  saveNow();render();toast('Copied '+DN[i]+' timing to all days');
+}
+function labOpenAll(on){const d=labDoc();if(!d)return;for(let j=0;j<7;j++){d.days[j].on=on;d.days[j].non=false}saveNow();render()}
+function setLabTests(v){
+  const a=[...new Set(String(v).split(/[,\n]/).map(x=>x.replace(/['"<>\\`$]/g,'').trim().slice(0,40)).filter(Boolean))].slice(0,12);
+  if(!a.length)return toast('Add at least one test');
+  S.labTests=a;saveNow();render();toast('Lab tests saved');
+}
+function tabLab(){
+  const d=labDoc();if(!d)return`<div class="empty">Lab is not set up yet. Reload the page.</div>`;
+  const t0=todayS(),t1=tomS(),mine=B.filter(b=>b.docId===d.id&&b.status!=='cancelled');
+  const cT=mine.filter(b=>b.date===t0).length,cM=mine.filter(b=>b.date===t1).length;
+  const days=[0,1,2,3,4,5,6].map(i=>{const w=d.days[i]=d.days[i]||{on:false,start:'07:00',end:'11:00',gap:10};return[i,w]});
+  const openN=days.filter(([i,w])=>w.on).length;
+  let h=`<div class="pad"><div style="display:flex;align-items:center;gap:12px"><span class="av big" style="width:48px;height:48px;font-size:22px;flex:0 0 auto">🧪</span><div style="flex:1"><h2 style="margin:0">${esc(d.name)}</h2><p class="sub">Blood / urine lab · ${openN} day${openN===1?'':'s'} open per week</p></div></div>
+  <div class="stat" style="margin-top:12px"><div><b>${cT}</b><span>Today</span></div><div><b>${cM}</b><span>Tomorrow</span></div><div><b>${mine.filter(b=>b.status==='pending').length}</b><span>Pending</span></div><div><b>${mine.filter(b=>b.status==='done').length}</b><span>Done</span></div></div>
+  <label class="sw" style="margin-top:12px"><input type="checkbox" ${d.active?'checked':''} onchange="upd('${d.id}','active',this.checked,1)"> Show Lab to patients</label>
+  <div class="row"><div><label>Lab name</label><input value="${esc(d.name)}" oninput="upd('${d.id}','name',this.value)"></div><div><label>Patients per time slot</label><input type="number" min="1" value="${d.perSlot||5}" onchange="upd('${d.id}','perSlot',Math.max(1,+this.value||1),1)"></div></div></div>
+  <div class="pad"><h2>Weekly schedule</h2><p class="sub">Tick a day to open the lab, then set its start, end and booking gap. Use ⧉ to copy one row to every day.</p>
+  <div style="display:flex;gap:6px;margin:10px 0;flex-wrap:wrap"><button class="btn sec sm" onclick="labOpenAll(true)">Open all days</button><button class="btn sec sm" onclick="labOpenAll(false)">Close all days</button></div>
+  <div style="overflow-x:auto"><table class="labt"><thead><tr><th>Day</th><th>Open</th><th>Start</th><th>End</th><th>Every (min)</th><th></th></tr></thead><tbody>`;
+  days.forEach(([i,w])=>{
+    const dis=w.on?'':'disabled';
+    h+=`<tr class="${w.on?'':'off'}"><td><b>${DN[i]}</b></td><td><input type="checkbox" ${w.on?'checked':''} onchange="labDay(${i},'on',this.checked,1)"></td><td><input type="time" value="${w.start||'07:00'}" ${dis} onchange="labDay(${i},'start',this.value)"></td><td><input type="time" value="${w.end||'11:00'}" ${dis} onchange="labDay(${i},'end',this.value)"></td><td><input type="number" min="5" step="5" value="${w.gap||10}" ${dis} onchange="labDay(${i},'gap',this.value)"></td><td><button class="btn sec sm" title="Copy to all days" onclick="labCopy(${i})">⧉</button></td></tr>`;
+  });
+  h+=`</tbody></table></div>
+  <label class="sw" style="margin-top:12px"><input type="checkbox" ${d.breakOn?'checked':''} onchange="upd('${d.id}','breakOn',this.checked,1)"> Daily break (no bookings)</label>
+  ${d.breakOn?`<div class="row"><div><label>Break start</label><input type="time" value="${d.breakStart}" onchange="upd('${d.id}','breakStart',this.value)"></div><div><label>Break end</label><input type="time" value="${d.breakEnd}" onchange="upd('${d.id}','breakEnd',this.value)"></div></div>`:''}
+  ${LAB_MODE?'':`<p class="sub" style="margin-top:12px">To close the lab on one date or set special hours, use <a href="#" onclick="setTab('time');return false" style="color:var(--g2);font-weight:700">Hours</a> and pick “${esc(d.name)}”.</p>`}</div>
+  <div class="pad"><h2>Tests patients can choose</h2><p class="sub">Separate with commas.</p><input value="${esc((S.labTests||[]).join(', '))}" onchange="setLabTests(this.value)"></div>`;
+  const up=mine.filter(b=>b.date>=t0).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).slice(0,30);
+  h+=`<div class="pad"><h2>Upcoming lab bookings</h2>`;
+  if(!up.length)h+=`<div class="empty">No upcoming lab bookings.</div>`;
+  up.forEach(b=>{h+=`<div class="bk" style="margin-top:8px"><div class="top"><div><b>#${b.token} · ${esc(b.name)}</b><div class="sub">${nice(b.date)} · <b style="color:var(--ink)">${f12(b.time)}</b> · ${esc(b.problem||'')}</div></div><span class="tag ${b.status}">${b.status}</span></div><div class="acts"><button class="btn sm" onclick="setStatus('${b.id}','confirmed')">Confirm</button><button class="btn sec sm" onclick="setStatus('${b.id}','done')">Done</button><button class="btn red sm" onclick="setStatus('${b.id}','cancelled')">Cancel</button><a class="btn sec sm" href="tel:${esc(b.phone)}">📞</a></div></div>`});
+  return h+`</div>`;
+}
+
+/* ----- Bookings ----- */
+function tabBookings(){
+  let list=B.filter(b=>(A.reqOnly?(b.req&&!b.time&&b.status!=='cancelled'):(!A.date||b.date===A.date))&&(LAB_MODE?(labDoc()&&b.docId===labDoc().id):(A.doc==='all'||b.docId===A.doc))&&(A.reqOnly||A.status==='all'||b.status===A.status));
+  const q=A.q.trim().toLowerCase();
+  if(q)list=list.filter(b=>(b.name+b.phone+b.problem+(b.userName||'')).toLowerCase().includes(q));
+  list.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  const cnt=s=>list.filter(b=>b.status===s).length;
+  let h=`<div class="stat"><div><b>${list.length}</b><span>Total</span></div><div><b>${cnt('pending')}</b><span>Pending</span></div><div><b>${cnt('confirmed')}</b><span>Confirmed</span></div><div><b>${cnt('done')}</b><span>Done</span></div></div>
+  <div class="pad"><div class="row">
+   <div><label style="margin-top:0">Date</label><input type="date" value="${A.date}" onchange="A.date=this.value;render()"></div>
+   ${LAB_MODE?'':`<div><label style="margin-top:0">Doctor</label><select onchange="A.doc=this.value;render()"><option value="all">All doctors</option>${S.doctors.map(d=>`<option value="${d.id}" ${A.doc===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}</select></div>`}
+   <div><label style="margin-top:0">Status</label><select onchange="A.status=this.value;render()">${['all','pending','confirmed','done','cancelled'].map(s=>`<option ${A.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+  </div>
+  <label>Search name / phone / problem / username</label><input value="${esc(A.q)}" id="sq" oninput="A.q=this.value;clearTimeout(A.qt);A.qt=setTimeout(()=>{render();const e=document.getElementById('sq');e&&(e.focus(),e.setSelectionRange(99,99))},350)">
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="btn sec sm" onclick="A.reqOnly=false;A.date=todayS();render()">Today</button><button class="btn sec sm" onclick="A.reqOnly=false;A.date=tomS();render()">Tomorrow</button><button class="btn sec sm" onclick="A.reqOnly=false;A.date='';render()">All dates</button>${LAB_MODE?'':`<button class="btn ${A.reqOnly?'':'sec '}sm" onclick="A.reqOnly=!A.reqOnly;render()">📩 Requests (${B.filter(b=>b.req&&!b.time&&b.status!=='cancelled'&&(!LAB_MODE||(labDoc()&&b.docId===labDoc().id))).length})</button>`}<button class="btn sec sm" onclick="exportCSV()">Export CSV</button></div></div>`;
+  if(!list.length)h+=`<div class="empty">No bookings found.</div>`;
+  list.forEach(b=>{
+    h+=`<div class="bk"><div class="top"><div><b>#${b.token} · ${esc(b.name)}</b><div class="sub">${esc(b.docName)} · ${nice(b.date)} · <b style="color:var(--ink)">${b.req&&!b.time?'⏳ no time yet':f12(b.time)}</b>${b.req?` · <span class="tag pending">📩 Request${b.pref?' · '+esc(b.pref):''}</span>`:''}</div></div><span class="tag ${b.status}">${b.status}</span></div>
+    <div><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a> · <a href="https://wa.me/${esc(waNum(b))}" target="_blank" rel="noopener">WhatsApp</a>${b.userName?` · <span class="sub">Account: ${esc(b.userName)}</span>`:''}</div>
+    <div style="margin-top:6px">${esc(b.problem)}</div>
+    ${b.req?`<div class="sub" style="margin-top:4px">WhatsApp: <b>${esc(b.wa||b.phone)}</b></div>`:''}
+    <div class="acts">
+     ${b.req?`<button class="btn sm" onclick="A.giveId='${b.id}';render()">🕒 ${b.time?'Change time':'Give time'}</button>`:''}
+     <button class="btn sm" onclick="setStatus('${b.id}','confirmed')">Confirm</button>
+     <button class="btn sec sm" onclick="setStatus('${b.id}','done')">Done</button>
+     <button class="btn sec sm" onclick="setStatus('${b.id}','pending')">Pending</button>
+     <button class="btn red sm" onclick="setStatus('${b.id}','cancelled')">Cancel</button>
+     <button class="btn red sm" onclick="delBooking('${b.id}')">Delete</button><button class="btn sec sm" onclick="toggleRep('${b.id}')">📄 Report${(b.reports||[]).length?' ('+b.reports.length+')':''}</button></div>${A.giveId===b.id?giveHtml(b):''}${A.rep===b.id?repHtml(b):''}</div>`;
+  });
+  return h;
+}
+const waNum=b=>String(b.wa||b.phone||'').replace(/^\+/,'').replace(/^0/,'94');
+function giveHtml(b){const t=b.time||'18:00';
+  return`<div class="pad" style="margin-top:10px"><b>Give time to ${esc(b.name)}</b><div class="row"><div><label>Date</label><input type="date" id="gd_${b.id}" value="${b.date}"></div><div><label>Time</label><input type="time" id="gt_${b.id}" value="${t}"></div></div>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" onclick="giveTime('${b.id}',true)">Save &amp; send on WhatsApp</button><button class="btn sec sm" onclick="giveTime('${b.id}',false)">Save only</button><button class="btn sec sm" onclick="A.giveId='';render()">Close</button></div></div>`}
+
+/* ===== WhatsApp "time confirmed" template: English + Tamil + Sinhala ===== */
+const DAY_TA=['ஞாயிற்றுக்கிழமை','திங்கட்கிழமை','செவ்வாய்க்கிழமை','புதன்கிழமை','வியாழக்கிழமை','வெள்ளிக்கிழமை','சனிக்கிழமை'];
+const DAY_SI=['ඉරිදා','සඳුදා','අඟහරුවාදා','බදාදා','බ්‍රහස්පතින්දා','සිකුරාදා','සෙනසුරාදා'];
+function waTimeMsg(b,d,t,doc){
+  const lab=!!(doc&&doc.lab),dt=pYmd(d),wd=dt.getDay(),dn=`${dt.getDate()} ${MN[dt.getMonth()]} ${dt.getFullYear()}`;
+  const date={en:`${DNF[wd]}, ${dn}`,ta:`${DAY_TA[wd]}, ${dn}`,si:`${DAY_SI[wd]}, ${dn}`};
+  const tm=f12(t),nm=b.name,cl=S.clinicName||'',dr=b.docName,pr=(b.problem||'').trim(),ph=(S.phone||'').trim();
+  const en=[`Dear ${nm},`,``,`Greetings from ${cl}.`,``,
+    `Your ${lab?'lab test':'appointment'} time has been confirmed. Please find the details below:`,``,
+    `👤 Patient: ${nm}`,`${lab?'🧪 Service':'🩺 Doctor'}: ${dr}`,`📅 Date: ${date.en}`,`🕒 Time: ${tm}`,`🔖 Token No: #${b.token}`,pr?`📝 ${lab?'Test':'Reason'}: ${pr}`:'',``,
+    `Please arrive 10 minutes before your time${lab?'':' and bring any previous reports'}. If you are unable to attend, kindly inform us in advance.`,``,
+    ph?`📞 ${ph}`:'',ph?'':null,`Thank you.`,cl].filter(x=>x!==null);
+  const ta=[`அன்புள்ள ${nm},`,``,`${cl} சார்பாக வணக்கம்.`,``,
+    `உங்கள் ${lab?'ஆய்வகப் பரிசோதனை':'மருத்துவ சந்திப்பு'} நேரம் உறுதி செய்யப்பட்டுள்ளது. விவரங்கள் கீழே:`,``,
+    `👤 நோயாளி: ${nm}`,`${lab?'🧪 சேவை':'🩺 மருத்துவர்'}: ${dr}`,`📅 தேதி: ${date.ta}`,`🕒 நேரம்: ${tm}`,`🔖 டோக்கன் எண்: #${b.token}`,pr?`📝 ${lab?'பரிசோதனை':'காரணம்'}: ${pr}`:'',``,
+    `குறிப்பிட்ட நேரத்திற்கு 10 நிமிடங்கள் முன்பாக வருகை தரவும்${lab?'':'; முந்தைய அறிக்கைகள் இருப்பின் எடுத்து வரவும்'}. வர இயலாவிட்டால் முன்கூட்டியே தெரிவிக்கவும்.`,``,
+    ph?`📞 ${ph}`:'',ph?'':null,`நன்றி.`,cl].filter(x=>x!==null);
+  const si=[`ආදරණීය ${nm},`,``,`${cl} වෙතින් ආයුබෝවන්.`,``,
+    `ඔබගේ ${lab?'රසායනාගාර පරීක්ෂණයේ':'වෛද්‍ය හමුවීමේ'} වේලාව තහවුරු කර ඇත. විස්තර පහත දැක්වේ:`,``,
+    `👤 රෝගියා: ${nm}`,`${lab?'🧪 සේවාව':'🩺 වෛද්‍යවරයා'}: ${dr}`,`📅 දිනය: ${date.si}`,`🕒 වේලාව: ${tm}`,`🔖 ටෝකන් අංකය: #${b.token}`,pr?`📝 ${lab?'පරීක්ෂණය':'හේතුව'}: ${pr}`:'',``,
+    `කරුණාකර නියමිත වේලාවට මිනිත්තු 10කට පෙර පැමිණෙන්න${lab?'':'; පෙර වාර්තා තිබේ නම් රැගෙන එන්න'}. පැමිණීමට නොහැකි නම් කලින් දන්වන්න.`,``,
+    ph?`📞 ${ph}`:'',ph?'':null,`ස්තූතියි.`,cl].filter(x=>x!==null);
+  const join=a=>a.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+  return [join(en),join(ta),join(si)].join('\n\n━━━━━━━━━━\n\n');
+}
+function giveTime(id,wa){
+  const b=B.find(x=>x.id===id);if(!b)return;
+  const d=document.getElementById('gd_'+id).value||b.date,t=document.getElementById('gt_'+id).value;
+  if(!t)return toast('Pick a time');
+  const doc=getDoc(b.docId);
+  if(doc&&!doc.lab&&B.some(x=>x.id!==id&&x.docId===b.docId&&x.date===d&&x.time===t&&x.status!=='cancelled')&&!confirm('Another booking already has this time. Continue?'))return;
+  Store.updateBooking(id,{date:d,time:t,status:'confirmed',timeGivenAt:Date.now()});
+  A.giveId='';
+  if(wa){const msg=waTimeMsg(b,d,t,doc);window.open('https://wa.me/'+waNum(b)+'?text='+encodeURIComponent(msg),'_blank')}
+  render();toast('Time given ✓');
+}
+const setStatus=(id,s)=>{const b=B.find(x=>x.id===id);if(s==='confirmed'&&b&&b.req&&!b.time){A.giveId=id;render();return toast('Give a time first')}Store.updateBooking(id,{status:s})};
+const delBooking=id=>{if(confirm('Delete this booking permanently?'))Store.deleteBooking(id)};
+function exportCSV(){
+  const rows=[['Date','Time','Doctor','Token','Name','Phone','Problem','Status','Account']];
+  [...B].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(b=>rows.push([b.date,b.time,b.docName,b.token,b.name,b.phone,b.problem,b.status,b.userName||'']));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='bookings.csv';a.click();
+}
+
+/* ----- Doctors ----- */
+function schedTxt(d){const ro=reqOn(d)&&!slotsOn(d)?'📩 Request only · ':'';ensureShifts(d);const t=(k,ic)=>{const x=d[k];if(!x.on)return'';const a=DN.filter((n,i)=>x.wd[i]);return a.length?`${ic} ${a.join(', ')} ${f12(x.start)}–${f12(x.end)}`:''};return ro+([t('n','🌙'),t('m','☀')].filter(Boolean).join(' · ')||'No days set')}
+function tabDoctors(){
+  let h=`<button class="btn" style="margin-bottom:12px" onclick="addDoctor()">+ Add doctor</button>`;
+  S.doctors.filter(d=>!d.lab).forEach(d=>{
+    const open=A.edit===d.id;
+    h+=`<div class="pad"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><h2>${esc(d.name)}</h2><p class="sub">${esc(d.spec)} · ${d.active?'Active':'Hidden'}</p><p class="sub">${schedTxt(d)}</p></div>
+    <button class="btn sec sm" onclick="A.edit='${open?'':d.id}';render()">${open?'Close':'Edit'}</button></div>`;
+    if(open){
+      ensureShifts(d);
+      h+=`<div class="row"><div><label>Doctor name</label><input value="${esc(d.name)}" oninput="upd('${d.id}','name',this.value)"></div>
+      <div><label>Speciality</label><input value="${esc(d.spec)}" oninput="upd('${d.id}','spec',this.value)"></div></div>
+      <p class="sub" style="margin-top:12px">${!slotsOn(d)?'📩 Request only: choose the days this doctor works. Patients see the doctor only on these days and send a request; you give the time.':'Evening is the default shift. Turn Morning On only when you want to give morning times.'}</p>
+      ${shiftCard(d,'n','🌙','Evening',d.id)}${shiftCard(d,'m','☀','Morning',d.id)}
+      <label class="sw" style="margin-top:14px"><input type="checkbox" ${d.active?'checked':''} onchange="upd('${d.id}','active',this.checked,1)"> Show this doctor to patients</label>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700;color:var(--mut)">More options</summary>
+      <div class="row"><div><label>Patients per slot</label><input type="number" min="1" value="${d.perSlot}" oninput="upd('${d.id}','perSlot',+this.value||1)"></div></div>
+      <label class="sw"><input type="checkbox" ${d.breakOn?'checked':''} onchange="upd('${d.id}','breakOn',this.checked,1)"> Daily break (no bookings)</label>
+      ${d.breakOn?`<div class="row"><div><input type="time" value="${d.breakStart}" onchange="upd('${d.id}','breakStart',this.value)"></div><div><input type="time" value="${d.breakEnd}" onchange="upd('${d.id}','breakEnd',this.value)"></div></div>`:''}</details>`;
+      h+=`<button class="btn red sm" style="margin-top:16px" onclick="delDoctor('${d.id}')">Remove doctor</button>`;
+    }
+    h+=`</div>`;
+  });
+  return h;
+}
+const ALL7=()=>[true,true,true,true,true,true,true];
+function ensureShifts(d){const ds=Object.values(d.days);
+  if(!d.m){const w=ds.find(x=>x.on)||{},nw=ds.find(x=>x.non)||{};d.m={on:ds.some(x=>x.on),start:w.start||'09:00',end:w.end||'13:00'};d.n={on:ds.some(x=>x.non),start:nw.nstart||'18:00',end:nw.nend||'21:00'}}
+  if(!d.m.gap)d.m.gap=d.slotMin||15;if(!d.n.gap)d.n.gap=d.slotMin||15;
+  if(!d.m.wd)d.m.wd=d.wd||[0,1,2,3,4,5,6].map(i=>!!(d.days[i]&&d.days[i].on));
+  if(!d.n.wd)d.n.wd=d.wd||[0,1,2,3,4,5,6].map(i=>!!(d.days[i]&&d.days[i].non))}
+function syncDays(d){if(d.lab)return;for(let i=0;i<7;i++){const w=d.days[i];w.on=!!(d.m.wd[i]&&d.m.on);w.start=d.m.start;w.end=d.m.end;w.gap=d.m.gap;w.ngap=d.n.gap;w.non=!!(d.n.wd[i]&&d.n.on);w.nstart=d.n.start;w.nend=d.n.end}}
+function targets(id){return id==='all'?S.doctors.filter(d=>!d.lab):[getDoc(id)].filter(Boolean)}
+function setShift(id,k,f,v,re){const T=targets(id);if(!T.length)return;T.forEach(ensureShifts);if(f==='end'&&v<=T[0][k].start)return toast('End time must be after start');T.forEach(d=>{d[k][f]=v;syncDays(d)});saveSoon();if(re)render()}
+function togDay(id,k,i){const T=targets(id);if(!T.length)return;T.forEach(ensureShifts);const nv=!T[0][k].wd[i];T.forEach(d=>{d[k].wd[i]=nv;syncDays(d)});saveSoon();render()}
+function shiftCard(d,k,ic,nm,id){const x=d[k],on=x.on;return`<div class="shc ${on?'':'off'}"><div class="shh"><b>${ic} ${nm} shift</b><label class="sw" style="margin:0"><input type="checkbox" ${on?'checked':''} onchange="setShift('${id}','${k}','on',this.checked,1)"> ${on?'On':'Off'}</label></div>
+  <label>Days (tap to turn a day off)</label><div class="dchips">${DN.map((n,i)=>`<button class="${x.wd[i]?'on':''}" ${on?'':'disabled'} onclick="togDay('${id}','${k}',${i})">${n}</button>`).join('')}</div>
+  <div class="row"><div><label>Start time</label><input type="time" value="${x.start}" ${on?'':'disabled'} onchange="setShift('${id}','${k}','start',this.value)"></div><div><label>End time</label><input type="time" value="${x.end}" ${on?'':'disabled'} onchange="setShift('${id}','${k}','end',this.value)"></div><div><label>Book every (min)</label><input type="number" min="5" step="5" value="${x.gap||15}" ${on?'':'disabled'} onchange="setShift('${id}','${k}','gap',+this.value||15)"></div></div></div>`}
+function permCard(){if(!S.doctors.length)return'';
+  return`<div class="pad"><h2>Permanent hours</h2><p class="sub">Base timing that runs every day, set separately for each doctor. Special hours below change only one date.</p></div>`+
+  S.doctors.filter(d=>!d.lab).map(d=>{ensureShifts(d);const lab=!!d.lab;
+    return`<div class="pad"><div style="display:flex;align-items:center;gap:12px"><span class="av big" style="width:46px;height:46px;font-size:20px;flex:0 0 auto">${lab?'🧪':esc((d.name.replace(/^Dr\.?\s*/i,'')[0]||'D').toUpperCase())}</span><div><h2 style="margin:0">${esc(d.name)}</h2><p class="sub">${lab?'Lab (blood / urine) runs in the morning.':'Night shift timing for this doctor.'}</p></div></div>
+    ${lab?shiftCard(d,'m','🧪','Lab (Morning)',d.id):shiftCard(d,'n','🌙','Evening',d.id)}</div>`}).join('')}
+function upd(id,k,v,re){getDoc(id)[k]=v;saveSoon();if(re)render()}
+function updDay(id,i,k,v,re){getDoc(id).days[i][k]=v;saveSoon();if(re)render()}
+function addDoctor(){const d=mkDoc(uid(),'Dr. New Doctor','M.B.B.S',[0,1,2,3,4,5,6]);S.doctors.push(d);A.edit=d.id;saveNow();render()}
+function delDoctor(id){if(!confirm('Remove this doctor? Existing bookings stay.'))return;S.doctors=S.doctors.filter(d=>d.id!==id);A.edit='';saveNow();render()}
+
+/* ----- Time control (professional) ----- */
+function docOpts(sel,all){return(all?`<option value="all">All doctors</option>`:'')+S.doctors.map(d=>`<option value="${d.id}" ${sel===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}
+const docName=id=>id==='all'?'All doctors':(getDoc(id)||{name:'(removed)'}).name;
+const dayOpts=sel=>DNF.map((d,i)=>`<option value="${i}" ${+sel===i?'selected':''}>${d}</option>`).join('');
+function ovRows(ds){
+  return S.doctors.map(d=>{
+    const info=dayInfo(d,ds);
+    if(!info.open)return`<div class="c"><b>${esc(d.name)}</b></div><div class="c" style="color:var(--red)">Closed · ${esc(info.reason||'')}</div><div class="c">-</div>`;
+    if(info.reqOnly)return`<div class="c"><b>${esc(d.name)}</b></div><div class="c">📩 Request mode</div><div class="c">-</div>`;
+    const tm=genTimes(d,info).filter(t=>!S.blockedSlots.includes(`${ds}|${d.id}|${t}`));
+    const booked=tm.reduce((a,t)=>a+Math.min(taken(d,ds,t),d.perSlot),0),total=tm.length*d.perSlot;
+    return`<div class="c"><b>${esc(d.name)}</b></div><div class="c">${(info.shifts||[]).map(x=>(x.k==='n'?'🌙 ':'☀ ')+f12(x.start)+'-'+f12(x.end)).join('<br>')}</div><div class="c"><b>${booked}/${total}</b></div>`;
+  }).join('');
+}
+function closeDayAll(ds,reason){if(!S.closedDates.find(c=>c.date===ds&&c.doc==='all'))S.closedDates.push({date:ds,doc:'all',reason:reason||'Closed'});saveNow();render();toast('Closed '+nice(ds))}
+function openDayAll(ds){S.closedDates=S.closedDates.filter(c=>!(c.date===ds&&c.doc==='all'));saveNow();render();toast('Reopened '+nice(ds))}
+function bkOptHtml(){return`<div class="pad"><h2>Booking options</h2><p class="sub">Choose how patients can book each doctor. Turn on one or both. With both on, patients choose between picking a time or sending a request.</p>`+S.doctors.filter(d=>!d.lab).map(d=>{const s=slotsOn(d),r=reqOn(d);return`<div style="padding:10px 0;border-top:1px solid var(--line,#e5e5e5)"><b>${esc(d.name)}</b><label class="sw"><input type="checkbox" ${s?'checked':''} onchange="setOpt('${d.id}','optSlots',this.checked)"> ⏱ Patient picks a time (time table)</label><label class="sw"><input type="checkbox" ${r?'checked':''} onchange="setOpt('${d.id}','optReq',this.checked)"> 📩 Patient sends a request (you give the time · WhatsApp number is asked)</label></div>`}).join('')+`</div>`}
+function setOpt(id,k,v){const d=getDoc(id);if(!d)return;const s=k==='optSlots'?v:slotsOn(d),r=k==='optReq'?v:reqOn(d);if(!s&&!r){toast('Keep at least one option on');render();return}d.optSlots=s;d.optReq=r;delete d.reqMode;saveSoon();render()}
+function tabTime(){return bkOptHtml()+tabTime0()}
+function tabTime0(){
+  const today=todayS(),tom=tomS();
+  S.closedDates=S.closedDates.filter(c=>c.date>=today);S.specials=S.specials.filter(c=>c.date>=today);
+  if(!A.blkDoc&&S.doctors[0])A.blkDoc=S.doctors[0].id;
+  const ac=autoClosed();
+  const st=!S.bookingOpen?['no','Booking is CLOSED','Closed manually. Patients see: '+S.closedMsg]:ac?['no','Booking is CLOSED (auto)',ac]:['ok','Booking is OPEN','Patients can book now.'];
+  const a=S.autoClose,tm=S.tomorrowMode||'auto';
+  const b0=S.doctors[0];if(b0)ensureShifts(b0);const bm=b0?b0.m:{start:'09:00',end:'13:00',gap:15},bn=b0?b0.n:{start:'18:00',end:'21:00',gap:15};
+  let h=`<div class="hero ${st[0]}"><div><h2>${st[1]}</h2><p>${esc(st[2])}</p></div><button class="btn ${S.bookingOpen?'red':''}" onclick="S.bookingOpen=!S.bookingOpen;saveNow();render()">${S.bookingOpen?'Close booking':'Open booking'}</button></div>
+
+  ${permCard()}
+
+  <div class="pad"><h2>Today and tomorrow</h2><p class="sub">Open hours and booked count per doctor.</p>
+  <div class="sect">TODAY · ${nice(today)}</div><div class="ov"><div class="h">Doctor</div><div class="h">Hours</div><div class="h">Booked</div>${ovRows(today)}</div>
+  <div class="sect">TOMORROW · ${nice(tom)}</div><div class="ov"><div class="h">Doctor</div><div class="h">Hours</div><div class="h">Booked</div>${ovRows(tom)}</div>
+  <div class="sect">QUICK ACTIONS</div><div style="display:flex;gap:6px;flex-wrap:wrap">
+  <button class="btn red sm" onclick="closeDayAll('${today}','Closed today')">Close today</button><button class="btn sec sm" onclick="openDayAll('${today}')">Reopen today</button>
+  <button class="btn red sm" onclick="closeDayAll('${tom}','Closed tomorrow')">Close tomorrow</button><button class="btn sec sm" onclick="openDayAll('${tom}')">Reopen tomorrow</button></div></div>
+
+  <details class="pad"><summary class="sm2">Tomorrow tab</summary><p class="sub">When patients can see Tomorrow on the booking page.</p>
+  <div class="seg"><button class="${tm==='auto'?'on':''}" onclick="S.tomorrowMode='auto';saveNow();render()">Automatic</button><button class="${tm==='on'?'on':''}" onclick="S.tomorrowMode='on';saveNow();render()">Always on</button><button class="${tm==='off'?'on':''}" onclick="S.tomorrowMode='off';saveNow();render()">Always off</button></div>
+  ${tm==='auto'?`<label>Show Tomorrow from</label><input type="time" value="${S.tomorrowFrom||'17:00'}" onchange="S.tomorrowFrom=this.value;saveNow();render()">`:''}</details>
+
+  <details class="pad"><summary class="sm2">Weekly auto-close</summary><p class="sub">Booking closes and reopens by itself every week.</p>
+  <label class="sw"><input type="checkbox" ${a.on?'checked':''} onchange="S.autoClose.on=this.checked;saveNow();render()"> Enable weekly auto-close</label>
+  ${a.on?`<div class="row"><div><label>Close on</label><select onchange="S.autoClose.closeDay=+this.value;saveNow();render()">${dayOpts(a.closeDay)}</select></div><div><label>At</label><input type="time" value="${a.closeTime}" onchange="S.autoClose.closeTime=this.value;saveNow();render()"></div></div>
+  <div class="row"><div><label>Reopen on</label><select onchange="S.autoClose.openDay=+this.value;saveNow();render()">${dayOpts(a.openDay)}</select></div><div><label>At</label><input type="time" value="${a.openTime}" onchange="S.autoClose.openTime=this.value;saveNow();render()"></div></div>`:''}</details>
+
+  <div class="pad"><h2>Close a day</h2><p class="sub">Every day is open. Pick any date to close the whole day, for one doctor or everyone.</p>
+  <div class="row"><div><label>Date</label><input type="date" id="cd_date" value="${today}" min="${today}"></div><div><label>Doctor</label><select id="cd_doc">${docOpts('',true)}</select></div></div>
+  <label>Reason (optional)</label><input id="cd_reason" placeholder="e.g. Doctor on leave">
+  <button class="btn" style="margin-top:12px" onclick="addClosed()">Close date</button>
+  <div style="margin-top:10px">${S.closedDates.sort((x,y)=>x.date.localeCompare(y.date)).map((c,i)=>`<div class="li"><div><b>${nice(c.date)}</b> · ${esc(docName(c.doc))}<div class="sub">${esc(c.reason||'')}</div></div><button class="btn red sm" onclick="S.closedDates.splice(${i},1);saveNow();render()">Open again</button></div>`).join('')||'<p class="sub">No closed dates.</p>'}</div></div>
+
+  <div class="pad"><h2>Special hours (one date only)</h2><p class="sub">Different timing for a single date. Other days run on Permanent hours above. Boxes start with the permanent time.</p>
+  <div class="row"><div><label>Date</label><input type="date" id="sp_date" value="${today}" min="${today}"></div><div><label>Doctor</label><select id="sp_doc">${docOpts('',true)}</select></div></div>
+  <div class="shc"><div class="shh"><b>☀ Morning</b><label class="sw" style="margin:0"><input type="checkbox" id="sp_mon" checked onchange="spTog()"> <span id="sp_mlb">On</span></label></div>
+  <div class="row"><div><label>From</label><input type="time" id="sp_ms" value="${bm.start}"></div><div><label>To</label><input type="time" id="sp_me" value="${bm.end}"></div><div><label>Every (min)</label><input type="number" min="5" step="5" id="sp_mg" value="${bm.gap||15}"></div></div></div>
+  <div class="shc"><div class="shh"><b>🌙 Evening</b><label class="sw" style="margin:0"><input type="checkbox" id="sp_non" checked onchange="spTog()"> <span id="sp_nlb">On</span></label></div>
+  <div class="row"><div><label>From</label><input type="time" id="sp_ns" value="${bn.start}"></div><div><label>To</label><input type="time" id="sp_ne" value="${bn.end}"></div><div><label>Every (min)</label><input type="number" min="5" step="5" id="sp_ng" value="${bn.gap||15}"></div></div></div>
+  <button class="btn" style="margin-top:12px;width:100%" onclick="addSpecial()">Save for this date</button>
+  <div style="margin-top:10px">${S.specials.sort((x,y)=>x.date.localeCompare(y.date)).map((c,i)=>`<div class="li"><div><b>${nice(c.date)}</b> · ${esc(docName(c.doc))}<div class="sub">${c.sh==='n'?'🌙 Evening':c.sh==='m'?'☀ Morning':'Special'} · ${c.off?'<b style="color:var(--red)">OFF</b>':f12(c.start)+' to '+f12(c.end)}</div></div><button class="btn red sm" onclick="S.specials.splice(${i},1);saveNow();render()">Remove</button></div>`).join('')||'<p class="sub">No special hours.</p>'}</div></div>`;
+  const doc=getDoc(A.blkDoc);
+  h+=`<details class="pad"><summary class="sm2">Block single times</summary><p class="sub">Tap a time to block or unblock it. Booked and past times block automatically.</p>
+  <div class="row"><div><label>Doctor</label><select onchange="A.blkDoc=this.value;render()">${docOpts(A.blkDoc)}</select></div><div><label>Date</label><input type="date" value="${A.blkDate}" onchange="A.blkDate=this.value;render()"></div></div>
+  <div style="display:flex;gap:6px;margin-top:8px"><button class="btn sec sm" onclick="A.blkDate=todayS();render()">Today</button><button class="btn sec sm" onclick="A.blkDate=tomS();render()">Tomorrow</button></div>`;
+  if(doc){
+    const info=dayInfo(doc,A.blkDate),tms=info.open?genTimes(doc,info):[];
+    if(!tms.length)h+=`<div class="empty">${esc(info.reason||'No times on this day')}</div>`;
+    else h+=`<div class="slots">${tms.map(t=>{const k=`${A.blkDate}|${doc.id}|${t}`,bl=S.blockedSlots.includes(k),n=taken(doc,A.blkDate,t);return`<button class="slot ${bl?'blk':''}" onclick="togBlock('${k}')">${f12(t)}<small>${bl?'Blocked':n+'/'+doc.perSlot+' booked'}</small></button>`}).join('')}</div>
+    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn sec sm" onclick="blockAll(true)">Block all</button><button class="btn sec sm" onclick="blockAll(false)">Unblock all</button></div>`;
+  }
+  h+=`</details><details class="pad"><summary class="sm2">Booking rules</summary>
+  <div class="row"><div><label>Stop booking (minutes before slot)</label><input type="number" min="0" value="${S.cutoffMin}" oninput="S.cutoffMin=+this.value||0;saveSoon()"></div>
+  <div><label>Max bookings per user / day</label><input type="number" min="1" value="${S.maxPerPhone}" oninput="S.maxPerPhone=+this.value||1;saveSoon()"></div></div>
+  <label>Message shown when closed</label><input value="${esc(S.closedMsg)}" oninput="S.closedMsg=this.value;saveSoon()"></details>`;
+  return h;
+}
+function addClosed(){
+  const date=document.getElementById('cd_date').value;if(!date)return toast('Pick a date');
+  S.closedDates.push({date,doc:document.getElementById('cd_doc').value,reason:document.getElementById('cd_reason').value.trim()});saveNow();render();toast('Date closed');
+}
+function spTog(){['m','n'].forEach(k=>{const on=document.getElementById('sp_'+k+'on').checked;document.getElementById('sp_'+k+'s').disabled=!on;document.getElementById('sp_'+k+'e').disabled=!on;document.getElementById('sp_'+k+'g').disabled=!on;document.getElementById('sp_'+k+'lb').textContent=on?'On':'Off'})}
+function addSpecial(){
+  const date=document.getElementById('sp_date').value,doc=document.getElementById('sp_doc').value;if(!date)return toast('Pick a date');
+  const rows=['m','n'].map(k=>({k,on:document.getElementById('sp_'+k+'on').checked,start:document.getElementById('sp_'+k+'s').value,end:document.getElementById('sp_'+k+'e').value,gap:Math.max(5,+document.getElementById('sp_'+k+'g').value||15)}));
+  for(const r of rows)if(r.on&&(!r.start||!r.end||t2m(r.end)<=t2m(r.start)))return toast((r.k==='m'?'Morning':'Evening')+': check the times');
+  S.specials=S.specials.filter(c=>!(c.date===date&&c.doc===doc&&(c.sh==='m'||c.sh==='n')));
+  rows.forEach(r=>S.specials.push({date,doc,sh:r.k,start:r.start,end:r.end,gap:r.gap,off:!r.on}));
+  saveNow();render();toast('Saved for '+nice(date));
+}
+function togBlock(k){const i=S.blockedSlots.indexOf(k);i>=0?S.blockedSlots.splice(i,1):S.blockedSlots.push(k);saveNow();render()}
+function blockAll(on){
+  const doc=getDoc(A.blkDoc),info=dayInfo(doc,A.blkDate);if(!info.open)return;
+  genTimes(doc,info).forEach(t=>{const k=`${A.blkDate}|${doc.id}|${t}`,i=S.blockedSlots.indexOf(k);if(on&&i<0)S.blockedSlots.push(k);if(!on&&i>=0)S.blockedSlots.splice(i,1)});
+  saveNow();render();
+}
+
+/* ----- Users ----- */
+function waRow(u){const my=bkOf(u).sort((a,b)=>b.created-a.created),l=my[0],un=my.reduce((x,b)=>x+unreadA(b),0);
+  return`<button class="war" onclick="A.uopen='${u.id}';render();window.scrollTo(0,0)"><span class="av">${esc(u.username[0].toUpperCase())}</span><span class="mid"><b>${esc(u.username)}</b><span class="pv">${l?`#${l.token} · ${esc(l.docName)} · ${nice(l.date)} ${f12(l.time)}`:esc(u.phone)}</span></span><span class="rt">${l?`<span class="tag ${l.status}">${l.status}</span>`:'<span>New</span>'}${un?`<i class="bdg">${un}</i>`:''}</span></button>`}
+function tabUsers(){
+  const op=A.uopen&&USERS.find(x=>x.id===A.uopen);
+  if(op){const u=op,my=bkOf(u).sort((a,b)=>b.created-a.created),wa='https://wa.me/'+esc(u.phone.replace(/^0/,'94'));
+    let h=`<button class="btn sec sm" onclick="A.uopen='';render()">‹ All users</button>
+    <div class="pad" style="text-align:center;margin-top:12px"><span class="av big" style="margin:0 auto 8px">${esc(u.username[0].toUpperCase())}</span><h2 style="margin:0">${esc(u.username)}</h2><p class="sub">${esc(u.phone)} · joined ${niceDT(u.created)}${u.nic?' · NIC '+esc(u.nic):''}</p>
+    <div class="wacts"><a href="tel:${esc(u.phone)}"><span>📞</span>Call</a><a class="wg" target="_blank" rel="noopener" href="${wa}"><span>💬</span>WhatsApp</a><button onclick="document.getElementById('usb_${u.id}').scrollIntoView({behavior:'smooth'})"><span>⚙</span>Settings</button><button onclick="resetUserPw('${u.id}')"><span>🔑</span>Password</button><button class="rd" onclick="delUser('${u.id}')"><span>🗑</span>Delete</button></div></div>
+    <div class="pad"><h2>Bookings (${my.length})</h2>`;
+    my.forEach(b=>h+=`<div class="li"><div><b>#${b.token} · ${esc(b.docName)}</b><div class="sub">${nice(b.date)} · ${f12(b.time)} · ${esc(b.name)}</div><div class="sub">${esc(b.problem)}</div></div><span class="tag ${b.status}">${b.status}</span></div>`);
+    if(!my.length)h+=`<p class="sub" style="margin-top:8px">No bookings yet.</p>`;
+    h+=`</div><div class="pad" id="usb_${u.id}"><h2>⚙ User settings</h2>
+    <label>Username</label><input id="su_u_${u.id}" value="${esc(u.username)}" autocapitalize="none">
+    <label>Phone</label><input id="su_p_${u.id}" value="${esc(u.phone)}" inputmode="tel">
+    <label>Admin note (only you see this)</label><textarea id="su_n_${u.id}" style="min-height:64px">${esc(u.note||'')}</textarea>
+    <button class="btn" style="width:100%;margin-top:14px" onclick="saveUserSettings('${u.id}')">Save settings</button></div>`;
+    return h}
+  const q=A.uq.trim().toLowerCase();
+  const list=USERS.filter(u=>!q||(u.username+u.phone).toLowerCase().includes(q)).sort((a,b)=>{const t=u=>Math.max(u.created,...bkOf(u).map(x=>x.created));return t(b)-t(a)});
+  let h=`<div class="stat"><div><b>${USERS.length}</b><span>Users</span></div><div><b>${USERS.filter(u=>bkOf(u).some(b=>b.status==='pending'||b.status==='confirmed')).length}</b><span>With upcoming</span></div><div><b>${USERS.filter(u=>Date.now()-u.created<7*864e5).length}</b><span>New (7 days)</span></div><div><b>${B.filter(b=>b.userId).length}</b><span>Account bookings</span></div></div>
+  <div class="pad"><input id="uq" placeholder="🔍 Search username / phone" value="${esc(A.uq)}" oninput="A.uq=this.value;clearTimeout(A.qt);A.qt=setTimeout(()=>{render();const e=document.getElementById('uq');e&&(e.focus(),e.setSelectionRange(99,99))},350)"></div>`;
+  if(!list.length)return h+`<div class="empty">No users yet.</div>`;
+  return h+`<div class="pad wal">${list.map(waRow).join('')}</div>`;
+}
+async function resetUserPw(id){
+  const u=USERS.find(x=>x.id===id);const v=prompt('New password for '+u.username+' (min 4 characters)');
+  if(!v)return;if(v.length<4)return toast('Too short');
+  await Store.saveUser({...u,passHash:await hashPw(u.id,v)});toast('Password reset');
+}
+async function saveUserSettings(id){const u=USERS.find(x=>x.id===id);if(!u)return;
+  const g=k=>document.getElementById(k+'_'+id).value.trim(),un=g('su_u'),ph=g('su_p'),nt=g('su_n');
+  if(un.length<3)return toast('Username must be at least 3 characters');
+  if(!ph)return toast('Enter a phone number');
+  if(USERS.some(x=>x.id!==id&&(x.usernameLower||x.username.toLowerCase())===un.toLowerCase()))return toast('That username is already taken');
+  await Store.saveUser({...u,username:un,usernameLower:un.toLowerCase(),phone:ph,note:nt});toast('User settings saved')}
+function delUser(id){const u=USERS.find(x=>x.id===id);if(confirm('Delete account '+u.username+'? Their bookings stay.'))Store.deleteUser(id)}
+
+/* ----- Settings ----- */
+function tabSettings(){
+  return`<div class="pad"><h2>Clinic details</h2>
+  <label>Clinic / pharmacy name</label><input id="cn_a" value="${esc(S.clinicName)}" maxlength="60">
+  <label>Footer text (empty = use the name)</label><input id="ft_a" value="${esc(S.footer||'')}" maxlength="80">
+  <button class="btn" style="margin-top:12px" onclick="saveClinicName()">Save name</button>
+  <label>Contact phone</label><input type="tel" value="${esc(S.phone)}" oninput="S.phone=this.value;saveSoon()">
+  <label>Notice for patients (shown at top, leave empty to hide)</label><textarea oninput="S.notice=this.value;saveSoon()">${esc(S.notice)}</textarea></div>
+  <div class="pad"><h2>Sign up form</h2>
+  <label>Ask NIC number when a patient signs up</label><select onchange="S.nicMode=this.value;saveNow();toast('Saved')"><option value="off" ${(S.nicMode||'off')==='off'?'selected':''}>Don't ask (off)</option><option value="optional" ${S.nicMode==='optional'?'selected':''}>Ask — optional</option><option value="required" ${S.nicMode==='required'?'selected':''}>Ask — required</option></select>
+  <p class="sub" style="margin-top:6px">Username and phone number are always required, and each must be unique.</p></div>
+  <div class="pad"><h2>Admin password</h2>
+  <label>New password</label><input type="text" id="npw" placeholder="At least 4 characters">
+  <button class="btn" style="margin-top:12px" onclick="const v=document.getElementById('npw').value;if(v.length<4)return toast('Too short');S.password=v;saveNow();toast('Password changed')">Change password</button>
+  <p class="sub" style="margin-top:10px">This is the admin page. Keep its link private.</p></div>
+  <div class="pad"><h2>🧪 Lab admin</h2>
+  <p class="sub">The lab has its own separate page (labs.html) and password. Put labs.html in the same folder as this file.</p>
+  <label>Lab admin link</label><input type="text" readonly value="${esc(location.href.split(/[?#]/)[0].replace(/[^\/]*$/,'')+'labs.html')}" onclick="this.select()">
+  <label>Lab admin password</label><input type="text" id="lpw" value="${esc(S.labPassword||'lab123')}">
+  <button class="btn" style="margin-top:12px" onclick="const v=document.getElementById('lpw').value.trim();if(v.length<4)return toast('Too short');S.labPassword=v;saveNow();toast('Lab password saved')">Save lab password</button>
+  <a class="btn sec" style="margin-left:6px" href="labs.html">Open lab admin</a></div>
+  <div class="pad"><h2>Clean up</h2>
+  <button class="btn red" onclick="clearOld()">Delete bookings before today</button>
+  <button class="btn sec" style="margin-left:6px" onclick="exportCSV()">Export all (CSV)</button></div><details class="pad"><summary class="sm2">Users</summary>${tabUsers()}</details>`;
+}
+const DEV_ID='0727676806';
+const isDev=r=>r.id===DEV_ID;
+const rvSort=(a,b)=>(isDev(b)-isDev(a))||(b.at-a.at);
+const avHtml=r=>isDev(r)?`<span class="crown"><span class="av">R</span></span>`:`<span class="av">${esc((r.username||'?')[0].toUpperCase())}</span>`;
+const devCard=()=>`<div class="pad dev" style="margin-top:16px"><div style="display:flex;gap:12px;align-items:center"><span class="crown"><span class="av big">R</span></span><div><b style="font-size:17px">Rusthi</b><span class="dvt">Developer</span><div class="sub"><a href="tel:${DEV_ID}" style="color:inherit">${DEV_ID}</a></div></div></div></div>`;
+function tabReviews(){
+  const n=R.length,avg=n?R.reduce((a,r)=>a+r.stars,0)/n:0,d=[0,0,0,0,0,0];R.forEach(r=>d[r.stars]++);
+  const f=A.rvf||0,list=[...R].filter(r=>!f||r.stars===f).sort(rvSort),st=k=>'★'.repeat(k)+'☆'.repeat(5-k);
+  let h=devCard()+(window.RV_ERR?`<div class="banner err">Reviews are not saving yet. In Firebase → Firestore → Rules, allow the <b>reviews</b> collection (error: ${esc(window.RV_ERR)}).</div>`:'')+`<div class="pad"><h2>⭐ Ratings &amp; reviews</h2>`;
+  h+=n?`<div class="rsum"><div class="big">${avg.toFixed(1)}<div class="stv" style="font-size:16px">${st(Math.round(avg))}</div><small>${n} review${n>1?'s':''}</small></div><div class="rbars">${[5,4,3,2,1].map(k=>`<div class="rbar"><span>${k}★</span><i><b style="width:${Math.round(d[k]/n*100)}%"></b></i><span>${d[k]}</span></div>`).join('')}</div></div>`:`<p class="sub" style="margin-top:6px">No reviews yet. Logged-in patients can rate from the Reviews tab on the booking page.</p>`;
+  h+=`</div>`;
+  if(n){
+    h+=`<div class="pad"><div style="display:flex;gap:6px;flex-wrap:wrap">${[[0,'All'],[5,'5★'],[4,'4★'],[3,'3★'],[2,'2★'],[1,'1★']].map(([k,l])=>`<button class="btn ${f===k?'':'sec'} sm" onclick="A.rvf=${k};render()">${l}${k?' ('+d[k]+')':''}</button>`).join('')}</div>`;
+    h+=list.length?list.map(r=>`<div class="li${isDev(r)?' dev':''}" style="margin-top:10px"><div style="min-width:0;display:flex;gap:10px">${avHtml(r)}<div style="min-width:0"><b>${esc(isDev(r)?'Rusthi':r.username)}</b>${isDev(r)?'<span class="dvt">Developer</span>':''} <span class="stv">${st(r.stars)}</span><div class="sub">${esc(/^\d/.test(r.id)?r.id+' · ':'')}${niceDT(r.at)}</div>${r.text?`<div style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:4px">${esc(r.text)}</div>`:''}</div></div><button class="btn red sm" onclick="delReview('${r.id}')">Delete</button></div>`).join(''):`<p class="sub" style="margin-top:10px">No ${f}★ reviews.</p>`;
+    h+=`<div class="row"><button class="btn red sm" onclick="delAllReviews()">Delete all reviews</button></div></div>`;
+  }
+  return h;
+}
+function delAllReviews(){if(prompt('Type DELETE to remove ALL '+R.length+' reviews')!=='DELETE')return;Promise.all(R.map(r=>Store.deleteReview(r.id))).then(()=>toast('All reviews deleted')).catch(()=>toast('Delete failed. Check connection.'))}
+function saveClinicName(){
+  const v=document.getElementById('cn_a').value.trim(),f=document.getElementById('ft_a').value.trim();
+  if(!v)return toast('Enter a name');
+  Promise.resolve(Store.patchSettings({clinicName:v,footer:f})).then(()=>{S.clinicName=v;S.footer=f;render();toast('Name saved ✓')}).catch(()=>toast('Save failed. Check connection.'));
+}
+function clearOld(){
+  const t=todayS(),old=B.filter(b=>b.date<t);
+  if(!old.length)return toast('Nothing to delete');
+  if(confirm(`Delete ${old.length} old bookings? Export CSV first if needed.`))old.forEach(b=>Store.deleteBooking(b.id));
+}
+
+
+
+/* ----- v6: send report to patient inbox ----- */
+A.rd={};A.rf=null;A.rep='';
+function toggleRep(id){A.rep=A.rep===id?'':id;render()}
+function repHtml(b){
+  const d=A.rd[b.id]||{},f=A.rf&&A.rf.id===b.id?A.rf:null,rs=b.reports||[];
+  const guest=!b.userId||String(b.userId).startsWith('guest-');
+  return`<div class="chat"><b>📄 Send report to ${esc(b.userName||b.name)}'s inbox</b>
+  ${guest?`<p class="sub" style="margin:6px 0 0">⚠ Guest booking — a guest has no Inbox access on other devices. Also send by WhatsApp.</p>`:''}
+  <label style="margin-top:10px">Title</label><input maxlength="80" placeholder="e.g. Blood test report" value="${esc(d.t||'')}" oninput="(A.rd['${b.id}']=A.rd['${b.id}']||{}).t=this.value">
+  <label>Message / result notes</label><textarea rows="3" maxlength="1500" placeholder="Result summary or advice for the patient" oninput="(A.rd['${b.id}']=A.rd['${b.id}']||{}).m=this.value">${esc(d.m||'')}</textarea>
+  <label>Attach report (photo or PDF)</label><input type="file" accept="image/*,application/pdf" onchange="pickRepFile('${b.id}',this)">
+  ${f?`<p class="sub" style="margin:6px 0 0">📎 ${esc(f.name)} ready ${f.type==='application/pdf'?'':'<br><img src="'+f.data+'" style="max-width:140px;border-radius:8px;margin-top:6px">'}</p>`:''}
+  <button class="btn" style="width:100%;margin-top:12px" onclick="sendReport('${b.id}')">Send to inbox</button>
+  ${rs.length?`<div style="margin-top:12px"><b class="sub">Already sent</b>${rs.map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:6px;font-size:13.5px"><span>🧪 ${esc(r.t)}${r.file?' 📎':''} · ${niceDT(r.at)}</span><button class="btn red sm" onclick="delReport('${b.id}','${r.id}')">Remove</button></div>`).join('')}</div>`:''}
+  </div>`;
+}
+function pickRepFile(id,inp){
+  const f=inp.files&&inp.files[0];if(!f)return;const fr=new FileReader();
+  if(f.type.startsWith('image/')){
+    fr.onload=()=>{const im=new Image();im.onload=()=>{const m=1100,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);A.rf={id,name:f.name,type:'image/jpeg',data:c.toDataURL('image/jpeg',.72)};render()};im.onerror=()=>toast('Could not read this image');im.src=fr.result};
+    fr.readAsDataURL(f);
+  }else if(f.type==='application/pdf'){
+    if(f.size>450*1024)return toast('PDF too big (max 450 KB). Send a photo instead.');
+    fr.onload=()=>{A.rf={id,name:f.name,type:'application/pdf',data:fr.result};render()};fr.readAsDataURL(f);
+  }else toast('Image or PDF only');
+}
+async function sendReport(id){
+  const b=B.find(x=>x.id===id);if(!b)return;
+  const d=A.rd[id]||{},t=(d.t||'').trim(),m=(d.m||'').trim(),f=A.rf&&A.rf.id===id?A.rf:null;
+  if(!m&&!f)return toast('Add a message or attach a file');
+  const r={id:uid(),t:t||'Lab report',m,at:Date.now()};if(f){r.file=f.data;r.ft=f.type;r.fn=f.name}
+  const list=[...(b.reports||[]),r];
+  if(JSON.stringify(list).length>900000)return toast('Too large for this booking. Remove an old report first.');
+  try{await Store.updateBooking(id,{reports:list});delete A.rd[id];A.rf=null;toast('Report sent to patient inbox ✓');render()}catch(e){toast('Failed to send. Check connection.')}
+}
+function delReport(id,rid){const b=B.find(x=>x.id===id);if(!b||!confirm('Remove this report from the patient inbox?'))return;Store.updateBooking(id,{reports:(b.reports||[]).filter(r=>r.id!==rid)})}
+
+const unreadA=b=>(b.chat||[]).slice(b.chatSeenA||0).filter(m=>m.f==='u'&&!m.d).length;
+const WA_SIDE='a';
+const waSrc=()=>B.filter(b=>(b.chat||[]).length||(b.reports||[]).length||b.userId||b.phone);
+const waCur=()=>(A.tab==='inbox'&&A.chat)?A.chat:'';
+const waGet=k=>k?(waGroups(waSrc()).find(g=>g.key===k)||null):null;
+const WA_EMPTY=g=>'No messages yet. Say hello 👋';
+const waName=g=>{const b=[...g.bs].reverse().find(x=>x.userName||x.name)||g.latest;return b.userName||b.name||'Patient'};
+const waGuest=g=>g.key.startsWith('ph:');
+function waRowsHtml(gs){
+  const q=(A.wq||'').trim().toLowerCase();
+  if(q)gs=gs.filter(g=>(waName(g)+' '+(g.latest.phone||'')+' '+(g.latest.docName||'')).toLowerCase().includes(q));
+  if(!gs.length)return`<div class="w2empty" style="margin:30px auto">${q?'No chats found.':'No patients yet. Patient chats will appear here.'}</div>`;
+  return gs.map(g=>{
+    const l=g.last,n=waUnread(g,'a'),nm=waName(g);let pv;
+    if(l){
+      const mine=l.k==='r'||l.m.f==='a';
+      pv=(mine?waTick(l,'a')+' ':'')+((l.k==='r'?l.r:l.m).d?'🚫 Message deleted':l.k==='r'?'🧪 '+esc(l.r.t||'Report')+(l.r.file?' 📎':''):esc(l.m.t));
+    }else pv=esc(g.latest.phone||'Start a conversation');
+    return`<button class="w2row${A.chat===g.key?' sel':''}" data-k="${esc(g.key)}" onclick="waOpen(this.dataset.k)"><span class="w2av">${esc(nm.charAt(0).toUpperCase())}</span><span class="w2rm"><span class="w2r1"><b>${esc(nm)}</b><span class="w2tm${n?' un':''}">${waListTime(g.at)}</span></span><span class="w2r2"><span class="w2pv">${pv}</span>${n?`<em class="w2bd">${n}</em>`:''}</span></span></button>`;
+  }).join('');
+}
+function waRowsPaint(){const el=document.getElementById('w2rows');if(el)el.innerHTML=waRowsHtml(waGroups(waSrc()))}
+function waFilter(v){A.wq=v;waRowsPaint()}
+function waOpen(k){A.chat=k;render()}
+function waConvHtml(g){
+  const b=g.latest,nm=waName(g);
+  return`<div class="w2top"><button class="w2back" onclick="A.chat='';render()" aria-label="Back">←</button><span class="w2av">${esc(nm.charAt(0).toUpperCase())}</span><div class="w2ti"><b>${esc(nm)}</b><span>${esc(b.phone||'')} · ${esc(b.docName||'Clinic')} · #${esc(b.token)}${waGuest(g)?' · Guest (no app inbox)':''}</span></div><a class="w2call" href="tel:${esc(b.phone||'')}" aria-label="Call">📞</a></div><div class="w2msgs" id="w2msgs">${waMsgsHtml(g,'a',WA_EMPTY(g))}</div>${waComposer(true,true)}`;
+}
+function tabInbox(){
+  const gs=waGroups(waSrc()),g=gs.find(x=>x.key===A.chat)||null;
+  if(A.chat&&!g)A.chat='';
+  return`<div class="w2app${g?' open':''}"><aside class="w2side"><div class="w2sh"><b>Chats</b><span>${gs.length}</span></div><div class="w2sr"><input id="w2q" value="${esc(A.wq||'')}" placeholder="🔍 Search name / phone" oninput="waFilter(this.value)"></div><div id="w2rows" class="w2rows">${waRowsHtml(gs)}</div></aside><section class="w2conv">${g?waConvHtml(g):`<div class="w2welcome"><div style="font-size:54px">💬</div><h2>Clinic messages</h2><p>Select a patient to open the chat.<br>Send text or attach lab reports (photo / PDF).</p></div>`}</section></div>`;
+}
+function waAttach(inp){
+  const g=waGet(waCur()),f=inp.files&&inp.files[0];inp.value='';if(!g||!f)return;
+  const send=(data,type)=>{
+    const b=g.latest,cap=((document.getElementById('w2in')||{}).value||'').trim();
+    const r={id:uid(),t:'Report',m:cap,at:Date.now(),file:data,ft:type,fn:f.name};
+    const list=[...(b.reports||[]),r];
+    if(JSON.stringify(list).length>900000)return toast('Too large for this booking. Remove an old report first.');
+    b.reports=list;WAD[g.key]='';
+    Promise.resolve(Store.updateBooking(b.id,{reports:list})).then(()=>toast('Sent ✓')).catch(()=>toast('Failed to send. Check connection.'));
+    render();
+  };
+  const fr=new FileReader();
+  if(f.type.startsWith('image/')){
+    fr.onload=()=>{const im=new Image();im.onload=()=>{const m=1100,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);send(c.toDataURL('image/jpeg',.72),'image/jpeg')};im.onerror=()=>toast('Could not read this image');im.src=fr.result};
+    fr.readAsDataURL(f);
+  }else if(f.type==='application/pdf'){
+    if(f.size>450*1024)return toast('PDF too big (max 450 KB). Send a photo instead.');
+    fr.onload=()=>send(fr.result,'application/pdf');fr.readAsDataURL(f);
+  }else toast('Image or PDF only');
+}
+
+/* ================= WhatsApp-style inbox core (shared) ================= */
+const WAD={};
+const waKey=b=>(b.userId&&!String(b.userId).startsWith('guest-'))?String(b.userId):'ph:'+String(b.phone||'').replace(/\D/g,'');
+function waItems(g){
+  const it=[];
+  g.bs.forEach(b=>{
+    (b.chat||[]).forEach((m,i)=>it.push({k:'m',m,b,i,at:m.at||0}));
+    (b.reports||[]).forEach((r,i)=>it.push({k:'r',r,b,i,at:r.at||0}));
+  });
+  return it.sort((a,b)=>a.at-b.at);
+}
+function waGroups(list){
+  const m={};
+  list.forEach(b=>{const k=waKey(b);(m[k]=m[k]||{key:k,bs:[]}).bs.push(b)});
+  return Object.values(m).map(g=>{
+    g.bs.sort((a,b)=>(a.created||0)-(b.created||0));
+    g.items=waItems(g);g.last=g.items[g.items.length-1]||null;g.latest=g.bs[g.bs.length-1];
+    g.at=g.last?g.last.at:(g.latest.created||0);return g;
+  }).sort((a,b)=>b.at-a.at);
+}
+const waUnread=(g,side)=>g.bs.reduce((n,b)=>side==='a'
+  ?n+(b.chat||[]).slice(b.chatSeenA||0).filter(m=>m.f==='u'&&!m.d).length
+  :n+(b.chat||[]).slice(b.chatSeenU||0).filter(m=>m.f==='a'&&!m.d).length+(b.reports||[]).slice(b.reportSeenU||0).filter(r=>!r.d).length,0);
+const waSame=(a,b)=>a.toDateString()===b.toDateString();
+function waListTime(ts){
+  if(!ts)return'';const d=new Date(ts),n=new Date(),y=new Date(n);y.setDate(n.getDate()-1);
+  if(waSame(d,n))return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  if(waSame(d,y))return'Yesterday';
+  return d.toLocaleDateString([],{day:'numeric',month:'short',year:'2-digit'});
+}
+function waDay(ts){
+  const d=new Date(ts),n=new Date(),y=new Date(n);y.setDate(n.getDate()-1);
+  if(waSame(d,n))return'Today';if(waSame(d,y))return'Yesterday';
+  return d.toLocaleDateString([],{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function waTick(it,side){
+  if(it.k==='m'?it.m.d:it.r.d)return'';
+  let mine=false,rd=false;
+  if(it.k==='m'){mine=it.m.f===side;rd=side==='a'?it.i<(it.b.chatSeenU||0):it.i<(it.b.chatSeenA||0)}
+  else if(side==='a'){mine=true;rd=it.i<(it.b.reportSeenU||0)}
+  return mine?`<i class="w2t${rd?' rd':''}">${rd?'✓✓':'✓'}</i>`:'';
+}
+function waBubble(it,side,tail){
+  const tm=new Date(it.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  const own=it.k==='m'?it.m.f===side:side==='a',dead=it.k==='m'?it.m.d:it.r.d;
+  if(dead)return`<div class="w2b ${own?'me':'ot'}${tail?' tl':''}"><span class="w2tx w2dl">🚫 ${own?'You deleted this message':'This message was deleted'}</span><span class="w2m">${tm}</span></div>`;
+  const xb=own?`<button class="w2x" title="Delete for everyone" onclick="waDel('${it.b.id}','${it.k}',${it.i})">⌄</button>`:'';
+  if(it.k==='m'){
+    const me=it.m.f===side;
+    return`<div class="w2b ${me?'me':'ot'}${tail?' tl':''}">${xb}<span class="w2tx">${esc(it.m.t)}</span><span class="w2m">${tm}${waTick(it,side)}</span></div>`;
+  }
+  const r=it.r,me=side==='a';let a='';
+  if(r.file&&String(r.file).startsWith('data:')){
+    a=r.ft==='application/pdf'
+      ?`<a class="w2pdf" href="${esc(r.file)}" download="${esc(r.fn||'report.pdf')}"><b>PDF</b><span>${esc(r.fn||'report.pdf')}<small>Tap to download</small></span></a>`
+      :`<a href="${esc(r.file)}" download="${esc(r.fn||'report.jpg')}"><img class="w2img" src="${esc(r.file)}" alt="report"></a>`;
+  }
+  return`<div class="w2b ${me?'me':'ot'}${tail?' tl':''}">${xb}${r.t?`<b class="w2rt">🧪 ${esc(r.t)}</b>`:''}${a}${r.m?`<span class="w2tx">${esc(r.m)}</span>`:''}<span class="w2m">${tm}${waTick(it,side)}</span></div>`;
+}
+function waDel(bid,k,i){
+  const g=waGet(waCur());if(!g)return;const b=g.bs.find(x=>x.id===bid);if(!b)return;
+  if(!confirm('Delete this message for everyone?'))return;
+  if(k==='m'){const c=(b.chat||[]).map((m,j)=>j===i?{f:m.f,at:m.at,d:1}:m);b.chat=c;Promise.resolve(Store.updateBooking(b.id,{chat:c})).catch(()=>toast('Delete failed. Check connection.'))}
+  else{const r=(b.reports||[]).map((x,j)=>j===i?{at:x.at,d:1}:x);b.reports=r;Promise.resolve(Store.updateBooking(b.id,{reports:r})).catch(()=>toast('Delete failed. Check connection.'))}
+  waPaint();if(typeof waRowsPaint==='function')waRowsPaint();toast('Deleted for everyone');
+}
+function waMsgsHtml(g,side,empty){
+  const items=waItems(g);
+  if(!items.length)return`<div class="w2empty">${empty}</div>`;
+  let h='',day='',prev='';
+  items.forEach(it=>{
+    const d=new Date(it.at).toDateString(),who=it.k==='r'?'a':it.m.f;
+    if(d!==day){day=d;prev='';h+=`<div class="w2day"><span>${waDay(it.at)}</span></div>`}
+    h+=waBubble(it,side,who!==prev);prev=who;
+  });
+  return h;
+}
+function waComposer(canSend,attach){
+  const k=waCur();
+  return`<div class="w2cmp">${attach?`<label class="w2clip" title="Attach report (photo / PDF)">📎<input type="file" accept="image/*,application/pdf" hidden onchange="waAttach(this)"></label>`:''}<input id="w2in" maxlength="500" autocomplete="off" placeholder="${canSend?'Type a message':'Chat unavailable'}" value="${esc(WAD[k]||'')}" oninput="WAD[waCur()]=this.value" onkeydown="if(event.key==='Enter')waSend()" ${canSend?'':'disabled'}><button class="w2snd" onclick="waSend()" aria-label="Send" ${canSend?'':'disabled'}>➤</button></div>`;
+}
+function waSeen(g){
+  g.bs.forEach(b=>{
+    const p={},n=(b.chat||[]).length,r=(b.reports||[]).length;
+    if(WA_SIDE==='a'){if((b.chatSeenA||0)<n){p.chatSeenA=n;b.chatSeenA=n}}
+    else{
+      if((b.chatSeenU||0)<n){p.chatSeenU=n;b.chatSeenU=n}
+      if((b.reportSeenU||0)<r){p.reportSeenU=r;b.reportSeenU=r}
+    }
+    if(Object.keys(p).length)Promise.resolve(Store.updateBooking(b.id,p)).catch(()=>{});
+  });
+}
+function waPaint(force){
+  const m=document.getElementById('w2msgs');if(!m)return;
+  const g=waGet(waCur());if(!g)return;
+  const near=force||m.scrollHeight-m.scrollTop-m.clientHeight<90;
+  m.innerHTML=waMsgsHtml(g,WA_SIDE,WA_EMPTY(g));
+  if(near)m.scrollTop=m.scrollHeight;
+}
+function waRefresh(){
+  waPaint();
+  if(typeof waRowsPaint==='function')waRowsPaint();
+  const g=waGet(waCur());if(g&&!document.hidden)waSeen(g);
+}
+function refreshChat(){waRefresh()}
+function waSend(){
+  const k=waCur(),g=waGet(k),i=document.getElementById('w2in');if(!g||!i)return;
+  const t=i.value.trim();if(!t)return;
+  const b=g.latest;if(!b)return toast('Book an appointment first to chat with the clinic');
+  const c=[...(b.chat||[]),{f:WA_SIDE,t,at:Date.now()}];
+  if(JSON.stringify(c).length>800000)return toast('Chat is too large for this booking');
+  b.chat=c;const p={chat:c};p[WA_SIDE==='a'?'chatSeenA':'chatSeenU']=c.length;
+  WAD[k]='';i.value='';waPaint(true);if(typeof waRowsPaint==='function')waRowsPaint();
+  Promise.resolve(Store.updateBooking(b.id,p)).catch(()=>toast('Failed to send. Check connection.'));
+  i.focus();
+}
+const _render=render;
+render=function(){
+  const m0=document.getElementById('w2msgs'),k0=window._w2k||'';
+  const near=!m0||m0.scrollHeight-m0.scrollTop-m0.clientHeight<90,st=m0?m0.scrollTop:0;
+  _render();
+  const m=document.getElementById('w2msgs'),k=waCur();
+  if(m){if(near||k!==k0||!m0)m.scrollTop=m.scrollHeight;else m.scrollTop=st}
+  window._w2k=m?k:'';
+  const g=m&&waGet(k);if(g&&!document.hidden)waSeen(g);
+};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){const g=waGet(waCur());if(g)waSeen(g)}});
+window._ready=true;softRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Developer - Medical Center Booking</title>
+<style>
+:root{--ink:#12303a;--mut:#5d7680;--paper:#fbfdfc;--line:#d7e5e2;--g:#0e8f6b;--g2:#0a6d53;--gl:#e1f5ee;--red:#d6403a;--rl:#fdeceb;--blue:#e6f1f7}
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.5;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:680px;margin:0 auto;padding:16px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;outline:none}
+input:focus,textarea:focus,button:focus-visible{border-color:var(--g);box-shadow:0 0 0 3px rgba(14,143,107,.18)}
+textarea{min-height:130px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label{display:block;font-weight:600;font-size:13.5px;margin:12px 0 5px}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--g);color:#fff}
+.btn.sec{background:var(--blue);color:var(--ink)}.btn.red{background:var(--rl);color:var(--red)}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pad{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+h1{font-size:21px}h2{font-size:17px;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13.5px}
+.st{padding:10px 13px;border-radius:10px;margin-top:12px;font-weight:600}
+.st.ok{background:var(--gl);color:var(--g2)}.st.no{background:var(--rl);color:var(--red)}.st.wait{background:var(--blue)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pw{display:flex;gap:8px}.pw input{flex:1}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.th{border:2px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;background:#fff;text-align:left;padding:0}
+.th .sw2{height:46px;display:flex}.th .sw2 i{flex:1}
+.th b{display:block;padding:8px 10px;font-size:13.5px}
+.th.on{border-color:var(--g);box-shadow:0 0 0 3px rgba(14,143,107,.2)}
+.u{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:10px}
+.u .t{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.kv{display:grid;grid-template-columns:90px 1fr;gap:2px 10px;font-size:14px;margin-top:8px}.kv span{color:var(--mut)}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;margin:10px 0}.sw input{width:20px;height:20px;accent-color:var(--g)}
+input[type=color]{height:46px;padding:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats div{background:var(--blue);border-radius:12px;padding:10px;text-align:center}.stats b{display:block;font-size:22px}.stats span{font-size:12px;color:var(--mut)}
+.danger{border-color:var(--red)}
+.adbox{border:1.5px dashed var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.adbox h3{font-size:15px;margin-bottom:2px}
+.adi{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;background:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.hint{font-size:12.5px;color:var(--mut);margin-top:4px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const DEV_PASS='0929';
+const THEMES={"mint": {"n": "Mint Pharmacy", "v": {"--ink": "#12303a", "--mut": "#5d7680", "--paper": "#fbfdfc", "--card": "#ffffff", "--line": "#d7e5e2", "--g": "#0e8f6b", "--g2": "#0a6d53", "--gl": "#e1f5ee", "--blue": "#e6f1f7", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#12303a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "ocean": {"n": "Ocean Blue", "v": {"--ink": "#0f2a44", "--mut": "#5d7680", "--paper": "#fafcff", "--card": "#ffffff", "--line": "#d3e1f0", "--g": "#1565c0", "--g2": "#0d47a1", "--gl": "#e3f0ff", "--blue": "#e8f1fa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#0f2a44", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "royal": {"n": "Royal Purple", "v": {"--ink": "#2a1b4d", "--mut": "#5d7680", "--paper": "#fcfbff", "--card": "#ffffff", "--line": "#e0d8f2", "--g": "#6a3fd0", "--g2": "#5129ae", "--gl": "#efe8ff", "--blue": "#f0ebfa", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#2a1b4d", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "sunset": {"n": "Sunset Orange", "v": {"--ink": "#3b2013", "--mut": "#5d7680", "--paper": "#fffdfb", "--card": "#ffffff", "--line": "#f0dccb", "--g": "#d9620f", "--g2": "#b34c08", "--gl": "#fff0e1", "--blue": "#fbefe3", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3b2013", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "rose": {"n": "Rose Care", "v": {"--ink": "#3d1a2a", "--mut": "#5d7680", "--paper": "#fffcfd", "--card": "#ffffff", "--line": "#f1d6e1", "--g": "#d6336c", "--g2": "#b02556", "--gl": "#ffe8f0", "--blue": "#fbeaf1", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#3d1a2a", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "forest": {"n": "Forest Green", "v": {"--ink": "#14301f", "--mut": "#5d7680", "--paper": "#fbfdfb", "--card": "#ffffff", "--line": "#d3e4d7", "--g": "#2f8f46", "--g2": "#226b34", "--gl": "#e4f5e8", "--blue": "#e8f2ea", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#14301f", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "graphite": {"n": "Graphite", "v": {"--ink": "#1f2933", "--mut": "#5d7680", "--paper": "#fafbfc", "--card": "#ffffff", "--line": "#d9dfe5", "--g": "#3a4a5a", "--g2": "#27323d", "--gl": "#e8edf1", "--blue": "#eef1f4", "--red": "#d6403a", "--rl": "#fdeceb", "--amb": "#b7791f", "--aml": "#fdf3dc", "--head": "#1f2933", "--onhead": "#ffffff", "--onG": "#ffffff"}}, "midnight": {"n": "Midnight (dark)", "v": {"--ink": "#e6f2f0", "--mut": "#8fa9ae", "--paper": "#0e1a1f", "--card": "#15262d", "--line": "#27414a", "--g": "#2fc89b", "--g2": "#25a67f", "--gl": "#11332b", "--blue": "#1a3340", "--red": "#ff8a80", "--rl": "#3a1a1a", "--amb": "#f0b429", "--aml": "#3a2e10", "--head": "#0b2a33", "--onhead": "#e6f2f0", "--onG": "#06231b"}}};
+const KEYS=['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId','measurementId'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const niceDT=ts=>{const d=new Date(ts);return `${d.getDate()} ${MN[d.getMonth()]} ${d.getFullYear()}`};
+async function hashPw(id,pw){
+  const t='mcb|'+id+'|'+pw;
+  if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=5381;for(const c of t)h=((h<<5)+h+c.charCodeAt(0))|0;return 'x'+h;
+}
+const app=document.getElementById('app');
+let authed=sessionStorage.getItem('mcb_dev')==='1';
+const BAKED_CONFIG={apiKey:"AIzaSyC5KCiRWBawHCRlwVpVyD_71jyp_u0bhwk",authDomain:"medical-center-b9e5f.firebaseapp.com",projectId:"medical-center-b9e5f",storageBucket:"medical-center-b9e5f.firebasestorage.app",messagingSenderId:"485817737930",appId:"1:485817737930:web:6745c7c9354b5fde018a33",measurementId:"G-6J7GQ15RJ0"};
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+let adsD=null;
+let cfg=null,db=null,sref=null,data=null,users=[],bookings=[],reviews=[],status={t:'wait',m:'Not connected'},showPw=false,pasted='',uq='',uopen='';
+try{cfg=window.MCB_CONFIG||JSON.parse(localStorage.getItem('mcb_fbconfig'))}catch(e){}
+if(!cfg||!cfg.projectId)cfg=BAKED_CONFIG;
+function parseCfg(txt){const o={};KEYS.forEach(k=>{const m=new RegExp(k+'\\s*[:=]\\s*["\']([^"\']+)["\']').exec(txt);if(m)o[k]=m[1]});return o.apiKey&&o.projectId?o:null}
+function configJs(c){return 'window.MCB_CONFIG = '+JSON.stringify(c,null,2)+';\n'}
+async function load(){
+  const s=await sref.get();data=s.exists?s.data():{};adsD=null;
+  users=(await db.collection('users').get()).docs.map(d=>({...d.data(),id:d.id}));
+  bookings=(await db.collection('bookings').get()).docs.map(d=>({...d.data(),id:d.id}));
+  try{reviews=(await db.collection('reviews').get()).docs.map(d=>({...d.data(),id:d.id}))}catch(e){reviews=[]}
+}
+async function connect(c){
+  status={t:'wait',m:'Connecting…'};render();
+  try{
+    const a=firebase.initializeApp(c,'dev'+Date.now());
+    db=a.firestore();sref=db.collection('meta').doc('settings');
+    await load();cfg=c;
+    status={t:'ok',m:'Connected to project: '+c.projectId+(Object.keys(data).length?'':' (no settings saved yet, defaults shown)')};
+  }catch(e){sref=null;db=null;data=null;status={t:'no',m:'Connection failed: '+(e.message||e)+'. Check config and Firestore rules.'}}
+  render();
+}
+function login(){if(document.getElementById('dp').value===DEV_PASS){authed=true;sessionStorage.setItem('mcb_dev','1');render();if(cfg&&!sref)connect(cfg)}else alert('Wrong password')}
+function render(){
+  if(!authed){app.innerHTML=`<div class="pad" style="margin-top:14vh"><h1>Developer access</h1><label>Password</label><input id="dp" type="password" onkeydown="if(event.key==='Enter')login()"><div class="row"><button class="btn" style="width:100%" onclick="login()">Open</button></div></div>`;return}
+  let h=`<h1 style="margin:6px 0 14px">Developer console</h1>
+  <div class="pad"><h2>1. Firebase connection</h2>
+  <p class="sub">The built-in project is <b>medical-center-b9e5f</b>. To use a different Firebase project, paste its SDK snippet (the part with <b>const firebaseConfig = {...}</b>) and press Connect, then download config.js and upload it with the pages.</p>
+  <label>Firebase SDK / config</label><textarea id="sdk" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot; };" oninput="pasted=this.value">${esc(pasted)}</textarea>
+  <div class="row"><button class="btn" onclick="doConnect()">Connect</button>
+  <button class="btn sec" onclick="dlCfg()" ${cfg?'':'disabled'}>Download config.js</button>
+  <button class="btn sec" onclick="copyCfg()" ${cfg?'':'disabled'}>Copy config.js text</button>
+  <button class="btn red" onclick="rmCfg()">Reset to built-in</button></div>
+  <div class="st ${status.t}">${esc(status.m)}</div></div>`;
+  if(sref&&data){
+    const cur=data.theme||'mint',today=ymd(new Date());
+    const live=bookings.filter(b=>b.status!=='cancelled');
+    h+=`<div class="pad"><h2>2. Overview</h2><div class="stats" style="margin-top:10px"><div><b>${users.length}</b><span>Users</span></div><div><b>${bookings.length}</b><span>Bookings</span></div><div><b>${live.filter(b=>b.date===today).length}</b><span>Today</span></div><div><b>${bookings.filter(b=>b.status==='pending').length}</b><span>Pending</span></div><div><b>${bookings.reduce((n,b)=>n+(b.chat||[]).filter(m=>!m.d).length,0)}</b><span>Chat messages</span></div><div><b>${bookings.reduce((n,b)=>n+(b.reports||[]).filter(r=>!r.d).length,0)}</b><span>Lab reports</span></div></div>
+    <p class="sub" style="margin-top:10px">⭐ ${reviews.length} review${reviews.length===1?'':'s'}${reviews.length?' · average '+(reviews.reduce((a,r)=>a+r.stars,0)/reviews.length).toFixed(1):''}</p>
+    <div class="row"><button class="btn sec sm" onclick="refresh()">Refresh data</button></div>
+    <p class="sub" style="margin-top:12px">🔗 Linked pages (same Firebase project <b>${esc(cfg&&cfg.projectId||'')}</b>, same settings, users and bookings):</p>
+    <div class="row" style="margin-top:6px"><button class="btn sec sm" onclick="location.href='medical-booking.html'">Booking page</button><button class="btn sec sm" onclick="location.href='medical-admin.html'">Admin page</button></div></div>
+    <div class="pad"><h2>3. Pharmacy name and footer</h2><p class="sub">Shown on the booking page and the admin page.</p>
+    <label>Name</label><input id="cn" value="${esc(data.clinicName||'City Medical Center & Pharmacy')}">
+    <label>Footer text (empty = use the name)</label><input id="ft" value="${esc(data.footer||'')}">
+    <div class="row"><button class="btn" onclick="saveName()">Save</button></div></div>
+    <div class="pad"><h2>4. Theme</h2><p class="sub">Tap a theme. It applies to the booking page and the admin page.</p>
+    <div class="themes">${Object.entries(THEMES).map(([id,t])=>`<button class="th ${cur===id?'on':''}" onclick="setTheme('${id}')"><div class="sw2"><i style="background:${t.v['--head']}"></i><i style="background:${t.v['--g']}"></i><i style="background:${t.v['--gl']}"></i><i style="background:${t.v['--paper']}"></i></div><b>${esc(t.n)}${cur===id?' ✓':''}</b></button>`).join('')}</div>
+    <label>Custom accent colour (overrides the theme's main colour)</label><input type="color" id="ac" value="${esc(data.accent||'#0e8f6b')}">
+    <div class="row"><button class="btn" onclick="put({accent:document.getElementById('ac').value},'Accent colour applied')">Apply colour</button><button class="btn sec" onclick="put({accent:''},'Accent colour reset')">Reset colour</button></div></div>
+    <div class="pad"><h2>5. Site controls</h2>
+    <label class="sw"><input type="checkbox" ${data.maintenance?'checked':''} onchange="put({maintenance:this.checked},'Maintenance mode '+(this.checked?'ON':'OFF'))"> Maintenance mode (nobody can book, patients see the message)</label>
+    <label>Maintenance message</label><input id="mm" value="${esc(data.maintenanceMsg||'We are updating the system. Please check back soon.')}">
+    <div class="row"><button class="btn sec sm" onclick="put({maintenanceMsg:document.getElementById('mm').value},'Message saved')">Save message</button></div>
+    <label class="sw"><input type="checkbox" ${data.allowSignup!==false?'checked':''} onchange="put({allowSignup:this.checked},'Sign ups '+(this.checked?'open':'closed'))"> Allow new sign ups</label>
+    <label>Ask NIC number on sign up</label><select onchange="put({nicMode:this.value},'NIC option: '+this.value)" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff"><option value="off" ${(data.nicMode||'off')==='off'?'selected':''}>Don't ask (off)</option><option value="optional" ${data.nicMode==='optional'?'selected':''}>Ask — optional</option><option value="required" ${data.nicMode==='required'?'selected':''}>Ask — required</option></select>
+    <p class="sub" style="margin-top:6px">Same setting as Admin → Settings → Sign up form. Username and phone are always unique.</p></div>
+    ${adsHtml()}
+    <div class="pad"><h2>7. Admin password</h2><p class="sub">Current admin login password.</p>
+    <label>Current password</label><div class="pw"><input type="${showPw?'text':'password'}" value="${esc(data.password||'admin123')}" readonly>
+    <button class="btn sec" onclick="showPw=!showPw;render()">${showPw?'Hide':'Show'}</button></div>
+    <label>Set new password</label><input id="np" placeholder="At least 4 characters">
+    <div class="row"><button class="btn" onclick="savePw()">Change password</button><button class="btn sec" onclick="put({password:'admin123'},'Admin password reset to admin123')">Reset to admin123</button></div></div>`;
+    const q=uq.trim().toLowerCase();
+    const list=users.filter(u=>!q||(u.username+u.phone+(u.nic||'')).toLowerCase().includes(q)).sort((a,b)=>b.created-a.created);
+    h+=`<div class="pad"><h2>8. Users (${users.length})</h2><p class="sub">Everyone who signed up on the booking page.</p>
+    <label>Search username / phone / NIC</label><input id="uq" value="${esc(uq)}" oninput="uq=this.value;clearTimeout(window.qt);window.qt=setTimeout(()=>{render();const e=document.getElementById('uq');e&&(e.focus(),e.setSelectionRange(99,99))},300)">`;
+    if(!list.length)h+=`<p class="sub" style="margin-top:12px">No users found.</p>`;
+    list.forEach(u=>{
+      const my=bookings.filter(b=>b.userId===u.id).sort((a,b)=>b.created-a.created),open=uopen===u.id;
+      h+=`<div class="u"><div class="t"><div><b>${esc(u.username)}</b><div class="sub">${esc(u.phone)}${u.nic?' · NIC '+esc(u.nic):''} · joined ${niceDT(u.created)}</div></div><span class="tag">${my.length} bookings</span></div>
+      <div class="row"><button class="btn sec sm" onclick="uopen='${open?'':u.id}';render()">${open?'Hide':'Details'}</button><button class="btn sec sm" onclick="resetPw('${u.id}')">Reset password</button><button class="btn red sm" onclick="delUser('${u.id}')">Delete</button></div>`;
+      if(open){
+        h+=`<div class="kv"><span>Username</span><b>${esc(u.username)}</b><span>Phone</span><b>${esc(u.phone)}</b>${u.nic?`<span>NIC</span><b>${esc(u.nic)}</b>`:''}<span>Joined</span><b>${niceDT(u.created)}</b></div>`;
+        my.forEach(b=>h+=`<div class="kv" style="border-top:1px solid var(--line);padding-top:8px"><span>#${b.token}</span><b>${esc(b.docName)} · ${esc(b.date)} ${esc(b.time)}</b><span>Patient</span><b>${esc(b.name)} · ${esc(b.phone)}</b><span>Problem</span><b>${esc(b.problem)}</b><span>Status</span><b>${esc(b.status)}</b></div>`);
+      }
+      h+=`</div>`;
+    });
+    h+=`</div>
+    <div class="pad"><h2>9. Backup and restore</h2><p class="sub">Settings, users and bookings in one JSON file.</p>
+    <div class="row"><button class="btn" onclick="backup()">Download backup</button></div>
+    <label>Restore from a backup file</label><input type="file" id="rf" accept=".json,application/json">
+    <div class="row"><button class="btn sec" onclick="restore()">Restore</button></div></div>
+    <div class="pad danger"><h2 style="color:var(--red)">10. Danger zone</h2><p class="sub">These cannot be undone. Download a backup first.</p>
+    <div class="row"><button class="btn red sm" onclick="delOld()">Delete bookings before today</button><button class="btn red sm" onclick="wipe('bookings')">Delete ALL bookings</button><button class="btn red sm" onclick="wipe('users')">Delete ALL users</button><button class="btn red sm" onclick="wipe('reviews')">Delete ALL reviews</button><button class="btn red sm" onclick="clearChats()">Clear all chat messages</button><button class="btn red sm" onclick="resetAll()">Reset all settings</button></div></div>`;
+  }
+  h+=`<div class="row"><button class="btn red sm" onclick="authed=false;sessionStorage.removeItem('mcb_dev');render()">Lock</button></div>`;
+  app.innerHTML=h;
+}
+
+/* ===== Ads (developer pushes ads to the booking page through meta/settings.ads) ===== */
+function adsLoad(){
+  const a=data.ads||{},c=a.custom||{},g=a.adsense||{},o=a.other||{};
+  return{on:!!a.on,
+    custom:{pos:c.pos==='bottom'?'bottom':'top',rotate:Math.max(3,+c.rotate||6),items:(c.items||[]).map(x=>({on:x.on!==false,title:x.title||'',text:x.text||'',btn:x.btn||'',link:x.link||'',img:x.img||'',from:x.from||'',to:x.to||''}))},
+    adsense:{on:!!g.on,pos:g.pos==='top'?'top':'bottom',client:g.client||'',slot:g.slot||''},
+    other:{on:!!o.on,pos:o.pos==='top'?'top':'bottom',html:o.html||'',h:Math.min(600,Math.max(50,+o.h||100))}};
+}
+function adsRead(){
+  const g=id=>document.getElementById(id),v=id=>g(id)?g(id).value.trim():'',c=id=>!!(g(id)&&g(id).checked);
+  if(!g('ad_on'))return adsD;
+  const items=adsD.custom.items.map((_,i)=>({on:c('ci_on'+i),title:v('ci_t'+i),text:v('ci_x'+i),btn:v('ci_b'+i),link:v('ci_l'+i),img:v('ci_i'+i),from:v('ci_f'+i),to:v('ci_to'+i)}));
+  return{on:c('ad_on'),
+    custom:{pos:v('c_pos')==='bottom'?'bottom':'top',rotate:Math.max(3,+v('c_rot')||6),items},
+    adsense:{on:c('g_on'),pos:v('g_pos')==='top'?'top':'bottom',client:v('g_cl'),slot:v('g_sl')},
+    other:{on:c('o_on'),pos:v('o_pos')==='top'?'top':'bottom',html:g('o_html')?g('o_html').value:'',h:Math.min(600,Math.max(50,+v('o_h')||100))}};
+}
+const posSel=(id,val)=>`<select class="f" id="${id}"><option value="top" ${val==='top'?'selected':''}>Top of booking page</option><option value="bottom" ${val==='bottom'?'selected':''}>Bottom of booking page</option></select>`;
+function adsHtml(){
+  if(!adsD)adsD=adsLoad();
+  const a=adsD,c=a.custom,g=a.adsense,o=a.other;
+  let h=`<div class="pad"><h2>6. Ads (push to booking page)</h2><p class="sub">Ads only show on the <b>booking page</b>, for logged-in patients. Nothing shows on the admin page. Press <b>Push ads live</b> to publish.</p>
+  <label class="sw"><input type="checkbox" id="ad_on" ${a.on?'checked':''}> <b>Ads ON</b> (master switch for all ad types below)</label>
+
+  <div class="adbox"><h3>A. My own ads (banner cards)</h3><p class="hint">Rotating cards. Link and image must start with https://. Optional dates: the ad shows only between From and To.</p>
+  <div class="two"><div><label>Position</label>${posSel('c_pos',c.pos)}</div><div><label>Rotate every (seconds, min 3)</label><input id="c_rot" type="number" min="3" value="${esc(c.rotate)}"></div></div>`;
+  c.items.forEach((x,i)=>{
+    h+=`<div class="adi"><div class="t" style="display:flex;justify-content:space-between;align-items:center"><label class="sw" style="margin:0"><input type="checkbox" id="ci_on${i}" ${x.on?'checked':''}> Ad ${i+1} active</label><button class="btn red sm" onclick="adDel(${i})">Remove</button></div>
+    <label>Title</label><input id="ci_t${i}" maxlength="80" value="${esc(x.title)}">
+    <label>Text (optional)</label><input id="ci_x${i}" maxlength="140" value="${esc(x.text)}">
+    <div class="two"><div><label>Button text</label><input id="ci_b${i}" maxlength="24" value="${esc(x.btn)}"></div><div><label>Link (https://)</label><input id="ci_l${i}" value="${esc(x.link)}"></div></div>
+    <label>Image URL (https://, optional)</label><input id="ci_i${i}" value="${esc(x.img)}">
+    <div class="two"><div><label>From date</label><input id="ci_f${i}" type="date" value="${esc(x.from)}"></div><div><label>To date</label><input id="ci_to${i}" type="date" value="${esc(x.to)}"></div></div></div>`;
+  });
+  h+=`<div class="row"><button class="btn sec sm" onclick="adAdd()" ${c.items.length>=20?'disabled':''}>+ Add my ad</button></div></div>
+
+  <div class="adbox"><h3>B. Google AdSense</h3><p class="hint">Publisher ID looks like <b>ca-pub-1234567890123456</b>. Slot ID is the number from your AdSense ad unit. Your site domain must be approved in AdSense, or ads stay blank.</p>
+  <label class="sw"><input type="checkbox" id="g_on" ${g.on?'checked':''}> Show Google ad</label>
+  <div class="two"><div><label>Publisher ID</label><input id="g_cl" placeholder="ca-pub-XXXXXXXXXXXXXXXX" value="${esc(g.client)}"></div><div><label>Ad slot ID</label><input id="g_sl" placeholder="1234567890" value="${esc(g.slot)}"></div></div>
+  <label>Position</label>${posSel('g_pos',g.pos)}</div>
+
+  <div class="adbox"><h3>C. Other ad network (HTML code)</h3><p class="hint">Paste the banner code from another network. It runs inside a sandboxed frame.</p>
+  <label class="sw"><input type="checkbox" id="o_on" ${o.on?'checked':''}> Show this ad</label>
+  <label>Ad code</label><textarea id="o_html" maxlength="4000" placeholder="&lt;a href=&quot;https://...&quot;&gt;...&lt;/a&gt;">${esc(o.html)}</textarea>
+  <div class="two"><div><label>Position</label>${posSel('o_pos',o.pos)}</div><div><label>Height (px, 50-600)</label><input id="o_h" type="number" min="50" max="600" value="${esc(o.h)}"></div></div></div>
+
+  <div class="row"><button class="btn" onclick="adPush()">Push ads live</button><button class="btn red" onclick="adOff()">Turn all ads OFF</button><button class="btn sec" onclick="adsD=null;render()">Discard changes</button></div></div>`;
+  return h;
+}
+function adAdd(){adsD=adsRead();if(adsD.custom.items.length>=20)return;adsD.custom.items.push({on:true,title:'',text:'',btn:'',link:'',img:'',from:'',to:''});render()}
+function adDel(i){adsD=adsRead();adsD.custom.items.splice(i,1);render()}
+function adCheck(a){
+  const https=u=>!u||/^https:\/\//i.test(u);
+  for(let i=0;i<a.custom.items.length;i++){
+    const x=a.custom.items[i];
+    if(!x.title&&!x.img)return 'Ad '+(i+1)+': add a title or an image';
+    if(!https(x.link))return 'Ad '+(i+1)+': link must start with https://';
+    if(!https(x.img))return 'Ad '+(i+1)+': image URL must start with https://';
+    if(x.from&&x.to&&x.from>x.to)return 'Ad '+(i+1)+': From date is after To date';
+  }
+  if(a.adsense.on){
+    if(!/^ca-pub-\d{10,20}$/.test(a.adsense.client))return 'AdSense Publisher ID must look like ca-pub-1234567890123456';
+    if(!/^\d{6,15}$/.test(a.adsense.slot))return 'AdSense slot ID must be 6 to 15 digits';
+  }
+  if(a.other.on&&!a.other.html.trim())return 'Other ad: paste the ad code or turn it off';
+  if(a.other.html.length>4000)return 'Other ad code is too long (max 4000 characters)';
+  return '';
+}
+function adPush(){
+  const a=adsRead(),err=adCheck(a);
+  adsD=a;
+  if(err){status={t:'no',m:err};render();window.scrollTo(0,0);return}
+  put({ads:a},a.on?'Ads pushed live to the booking page':'Ads saved (master switch is OFF, nothing shows)');
+}
+function adOff(){const a=adsRead();a.on=false;adsD=a;put({ads:a},'All ads turned OFF')}
+function doConnect(){const c=parseCfg(document.getElementById('sdk').value);if(!c){alert('Could not find apiKey and projectId in the pasted text.');return}localStorage.setItem('mcb_fbconfig',JSON.stringify(c));pasted='';connect(c)}
+function dlCfg(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([configJs(cfg)],{type:'text/javascript'}));a.download='config.js';a.click()}
+function copyCfg(){navigator.clipboard.writeText(configJs(cfg)).then(()=>alert('Copied. Save it as config.js'),()=>prompt('Copy this text',configJs(cfg)))}
+function rmCfg(){if(!confirm('Go back to the built-in Firebase project on this device?'))return;localStorage.removeItem('mcb_fbconfig');connect(BAKED_CONFIG)}
+async function put(patch,msg){try{await sref.set(patch,{merge:true});Object.assign(data,patch);if(patch.ads)adsD=null;status={t:'ok',m:msg}}catch(e){status={t:'no',m:'Save failed: '+e.message}}render()}
+function saveName(){const v=document.getElementById('cn').value.trim();if(!v)return alert('Enter a name');put({clinicName:v,footer:document.getElementById('ft').value.trim()},'Name and footer saved')}
+function setTheme(id){put({theme:id},'Theme changed to '+THEMES[id].n)}
+function savePw(){const v=document.getElementById('np').value;if(v.length<4)return alert('At least 4 characters');put({password:v},'Admin password changed')}
+async function refresh(){try{await load();status={t:'ok',m:'Refreshed'}}catch(e){status={t:'no',m:e.message}}render()}
+async function resetPw(id){const u=users.find(x=>x.id===id);const v=prompt('New password for '+u.username+' (min 4 characters)');if(!v)return;if(v.length<4)return alert('Too short');
+  try{const passHash=await hashPw(u.id,v);await db.collection('users').doc(id).set({...u,passHash});u.passHash=passHash;status={t:'ok',m:'Password reset for '+u.username}}catch(e){status={t:'no',m:e.message}}render()}
+async function delUser(id){const u=users.find(x=>x.id===id);if(!confirm('Delete account '+u.username+'?'))return;
+  try{await db.collection('users').doc(id).delete();users=users.filter(x=>x.id!==id);status={t:'ok',m:'User deleted'}}catch(e){status={t:'no',m:e.message}}render()}
+
+async function chunked(items,fn){for(let i=0;i<items.length;i+=400){const b=db.batch();items.slice(i,i+400).forEach(x=>fn(b,x));await b.commit()}}
+async function backup(){
+  await load();const j={app:'medical-booking',exported:new Date().toISOString(),settings:data,users,bookings,reviews};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'}));a.download='medical-backup-'+ymd(new Date())+'.json';a.click();
+  status={t:'ok',m:'Backup downloaded'};render();
+}
+async function restore(){
+  const f=document.getElementById('rf').files[0];if(!f)return alert('Choose a backup file first');
+  let j;try{j=JSON.parse(await f.text())}catch(e){return alert('That file is not a valid backup')}
+  if(!confirm('Restore will overwrite matching data. Continue?'))return;
+  try{
+    if(j.settings)await sref.set(j.settings);
+    const put1=coll=>(b,x)=>{const{id,...rest}=x;b.set(db.collection(coll).doc(id),rest)};
+    await chunked(j.users||[],put1('users'));await chunked(j.bookings||[],put1('bookings'));await chunked(j.reviews||[],put1('reviews'));
+    await load();status={t:'ok',m:'Backup restored'};
+  }catch(e){status={t:'no',m:'Restore failed: '+e.message}}
+  render();
+}
+async function delOld(){
+  const t=ymd(new Date()),old=bookings.filter(b=>b.date<t);if(!old.length)return alert('Nothing to delete');
+  if(!confirm('Delete '+old.length+' old bookings?'))return;
+  try{await chunked(old,(b,x)=>b.delete(db.collection('bookings').doc(x.id)));bookings=bookings.filter(b=>b.date>=t);status={t:'ok',m:'Old bookings deleted'}}catch(e){status={t:'no',m:e.message}}render();
+}
+async function wipe(coll){
+  if(prompt('Type DELETE to remove ALL '+coll)!=='DELETE')return;
+  try{const list=coll==='users'?users:coll==='reviews'?reviews:bookings;await chunked(list,(b,x)=>b.delete(db.collection(coll).doc(x.id)));if(coll==='users')users=[];else if(coll==='reviews')reviews=[];else bookings=[];status={t:'ok',m:'All '+coll+' deleted'}}catch(e){status={t:'no',m:e.message}}render();
+}
+async function clearChats(){
+  const list=bookings.filter(b=>(b.chat||[]).length);if(!list.length)return alert('No chat messages');
+  if(prompt('Type DELETE to clear chat messages in '+list.length+' bookings (lab reports are kept)')!=='DELETE')return;
+  try{await chunked(list,(b,x)=>b.update(db.collection('bookings').doc(x.id),{chat:[],chatSeenA:0,chatSeenU:0}));list.forEach(b=>{b.chat=[];b.chatSeenA=0;b.chatSeenU=0});status={t:'ok',m:'Chat messages cleared'}}catch(e){status={t:'no',m:e.message}}render();
+}
+async function resetAll(){
+  if(prompt('Type DELETE to reset all settings (admin password goes back to admin123, doctors reset)')!=='DELETE')return;
+  try{await sref.delete();data={};adsD=null;status={t:'ok',m:'Settings reset. They are recreated when a page loads.'}}catch(e){status={t:'no',m:e.message}}render();
+}
+render();if(authed&&cfg)connect(cfg);
+</script>
+</body>
+</html>
